@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:xcustom="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/corners_s_bg"
+    android:orientation="horizontal">
+
+    <com.baidu.idl.sample.view.DrawView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xcustom:drawColor="#343966"
+        xcustom:drawRoundRadius="17dp"
+        xcustom:drawStyleFill="true">
+    </com.baidu.idl.sample.view.DrawView>
+
+    <ImageView
+        android:id="@+id/ic_flow_title"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp"
+        android:background="@mipmap/ic_check" />
+
+    <TextView
+        android:id="@+id/flow_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        android:layout_alignTop="@+id/ic_flow_title"
+        android:layout_toRightOf="@id/ic_flow_title"
+        android:textColor="#AAA7C6"
+        android:text="@string/db_path_title" />
+
+    <View
+        android:id="@+id/layout_top"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/flow_title"
+        android:layout_marginTop="10dp"
+        android:background="#413B64" />
+
+    <ImageView
+        android:id="@+id/ic_flow_path"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_below="@id/layout_top"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:background="@mipmap/ic_check" />
+
+    <TextView
+        android:id="@+id/flow_path_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_top"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="20dp"
+        android:layout_toRightOf="@id/ic_flow_path"
+        android:text="操作流程"
+        android:textColor="#DBD9E7"/>
+
+    <ImageView
+        android:id="@+id/ic_flow_path_step_one"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_below="@id/flow_path_title"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="21dp"
+        android:background="@mipmap/ic_check_no" />
+
+    <TextView
+        android:id="@+id/flow_path_step_one"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/flow_path_title"
+        android:layout_marginBottom="4dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="18dp"
+        android:layout_toRightOf="@id/ic_flow_path_step_one"
+        android:text="STEP 1"
+        android:textColor="#DBD9E7"/>
+
+    <TextView
+        android:id="@+id/flow_path_step_one_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/flow_path_step_one"
+        android:textColor="#AAA7C6"
+        android:layout_marginRight="20dp"
+        android:layout_toRightOf="@id/ic_flow_path_step_one"
+        android:text="@string/db_path_step_one_msg" />
+
+    <View
+        android:id="@+id/layout_one"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@id/flow_path_step_one_msg"
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/ic_flow_path_step_one"
+        android:background="#413B64" />
+
+    <ImageView
+        android:id="@+id/ic_flow_path_step_two"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_below="@id/flow_path_step_one_msg"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp"
+        android:background="@mipmap/ic_check_no" />
+
+    <TextView
+        android:id="@+id/flow_path_step_two"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/flow_path_step_one_msg"
+        android:layout_marginBottom="4dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="18dp"
+        android:layout_toRightOf="@id/ic_flow_path_step_two"
+        android:text="STEP 2"
+        android:textColor="#DBD9E7"/>
+
+    <TextView
+        android:id="@+id/flow_path_step_two_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/flow_path_step_two"
+        android:layout_marginRight="20dp"
+        android:layout_toRightOf="@id/ic_flow_path_step_two"
+        android:textColor="#AAA7C6"
+        android:text="@string/db_path_step_two_msg" />
+
+    <View
+        android:id="@+id/layout_two"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@id/flow_path_step_two_msg"
+        android:layout_toRightOf="@id/ic_flow_path_step_two"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#413B64" />
+
+</RelativeLayout>

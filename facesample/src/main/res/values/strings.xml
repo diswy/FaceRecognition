@@ -1,0 +1,106 @@
+<resources>
+    <string name="app_name">facesample</string>
+
+    <string name="app_title">百度人脸通行离线方案</string>
+    <string name="reminder">提示：建议先在设置中进行摄像头连接调试</string>
+    <string name="face_regiseter">人脸注册</string>
+    <string name="face_manager">人脸库管理</string>
+    <string name="db_import">数据库导入/导出</string>
+    <string name="pass">通行演示</string>
+    <string name="pass_1_n">1:N 通行</string>
+    <string name="setting">设置</string>
+
+    <string name="input_name">请输入您的姓名</string>
+
+    <string name="binocular_camera">双目摄像头RGB+NIR</string>
+    <string name="camera_model">请选择摄像头型号</string>
+    <string name="dvitec">迪威泰</string>
+
+    <string name="setting_detect_threshold">人脸质量阈值设置</string>
+    <string name="setting_live_threshold">无感知活体阈值设置</string>
+    <string name="setting_feature_threshold">人脸识别阈值设置</string>
+    <string name="setting_live_status">无感知活体检测设置</string>
+    <string name="setting_track_angle">人脸检测角度设置</string>
+    <string name="setting_camera_preview">摄像头预览旋转角度设置</string>
+
+    <string name="defalut_blur">模糊度（默认值0.70）</string>
+    <string name="defalut_occlu">遮挡（默认值0.50）</string>
+    <string name="defalut_illum">光照（默认值40）</string>
+    <string name="defalut_argb_live">可见光活体（默认值0.8）</string>
+    <string name="defalut_nir_live">红外活体（默认值0.8）</string>
+    <string name="defalut_deepth_live">深度活体（默认值0.8）</string>
+    <string name="defalut_argb_feature">可见光特征（默认值90）</string>
+    <string name="defalut_phone_feature">证件照特征（默认值90）</string>
+    <string name="default_conf">人脸置信度（默认值2）</string>
+
+    <string name="blur">模糊</string>
+    <string name="occlu">遮挡</string>
+    <string name="illum">光照</string>
+    <string name="default_value">默认值</string>
+    <string name="explain">说明</string>
+
+    <string name="batch_import">批量导入</string>
+    <string name="batch_delete">批量删除</string>
+    <string name="batch_register">批量注册</string>
+    <string name="db_import_output">导入/导出数据库</string>
+    <string name="check_all">全选</string>
+
+    <string name="import_achieve">导入完成</string>
+    <string name="import_tatal">任务总数</string>
+    <string name="import_success">导入成功</string>
+    <string name="import_fail">导入失败</string>
+
+    <string name="regiseter_overtime">注册超时</string>
+    <string name="camera_fail">连接系统摄像头失败！</string>
+    <string name="camera_success">连接系统摄像头成功！</string>
+    <string name="camera_operation">请在“%s”中选择外部连接的摄像头，否则无法进行演示操作。</string>
+    <string name="camera_setting">设置 >> 摄像头连接</string>
+
+
+    <string name="dialog_delete">确认删除所选中的人员记录？</string>
+
+    <string name="flow_path_title">本演示功能下支持批量导入人脸图片数据以录入到人脸库中，即批量注册。该过程不进行活体检测，仅执行批量人脸特征值生成及录入，每张图片提取一张最大人脸作为注册人脸，人脸图片较多时可能耗时较长，请耐心等待！</string>
+    <string name="flow_path_step_one_msg">PC通过USB连接本机，找到本机/sdcard目录下“Import Faces”目录，该目录下包含“Faces List.txt”及“FacePictures”目录</string>
+    <string name="flow_path_step_two_msg">“FacePictures”目录下存放人脸注册图片，可通过PC拷贝进来。在“Faces List.txt”如下图将姓名与图片名按对应格式填入</string>
+    <string name="flow_path_step_three_msg">准备就绪！注意原目录结构及目录/文件名称一定不要更改，如果一切操作无误，请点击下面“开始导入”按钮。（本程序安装后自带100张图片的批量导入示例，可直接点击体验）</string>
+
+    <string name="db_path_title">本演示功能支持将批量导入人脸图片数据以录入到手机内存下的数据库文件导出到SD卡的某目录下，或者将SD卡下的数据库文件导入到手机内存当中</string>
+    <string name="db_path_step_one_msg">导入数据库：将数据库文件放置SD卡bdface/import目录下，并命名为bdface.db，点击“导入数据库”按钮，完成导入功能</string>
+    <string name="db_path_step_two_msg">导出数据库：点击“导出数据库”按钮，数据库文件（bdface.db）将会导出到bdface/output目录下</string>
+
+    <string name="license_activate">设备激活</string>
+    <string name="license_application">应用激活</string>
+    <string name="license_application_reminder">应用激活：通过包名，签名在线申请License 文件至于asset下</string>
+    <string name="license_online">在线激活</string>
+    <string name="license_online_reminder">在线激活：输入序列号，保持设备联网，SDK会自动进行激活</string>
+    <string name="license_offline">离线激活</string>
+    <string name="license_offline_reminder">离线激活：将激活文件置于SD卡中，SDK会自动进行激活处理</string>
+
+    <string name="setting_live_title_no">不使用活体检测</string>
+    <string name="setting_live_title_rgb">单目活体（RGB）</string>
+    <string name="setting_live_title_bino">红外双目活体（RGB+NIR）</string>
+    <string name="setting_live_title_sl">结构光双目活体（RGB+Depth）</string>
+    <string name="setting_live_no">活体检测主要用于判断当前进行通行比对的用户是否为真人，但如果使用场景中有固定人员看守，则无需进行活体检测，直接采集人脸。因为活体检测虽然保障了安全性，但却会影响一定的通过率。</string>
+    <string name="setting_live_rgb">采用单目活体模式，即使用RGB（彩色）活体检测，此方式可有效防止照片翻拍、屏幕成像等攻击。可使用市面上通用的USB单目RGB摄像头，要求设备分辨率大于1280*720</string>
+    <string name="setting_live_bino">采用RGB（彩色）+NIR（近红外）双目活体模式，基于近红外成像特点，此方式下可提高对屏幕成像攻击、高清图片攻击的拒绝率。要求近红外波段860nm。</string>
+    <string name="setting_live_sl">采用RGB（彩色）+Depth（深度）双目活体模式，基于深度传感器特点，此方式下可提高对屏幕、高清彩打图片、视频、模具攻击的拒绝率。</string>
+
+    <string name="blur_title">模糊度</string>
+    <string name="blur_message">人脸的模糊程度，取值范围[0,1]，越接近0代表越不模糊，越接近1代表越模糊。\n检测图像得到的模糊度大于设置值时质量检测不通过，该帧图像不进行后续的人脸识别和活体检测。\n设定值可取0或1，设置为0时直接判定质量检测通过，设置为1时直接判定质量检测不通过。</string>
+    <string name="occlu_title">遮挡</string>
+    <string name="occlu_message">人脸的遮挡程度，取值范围[0,1]，大于设定值时质量检测不通过，不进行后续的人脸识别和活体检测。</string>
+    <string name="illum_title">光照</string>
+    <string name="illum_message">图像的光照程度，取值范围[0,255]，我们认为图像过暗的情况不适宜进行人脸识别，所以检测到图像光照度小于设定值时判定质量检测不通过，不进行后续的人脸识别和活体检测。</string>
+
+    <string name="vis_live">可见光活体</string>
+    <string name="vis_live_message">通过算法对可见光图像中人脸进行活体判断，当算法输出的人脸活体分数大于“阈值”时判定活体校验通过。</string>
+    <string name="nir_live">红外活体</string>
+    <string name="nir_live_message">通过算法对近红外图像中人脸进行活体判断，当算法输出的人脸活体分数大于“阈值”时判定活体校验通过。</string>
+    <string name="depth_live">深度活体</string>
+    <string name="depth_live_message">通过算法对深度图像中人脸进行活体判断，当算法输出的人脸活体分数大于“阈值”时判定活体校验通过。</string>
+
+    <string name="vis_feature">可见光识别</string>
+    <string name="vis_feature_message">通过算法对两张人脸进行比对并得出相似度，当相似度大于“阈值”时判定两张人脸为同一个人。</string>
+    <string name="nir_feature">证件照识别</string>
+    <string name="nir_feature_message">通过算法对两张人脸进行比对并得出相似度，当相似度大于“阈值”时判定两张人脸为同一个人。</string>
+</resources>

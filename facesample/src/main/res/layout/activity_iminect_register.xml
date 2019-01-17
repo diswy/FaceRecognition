@@ -1,0 +1,113 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:xcustom="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/background_main">
+
+    <include
+        android:id="@+id/title_bar"
+        layout="@layout/layout_title" />
+
+    <RelativeLayout
+        android:id="@+id/layout_input"
+        android:layout_below="@+id/title_bar"
+        android:layout_width="313dp"
+        android:layout_height="133dp"
+        android:layout_centerHorizontal="true"
+        android:visibility="visible"
+        android:layout_marginTop="67dp">
+
+        <com.baidu.idl.sample.view.DrawView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            xcustom:drawColor="#343966"
+            xcustom:drawRoundRadius="17dp"
+            xcustom:drawStyleFill="true">
+        </com.baidu.idl.sample.view.DrawView>
+
+        <TextView
+            android:id="@+id/input_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="37dp"
+            android:layout_marginTop="33dp"
+            android:text="@string/input_name"
+            android:textColor="#FFFFFF"
+            android:textSize="13dp" />
+
+        <EditText
+            android:id="@+id/nick_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/input_name"
+            android:layout_marginLeft="37dp"
+            android:layout_marginRight="37dp"
+            android:layout_marginTop="17dp"
+            android:hint="Jimmy"
+            android:textColor="#AAA7C6"
+            android:layout_toLeftOf="@+id/go_btn"/>
+
+        <ImageView
+            android:id="@+id/go_btn"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/input_name"
+            android:layout_marginRight="37dp"
+            android:layout_marginTop="27dp"
+            android:background="@mipmap/ic_go_right"
+            />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/text_batch_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_input"
+        android:layout_centerHorizontal="true"
+        android:textColor="#7D94FE"
+        android:layout_marginTop="30dp"
+        android:text="@string/batch_register"
+        android:textSize="12dp"/>
+
+    <include android:id="@+id/regist_result"
+        layout="@layout/layout_pass"
+        android:layout_below="@+id/title_bar"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <RelativeLayout
+        android:id="@+id/layout_camera"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/title_bar"
+        android:visibility="gone"
+        android:gravity="center">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <ImageView
+            android:id="@+id/btn_go_left"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:background="@mipmap/ic_go_left" />
+
+        <ImageView
+            android:id="@+id/btn_go_right"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:background="@mipmap/ic_go_right" />
+    </RelativeLayout>
+</RelativeLayout>

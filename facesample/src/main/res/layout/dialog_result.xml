@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_marginLeft="43dp"
+    android:layout_marginRight="43dp"
+    android:background="@drawable/corners_s_bg">
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@mipmap/ic_success"
+        android:layout_alignParentRight="true"/>
+
+    <RelativeLayout
+        android:id="@+id/relative_finish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="33dp"
+        android:layout_marginBottom="33dp">
+
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="导入完成"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/text_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/text_title"
+            android:layout_marginTop="17dp"
+            android:textColor="#AAA7C6"
+            android:textSize="12sp"
+            android:lineSpacingExtra="16dp"
+            android:text="任务总数：0"/>
+    </RelativeLayout>
+</RelativeLayout>

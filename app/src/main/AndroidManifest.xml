@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.yibaiqi.face.recognition">
+
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.hardware.camera.autofocus"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <!-- 记录logcat日志功能 所需的权限 -->
+    <uses-permission android:name="android.permission.READ_LOGS" />
+
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.camera.front.autofocus"
+        android:required="true"/>
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <!--<activity android:name=".MainActivity">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<action android:name="android.intent.action.VIEW"/>-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
+
+        <activity
+            android:name="com.baidu.idl.sample.ui.MainActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme_NoTitle">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.baidu.idl.sample.ui.RegisterActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.UserActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.BatchImportActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.LicenseActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.SettingActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.SettingCameraActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.SettingDetectActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.SettingLiveActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.SettingFeatureActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.PassActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.OrbbecProPassActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.SettingCameraPreviewAngleActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.SettingFaceTrackAngleActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.IminectPassActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.OrbbecMiniPassActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.ImageDetailActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.DBImportActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.IminectRegisterActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.OrbbecProRegisterActivity"/>
+        <activity android:name="com.baidu.idl.sample.ui.OrbbecMiniRegisterActivity"/>
+
+        <!-- 安全设备指纹接入 start -->
+        <activity
+            android:name="com.baidu.liantian.LiantianActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:launchMode="standard"
+            android:theme="@android:style/Theme.Translucent">
+            <intent-filter>
+                <action android:name="com.baidu.action.Liantian.VIEW"/>
+
+                <category android:name="com.baidu.category.liantian"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name="com.baidu.liantian.LiantianReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.baidu.action.Liantian.VIEW"/>
+
+                <category android:name="com.baidu.category.liantian"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name="com.baidu.liantian.LiantianProvider"
+            android:authorities="com.lth.deviceiddemo.liantian.ac.provider"
+            android:exported="true"/>
+
+        <service
+            android:name="com.baidu.liantian.LiantianService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.baidu.action.Liantian.VIEW"/>
+
+                <category android:name="com.baidu.category.liantian"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="seckey_avscan"
+            android:value="660346260f8a841a04ec2a56815b421b"/>
+        <meta-data
+            android:name="appkey_avscan"
+            android:value="100034"/>
+
+        <!-- 安全设备指纹接入 end -->
+        <!--<activity android:name="com.baidu.idl.face.demo.activity.FaceAipeAuthActivity">
+        </activity>-->
+    </application>
+
+</manifest>

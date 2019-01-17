@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:xcustom="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_marginLeft="43dp"
+    android:layout_marginRight="43dp"
+    android:layout_marginTop="20dp">
+
+    <com.baidu.idl.sample.view.DrawView
+        android:layout_width="match_parent"
+        android:layout_height="133dp"
+        xcustom:drawColor="#FF5A5376"
+        xcustom:drawRoundRadius="17dp"
+        xcustom:drawStyleFill="true"/>
+    <TextView
+        android:id="@+id/default_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="33dp"
+        android:layout_marginLeft="37dp"
+        android:text="模糊度（默认值****）"
+        android:textColor="#F5F0F8"
+        android:textSize="13dp" />
+
+    <TextView
+        android:id="@+id/explain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="33dp"
+        android:layout_marginRight="37dp"
+        android:text="说明"
+        android:textColor="#7D94FE"
+        android:textSize="12dp" />
+
+    <ImageView
+        android:id="@+id/go_btn"
+        android:layout_width="17dp"
+        android:layout_height="17dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="33dp"
+        android:layout_marginRight="37dp"
+        android:background="@mipmap/ic_go_left"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/explain_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/explain"
+        android:layout_marginRight="37dp"
+        android:layout_marginTop="19dp"
+        android:text="0%"
+        android:textColor="#F5F0F8"
+        android:textSize="10dp" />
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:layout_marginRight="37dp"
+        android:layout_marginLeft="37dp"
+        android:layout_below="@id/explain_details"/>
+</RelativeLayout>

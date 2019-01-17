@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_main">
+
+    <include
+        android:id="@+id/layout_title"
+        layout="@layout/layout_title" />
+
+    <include
+        android:id="@+id/layout_search"
+        layout="@layout/layout_search"
+        android:layout_below="@id/layout_title"
+        android:layout_width="match_parent"
+        android:layout_height="37dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="43dp"
+        android:layout_marginRight="43dp"/>
+
+    <RelativeLayout
+        android:id="@+id/relative_action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@id/layout_search"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="43dp"
+        android:layout_marginRight="43dp">
+        <TextView
+            android:id="@+id/batch_import_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#7D94FE"
+            android:text="@string/batch_import"
+            android:textSize="12dp"/>
+        <TextView
+            android:id="@+id/batch_delete_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#7D94FE"
+            android:text="@string/batch_delete"
+            android:textSize="12dp"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@id/batch_import_btn"/>
+        <TextView
+            android:id="@+id/db_import_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#7D94FE"
+            android:text="@string/db_import_output"
+            android:textSize="12dp"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@id/batch_delete_btn"/>
+        <TextView
+            android:id="@+id/check_all_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#7D94FE"
+            android:text="@string/check_all"
+            android:visibility="gone"
+            android:textSize="12dp"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/text_no_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/relative_action"
+        android:layout_gravity="center_horizontal"
+        android:text="没有数据"/>
+
+    <!--删除-->
+    <RelativeLayout
+        android:id="@+id/relative_delete"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:background="#5A5376"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true">
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#383343"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_below="@id/view">
+
+            <Button
+                android:id="@+id/button_delete"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="35dp"
+                android:background="@drawable/corners_btn_blue_bg"
+                android:text="删除"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="25dp"
+                android:layout_height="match_parent"/>
+
+            <Button
+                android:id="@+id/button_cancel"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="35dp"
+                android:background="@drawable/corners_btn_bg"
+                android:text="取消"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/relative_action"
+        android:layout_above="@id/relative_delete"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp">
+    </android.support.v7.widget.RecyclerView>
+
+    <!--删除提示框-->
+    <RelativeLayout
+        android:id="@+id/relative_delete_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="#7000">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="115dp"
+            android:background="@drawable/corners_dialog_bg"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="14dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp">
+            <TextView
+                android:id="@+id/text_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:textColor="@color/textBlue1"
+                android:text="确认删除所选中的人员记录？"/>
+
+            <View
+                android:id="@+id/view_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/text_title"
+                android:background="#383343"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/view_line"
+                android:orientation="horizontal"
+                android:background="@drawable/corners_half_dialog_bg"
+                android:layout_alignParentBottom="true">
+
+                <TextView
+                    android:id="@+id/text_yes"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/corners_left_botton_dialog_bg"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:textColor="#7d94fe"
+                    android:text="是"/>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/text_title"
+                    android:background="#383343"/>
+
+                <TextView
+                    android:id="@+id/text_no"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:textColor="@color/textBlue1"
+                    android:text="否"/>
+            </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

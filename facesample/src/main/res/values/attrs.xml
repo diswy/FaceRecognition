@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DrawViewAttr">
+        <attr name="drawRoundRadius" format="dimension" />
+        <attr name="drawStrokeWidth" format="dimension" />
+        <attr name="drawColor" format="color" />
+        <attr name="drawStyleFill" format="boolean" />
+        <attr name="drawAlpha" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="CircleImageView">
+        <attr name="border_width" format="dimension" />
+        <attr name="border_color" format="color" />
+    </declare-styleable>
+
+    <string-array name="CameraType">
+        <item>奥比中光 Astra Mini/MiniS</item>
+        <item>奥比中光 Astra Pro/Pro S</item>
+        <item>华捷艾米A100S+MINI</item>
+    </string-array>
+
+    <declare-styleable name="CirclePercentView" >
+        <attr name="circleBg" format="color"/>
+        <attr name="arcColor" format="color"/>
+        <attr name="arcWidth" format="dimension"/>
+        <attr name="percentTextColor" format="color"/>
+        <attr name="percentTextSize" format="dimension"/>
+        <attr name="radius" format="dimension"/>
+    </declare-styleable>
+</resources>

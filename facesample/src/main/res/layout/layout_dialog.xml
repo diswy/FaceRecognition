@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/corners_s_bg"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="51dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="@string/dialog_delete"
+        android:textColor="#F5F0F8"
+        android:textSize="14dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/left_msg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="是"
+            android:textColor="#F5F0F8"
+            android:textSize="14dp" />
+
+        <TextView
+            android:id="@+id/right_msg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/center"
+            android:layout_centerHorizontal="true"
+            android:layout_toRightOf="@+id/left_msg"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="否"
+            android:textColor="#F5F0F8"
+            android:textSize="14dp" />
+    </LinearLayout>
+</LinearLayout>

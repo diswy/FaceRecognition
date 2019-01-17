@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_main"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/layout_title" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="17dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="40dp"
+            android:layout_marginLeft="40dp"
+            android:paddingBottom="33dp">
+
+            <include
+                android:id="@+id/flow_path"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                layout="@layout/layout_import_flow_path"/>
+
+            <Button
+                android:id="@+id/button_import"
+                android:layout_width="127dp"
+                android:layout_height="30dp"
+                android:background="@drawable/corners_btn_bg"
+                android:text="开始导入"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/flow_path"
+                android:layout_marginTop="16dp"/>
+        </RelativeLayout>
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/corners_dialog_bg">
+
+    <ImageView
+        android:id="@+id/ic_right"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@mipmap/ic_fail"
+        android:layout_alignParentRight="true"/>
+
+
+    <ImageView
+        android:id="@+id/ic_portrait"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_below="@+id/ic_right"
+        android:layout_centerHorizontal="true"
+        android:background="@mipmap/ic_fail" />
+
+    <TextView
+        android:id="@+id/nick_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ic_portrait"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="17dp"
+        android:text="Jimmy"
+        android:textColor="#F5F0F8"
+        android:textSize="31dp" />
+
+    <TextView
+        android:id="@+id/result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/nick_name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="17dp"
+        android:text="注册成功"
+        android:textColor="#F5F0F8"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/complete"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/result"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="67dp"
+        android:background="@drawable/corners_half_dialog_bg_c"
+        android:text="完成"
+        android:textColor="#F5F0F8"
+        android:textSize="16dp"
+        android:gravity="center"/>
+</RelativeLayout>

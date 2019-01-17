@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/background_main">
+
+    <include
+        layout="@layout/layout_title" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:text="说明："
+        android:textColor="#F5F0F8"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:text="此项设置用于管理：从视频流中实际检测人脸的方向，分为0、90、180、270四个角度。选择固定方向后，则只有人脸在此方向角度才会被检测到（RGB）"
+        android:textColor="#F5F0F8"
+        android:textSize="17sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center|left"
+        android:text="选择检测角度:"
+        android:textColor="#F5F0F8"
+        android:textSize="16dp"
+        android:textStyle="bold"/>
+
+    <com.baidu.idl.sample.view.CustomRadioGroup
+        android:id="@+id/rg_track_angle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/rb_track_zero_angle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="0"
+                    android:textColor="@android:color/holo_red_light"
+                    android:textSize="20dp"
+                    android:textStyle="bold"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_below="@+id/rb_track_zero_angle"
+                    android:src="@mipmap/track_image_angle"/>
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp">
+
+                <RadioButton
+                    android:id="@+id/rb_track_nine_angle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="90"
+                    android:textColor="@android:color/holo_red_light"
+                    android:textSize="20dp"
+                    android:textStyle="bold"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_below="@+id/rb_track_nine_angle"
+                    android:src="@mipmap/ninety_track"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/rb_track_one_hundred_eighty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="180"
+                    android:textColor="@android:color/holo_red_light"
+                    android:textSize="20dp"
+                    android:textStyle="bold"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_below="@+id/rb_track_one_hundred_eighty"
+                    android:src="@mipmap/one_eight_imae"/>
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp">
+
+                <RadioButton
+                    android:id="@+id/rb_track_two_hundred_seventy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="270"
+                    android:textColor="@android:color/holo_red_light"
+                    android:textSize="20dp"
+                    android:textStyle="bold"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_below="@+id/rb_track_two_hundred_seventy"
+                    android:src="@mipmap/two_seventy_image"/>
+            </RelativeLayout>
+        </LinearLayout>
+    </com.baidu.idl.sample.view.CustomRadioGroup>
+
+    <Button
+        android:id="@+id/confirm_btn"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/btn_selector"
+        android:text="确定"
+        android:textColor="#6CD6A5"/>
+
+</LinearLayout>

@@ -1,0 +1,27 @@
+<!--
+  ~ Copyright (C) 2018 Baidu, Inc. All Rights Reserved.
+  -->
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="buttonColor">#FF6600</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+
+    <color name="titleColor">#F5F0F8</color>
+    <color name="textBlue">#7D94FE</color>
+    <color name="textBlue1">#AAA7C6</color>
+    <color name="textGrey">#72728C</color>
+    <color name="btnColor">#6CD6A5</color>
+
+    <color name="line">#CCCCFF</color>
+    <color name="divider">#ffd2d2d2</color>
+    <color name="green">#006400</color>
+    <color name="blue">#179BD5</color>
+
+    <color name="red">#CC0000</color>
+</resources>

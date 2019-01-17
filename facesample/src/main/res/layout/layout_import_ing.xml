@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:xcustom="http://schemas.android.com/apk/res-auto">
+
+    <com.baidu.idl.sample.view.DrawView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xcustom:drawColor="#5A5376"
+        xcustom:drawRoundRadius="17dp"
+        xcustom:drawStyleFill="true"/>
+    <TextView
+        android:id="@+id/explain_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="37dp"
+        android:text="说明"
+        android:textColor="#F5F0F8"
+        android:textSize="10dp"/>
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="37dp"
+        android:layout_marginLeft="37dp"
+        android:layout_centerVertical="true"/>
+</RelativeLayout>

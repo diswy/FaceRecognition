@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_main"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="73dp"
+        android:text="@string/license_activate"
+        android:textColor="#F5F0F8"
+        android:textSize="32dp" />
+
+    <TextView
+        android:id="@+id/tv_device"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="27dp"
+        android:layout_marginTop="17dp"
+        android:text="设备指纹：D7J89KGUIOE930FJ489038DFI39"
+        android:textColor="#AAA7C6"
+        android:textSize="12dp" />
+
+    <LinearLayout
+        android:id="@+id/layout_online_active"
+        android:layout_width="match_parent"
+        android:layout_height="133dp"
+        android:layout_marginLeft="43dp"
+        android:layout_marginRight="43dp"
+        android:background="@drawable/corners_bg"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="37dp"
+            android:layout_marginTop="33dp"
+            android:text="@string/license_activate"
+            android:textColor="#FFFFFF"
+            android:textSize="13dp" />
+
+        <EditText
+            android:id="@+id/et_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="37dp"
+            android:layout_marginRight="37dp"
+            android:layout_marginTop="17dp"
+            android:text="D7J89KGUIOE930FJ489038DFI39"
+            android:textColor="#AAA7C6"
+            android:textSize="12dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_offline_active"
+        android:layout_width="match_parent"
+        android:layout_height="133dp"
+        android:layout_marginLeft="43dp"
+        android:layout_marginRight="43dp"
+        android:background="@drawable/corners_bg"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@mipmap/ic_track"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="58dp"
+        android:layout_marginRight="58dp"
+        android:layout_marginTop="17dp">
+
+        <TextView
+            android:id="@+id/bt_application_auth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            android:gravity="center"
+            android:text="@string/license_application"
+            android:textColor="#6CD6A5"
+            android:background="@drawable/btn_selector"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/bt_on_line_active"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/license_online"
+            android:textColor="#6CD6A5"
+            android:background="@drawable/btn_selector"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/bt_off_line_active"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/license_offline"
+            android:textColor="#6CD6A5"
+            android:background="@drawable/btn_selector"
+            android:textSize="16dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_active_reminder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="27dp"
+        android:layout_marginTop="17dp"
+        android:text="@string/license_application_reminder"
+        android:textColor="#AAA7C6"
+        android:textSize="12dp" />
+
+    <TextView
+        android:id="@+id/btn_back"
+        android:layout_width="327dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="167dp"
+        android:clickable="true"
+        android:gravity="center"
+        android:onClick="onBackClick"
+        android:text="返回"
+        android:textColor="#6CD6A5"
+        android:textSize="16dp"
+        android:background="@drawable/btn_selector"/>
+</LinearLayout>

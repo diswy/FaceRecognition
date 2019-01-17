@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_main"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/ic_title"
+        layout="@layout/layout_title" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ic_title">
+        <RelativeLayout
+            android:id="@+id/layout_camera"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center" >
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewpage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <ImageView
+                android:id="@+id/btn_go_left"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:background="@mipmap/ic_go_left" />
+
+            <ImageView
+                android:id="@+id/btn_go_right"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:background="@mipmap/ic_go_right" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/image_track"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_info"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_below="@+id/ic_title"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/circle_bg">
+
+        <com.baidu.idl.sample.view.CircleImageView
+            android:id="@+id/image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp" />
+
+        <TextView
+            android:id="@+id/tv_similarity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/image"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="13dp"
+            android:gravity="center"
+            android:text="未匹配到相似人脸"
+            android:textColor="#FFAAA7C6"
+            android:textSize="10dp" />
+
+        <TextView
+            android:id="@+id/tv_nick_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_similarity"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="17dp"
+            android:gravity="center"
+            android:text="陌生访客，请先注册"
+            android:textColor="#FFAAA7C6"
+            android:textSize="10dp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#c8323967"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="13dp"
+            android:layout_marginLeft="43dp"
+            android:layout_marginTop="13dp"
+            android:text="底库人脸数：100个"
+            android:textColor="#FFAAA7C6"
+            android:textSize="10dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#595F83" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_detect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="43dp"
+                android:layout_marginTop="4dp"
+                android:text="人脸检测耗时：100ms"
+                android:textColor="#FFAAA7C6"
+                android:textSize="10dp" />
+
+            <TextView
+                android:id="@+id/tv_feature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="4dp"
+                android:layout_marginRight="43dp"
+                android:layout_marginTop="4dp"
+                android:text="特征提取耗时：50ms"
+                android:textColor="#FFAAA7C6"
+                android:textSize="10dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_below="@id/tv_detect"
+                android:background="#595F83" />
+
+            <TextView
+                android:id="@+id/tv_live"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_detect"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="43dp"
+                android:layout_marginTop="4dp"
+                android:text="活体检测耗时：40ms"
+                android:textColor="#FFAAA7C6"
+                android:textSize="10dp" />
+
+            <TextView
+                android:id="@+id/tv_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/tv_feature"
+                android:layout_marginBottom="4dp"
+                android:layout_marginRight="43dp"
+                android:layout_marginTop="4dp"
+                android:text="人脸检索耗时：60ms"
+                android:textColor="#FFAAA7C6"
+                android:textSize="10dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_below="@id/tv_live"
+                android:background="#595F83" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="30dp">
+
+            <LinearLayout
+                android:id="@+id/layout_rgb_live"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <com.baidu.idl.sample.view.CirclePercentView
+                    android:id="@+id/circle_rgb_live"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center_horizontal"
+                    app:arcColor="#6CD6A5"
+                    app:arcWidth="1dp"
+                    app:circleBg="#14ffffff"
+                    app:percentTextColor="#AAA7C6"
+                    app:percentTextSize="10sp"
+                    app:radius="22dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="7dp"
+                    android:text="RGB活体分数"
+                    android:textColor="#FFAAA7C6"
+                    android:textSize="10dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_nir_live"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <com.baidu.idl.sample.view.CirclePercentView
+                    android:id="@+id/circle_nir_live"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center_horizontal"
+                    app:arcColor="#6CD6A5"
+                    app:arcWidth="1dp"
+                    app:circleBg="#14ffffff"
+                    app:percentTextColor="#AAA7C6"
+                    app:percentTextSize="10sp"
+                    app:radius="22dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="7dp"
+                    android:text="红外活体分数"
+                    android:textColor="#FFAAA7C6"
+                    android:textSize="10dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_depth_live"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <com.baidu.idl.sample.view.CirclePercentView
+                    android:id="@+id/circle_depth_live"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center_horizontal"
+                    app:arcColor="#6CD6A5"
+                    app:arcWidth="1dp"
+                    app:circleBg="#14ffffff"
+                    app:percentTextColor="#AAA7C6"
+                    app:percentTextSize="10sp"
+                    app:radius="22dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="7dp"
+                    android:text="深度活体分数"
+                    android:textColor="#FFAAA7C6"
+                    android:textSize="10dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
