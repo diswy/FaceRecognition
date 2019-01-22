@@ -1,6 +1,9 @@
 package com.yibaiqi.face.recognition.ui;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.widget.EditText;
 
 import com.yibaiqi.face.recognition.App;
@@ -10,11 +13,27 @@ import com.yibaiqi.face.recognition.db.AppDatabase;
 import com.yibaiqi.face.recognition.di.DaggerActivityComponent;
 import com.yibaiqi.face.recognition.entity.User;
 import com.yibaiqi.face.recognition.ui.base.BaseActivity;
+import com.yibaiqi.face.recognition.viewmodel.UserViewModel;
+
+import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
+
+import io.reactivex.Flowable;
+import io.reactivex.FlowableSubscriber;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class SplashActivity extends BaseActivity {
 
@@ -43,12 +62,12 @@ public class SplashActivity extends BaseActivity {
                 .build()
                 .inject(this);
 
-//        appExecutors.diskIO().execute(() -> {
-//            System.out.println("------>这是后台打印");
-//            appExecutors.mainThread().execute(()->{
-//                ToastUtils.toast(SplashActivity.this,"hahahah!");
-//            });
-//        });
+
+        UserViewModel model = ViewModelProviders.of(this,App.getInstance().factory)
+                .get(UserViewModel.class);
+        System.out.println("------>>>SplashActivity"+model);
+        model.say();
+
 
 
         final List<User> lists = new ArrayList<>();
@@ -63,7 +82,7 @@ public class SplashActivity extends BaseActivity {
 
 
         findViewById(R.id.jump).setOnClickListener(v -> {
-            startActivity(new Intent(SplashActivity.this, ConfigActivity.class));
+//            startActivity(new Intent(SplashActivity.this, ConfigActivity.class));
         });
 
         findViewById(R.id.insert).setOnClickListener(v -> {
@@ -115,5 +134,4 @@ public class SplashActivity extends BaseActivity {
             });
         });
     }
-
 }
