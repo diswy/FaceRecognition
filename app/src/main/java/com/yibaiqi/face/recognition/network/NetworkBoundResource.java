@@ -1,15 +1,15 @@
 package com.yibaiqi.face.recognition.network;
 
-import com.yibaiqi.face.recognition.AppExecutors;
-import com.yibaiqi.face.recognition.tools.Objects;
-import com.yibaiqi.face.recognition.vo.Resource;
-
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
+
+import com.yibaiqi.face.recognition.AppExecutors;
+import com.yibaiqi.face.recognition.tools.Objects;
+import com.yibaiqi.face.recognition.vo.Resource;
 
 /**
  * A generic class that can provide a resource backed by both the sqlite database and the network.
@@ -26,7 +26,7 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
     private final MediatorLiveData<Resource<ResultType>> result = new MediatorLiveData<>();
 
     @MainThread
-    NetworkBoundResource(AppExecutors appExecutors) {
+    public NetworkBoundResource(AppExecutors appExecutors) {
         this.appExecutors = appExecutors;
         result.setValue(Resource.loading(null));
         LiveData<ResultType> dbSource = loadFromDb();
@@ -59,9 +59,6 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
                 appExecutors.diskIO().execute(() -> {
                     saveCallResult(processResponse(response));
                     appExecutors.mainThread().execute(() ->
-                            // we specially request a new live data,
-                            // otherwise we will get immediately last cached value,
-                            // which may not be updated with latest results received from network.
                             result.addSource(loadFromDb(),
                                     newData -> setValue(Resource.success(newData)))
                     );

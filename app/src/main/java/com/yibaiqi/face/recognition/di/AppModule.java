@@ -7,6 +7,7 @@ import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.db.AppDatabase;
 import com.yibaiqi.face.recognition.db.UserDao;
 import com.yibaiqi.face.recognition.network.WebService;
+import com.yibaiqi.face.recognition.network.converter.LiveDataCallAdapterFactory;
 import com.yibaiqi.face.recognition.network.converter.StringConverterFactory;
 import com.yibaiqi.face.recognition.tools.ACache;
 
@@ -59,10 +60,11 @@ class AppModule {
                 .build();
         return new Retrofit.Builder()
                 .client(okHttpClient)
-                .baseUrl("http://service.ex.cqebd.cn/")
+                .baseUrl("http://apicloud.mob.com/")
                 .addConverterFactory(StringConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addCallAdapterFactory(LiveDataCallAdapterFactory.create())
                 .build()
                 .create(WebService.class);
     }

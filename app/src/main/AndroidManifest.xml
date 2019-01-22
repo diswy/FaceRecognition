@@ -53,13 +53,13 @@
             android:launchMode="singleTop"
             android:theme="@style/Theme_NoTitle">
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-            <!-- <action android:name="android.intent.action.VIEW" /> -->
+             <!--<intent-filter>-->
+             <!--<action android:name="android.intent.action.MAIN" />-->
+             <!--<action android:name="android.intent.action.VIEW" />-->
 
 
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
+             <!--<category android:name="android.intent.category.LAUNCHER" />-->
+             <!--</intent-filter>-->
         </activity>
         <activity android:name="com.baidu.idl.sample.ui.RegisterActivity" />
         <activity android:name="com.baidu.idl.sample.ui.UserActivity" />

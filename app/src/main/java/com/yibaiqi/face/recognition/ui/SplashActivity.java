@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.SystemClock;
 import android.widget.EditText;
 
+import com.google.gson.Gson;
 import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.AppExecutors;
 import com.yibaiqi.face.recognition.R;
@@ -67,7 +68,13 @@ public class SplashActivity extends BaseActivity {
                 .get(UserViewModel.class);
         System.out.println("------>>>SplashActivity"+model);
         model.say();
-
+//        model.getMo().observe(this, movieResource -> {
+//            System.out.println("--->>>这里执行了");
+//        });
+        model.getMo2().observe(this, movieResource -> {
+            String ss = new Gson().toJson(movieResource);
+            System.out.println("--->>>这里执行了 2 这是真的"+ss);
+        });
 
 
         final List<User> lists = new ArrayList<>();
