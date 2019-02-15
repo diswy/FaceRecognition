@@ -61,7 +61,7 @@ public class UserRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<Movie>> createCall() {
-                return service.getMovie(" 28d0461b30a6d","CN");
+                return service.getMovie("28d0461b30a6d","CN");
             }
         }.asLiveData();
     }
@@ -69,11 +69,10 @@ public class UserRepository {
 
     public LiveData<Resource<Movie>> getMovie3(){
         return new NetworkResource<Movie>(appExecutors){
-
             @NonNull
             @Override
             protected LiveData<ApiResponse<Movie>> createCall() {
-                return service.getMovie(" 28d0461b30a6d","CN");
+                return service.getMovie("28d0461b30a6d","CN");
             }
         }.asLiveData();
     }

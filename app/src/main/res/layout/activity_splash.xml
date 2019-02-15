@@ -8,10 +8,22 @@
     tools:context=".ui.SplashActivity">
 
     <Button
+        android:id="@+id/speak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="跳转界面到语音合成" />
+
+    <Button
         android:id="@+id/jump"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="跳转界面" />
+
+    <Button
+        android:id="@+id/jump_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="跳转主界面" />
 
     <Button
         android:id="@+id/insert"

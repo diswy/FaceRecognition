@@ -1,11 +1,10 @@
 package com.yibaiqi.face.recognition.ui;
 
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.os.SystemClock;
 import android.widget.EditText;
 
+import com.baidu.idl.sample.ui.MainActivity;
 import com.google.gson.Gson;
 import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.AppExecutors;
@@ -16,25 +15,10 @@ import com.yibaiqi.face.recognition.entity.User;
 import com.yibaiqi.face.recognition.ui.base.BaseActivity;
 import com.yibaiqi.face.recognition.viewmodel.UserViewModel;
 
-import org.reactivestreams.Subscription;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
-
-import io.reactivex.Flowable;
-import io.reactivex.FlowableSubscriber;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
-import io.reactivex.Scheduler;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
 
 public class SplashActivity extends BaseActivity {
 
@@ -64,16 +48,16 @@ public class SplashActivity extends BaseActivity {
                 .inject(this);
 
 
-        UserViewModel model = ViewModelProviders.of(this,App.getInstance().factory)
+        UserViewModel model = ViewModelProviders.of(this, App.getInstance().factory)
                 .get(UserViewModel.class);
-        System.out.println("------>>>SplashActivity"+model);
+        System.out.println("------>>>SplashActivity" + model);
         model.say();
 //        model.getMo().observe(this, movieResource -> {
 //            System.out.println("--->>>这里执行了");
 //        });
         model.getMo2().observe(this, movieResource -> {
             String ss = new Gson().toJson(movieResource);
-            System.out.println("--->>>这里执行了 2 这是真的"+ss);
+            System.out.println("--->>>这里执行了 2 这是真的" + ss);
         });
 
 
@@ -88,8 +72,14 @@ public class SplashActivity extends BaseActivity {
         lists.add(new User("最终幻想", 98));
 
 
+        findViewById(R.id.speak).setOnClickListener(v -> {
+            startActivity(new Intent(SplashActivity.this, SynthActivity.class));
+        });
         findViewById(R.id.jump).setOnClickListener(v -> {
-//            startActivity(new Intent(SplashActivity.this, ConfigActivity.class));
+            startActivity(new Intent(SplashActivity.this, ConfigActivity.class));
+        });
+        findViewById(R.id.jump_main).setOnClickListener(v -> {
+            startActivity(new Intent(SplashActivity.this, MainActivity.class));
         });
 
         findViewById(R.id.insert).setOnClickListener(v -> {
