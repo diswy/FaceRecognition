@@ -7,6 +7,31 @@
     android:orientation="vertical"
     tools:context=".ui.SplashActivity">
 
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:text="高电平开闸"
+            android:id="@+id/btnOn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:text="低电平关闸"
+            android:id="@+id/btnOff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="接线方式：控制口接主板的  6PIN 座子的RST 脚" />
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/speak"
         android:layout_width="wrap_content"

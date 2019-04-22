@@ -36,8 +36,8 @@ public class ConfigActivity extends BaseActivity {
         faceAuth = new FaceAuth();
         // 建议3288板子flagsThreads设置2,3399板子设置4
         faceAuth.setAnakinThreadsConfigure(2, 0);
-        String key = "ZUJN-TZD0-BPYP-BSSU".trim().toUpperCase();// 测试华为手机
-//        String key = "FFUY-H4NL-NKJR-VG4P".trim().toUpperCase();// 闸机头
+//        String key = "ZUJN-TZD0-BPYP-BSSU".trim().toUpperCase();// 测试华为手机
+        String key = "FFUY-H4NL-NKJR-VG4P".trim().toUpperCase();// 闸机头
 
 
 

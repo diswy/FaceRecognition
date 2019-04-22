@@ -1,1 +1,1 @@
-include ':app', ':facesample',':orbbec',':iminect'
+include ':app', ':facesample', ':orbbec', ':iminect', ':IMLib'

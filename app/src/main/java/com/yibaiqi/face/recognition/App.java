@@ -8,6 +8,8 @@ import com.yibaiqi.face.recognition.di.DaggerAppComponent;
 
 import javax.inject.Inject;
 
+import io.rong.imlib.RongIMClient;
+
 
 public class App extends Application {
 
@@ -24,6 +26,14 @@ public class App extends Application {
 
         appComponent = DaggerAppComponent.builder().application(this).build();
         appComponent.inject(this);
+
+        // 融云初始化
+        RongIMClient.init(this);
+//        RongIMClient.setOnReceiveMessageListener((message, left) -> {
+//            System.out.println("--->>>>>>消息：" + message);
+//            System.out.println("--->>>>>>未拉取：" + left);
+//            return false;
+//        });
     }
 
     public AppComponent getAppComponent() {
