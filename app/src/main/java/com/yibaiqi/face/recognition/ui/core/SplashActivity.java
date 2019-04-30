@@ -200,6 +200,7 @@ public class SplashActivity extends BaseActivity {
         faceModel.getInitStatus().observe(this, status -> {
             System.out.println("shazigui--------->>>" + status);
             if (status != null && status) {
+//                startActivity(new Intent(SplashActivity.this, CMainActivity.class));
                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
             }
         });

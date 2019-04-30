@@ -89,7 +89,6 @@ public class FaceViewModel extends ViewModel {
                 GlobalSet.setLicenseStatus(LICENSE_ONLINE);
 
                 GlobalSet.FACE_AUTH_STATUS = 0;
-                System.out.println("___zhelizhixingle");
                 initSuccess.postValue(true);
             } else {
                 String format = "请联系管理员，错误代码：%d  %s";
