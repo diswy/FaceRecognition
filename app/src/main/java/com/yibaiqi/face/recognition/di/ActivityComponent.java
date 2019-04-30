@@ -3,7 +3,7 @@ package com.yibaiqi.face.recognition.di;
 
 import com.yibaiqi.face.recognition.di.ano.ActivityScope;
 import com.yibaiqi.face.recognition.ui.ConfigActivity;
-import com.yibaiqi.face.recognition.ui.SplashActivity;
+import com.yibaiqi.face.recognition.ui.core.SplashActivity;
 
 import dagger.Component;
 

@@ -6,6 +6,7 @@ import com.readystatesoftware.chuck.ChuckInterceptor;
 import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.db.AppDatabase;
 import com.yibaiqi.face.recognition.db.UserDao;
+import com.yibaiqi.face.recognition.network.ApiService;
 import com.yibaiqi.face.recognition.network.WebService;
 import com.yibaiqi.face.recognition.network.converter.LiveDataCallAdapterFactory;
 import com.yibaiqi.face.recognition.network.converter.StringConverterFactory;
@@ -67,6 +68,26 @@ class AppModule {
                 .addCallAdapterFactory(LiveDataCallAdapterFactory.create())
                 .build()
                 .create(WebService.class);
+    }
+
+    @Singleton
+    @Provides
+    ApiService provideApiService(App app) {
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .addInterceptor(new ChuckInterceptor(app))
+                .build();
+        return new Retrofit.Builder()
+                .client(okHttpClient)
+                .baseUrl("http://xueyiguan.10130422.com/")
+                .addConverterFactory(StringConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addCallAdapterFactory(LiveDataCallAdapterFactory.create())
+                .build()
+                .create(ApiService.class);
     }
 
 }

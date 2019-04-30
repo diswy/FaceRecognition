@@ -47,4 +47,12 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
+
+    <style name="AppTheme.Translucent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <!--<item name="android:statusBarColor">#00000000</item>-->
+        <!--<item name="android:background">@drawable/bg_splash</item>-->
+    </style>
+
 </resources>

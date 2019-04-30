@@ -66,6 +66,7 @@ public class LicenseActivity extends BaseActivity implements View.OnClickListene
      */
     private void ifUserLicense() {
         int status = GlobalSet.getLicenseStatus();
+        System.out.println("------>::::"+status);
         switch (status) {
             case 0:
                 return;
@@ -101,7 +102,7 @@ public class LicenseActivity extends BaseActivity implements View.OnClickListene
         deviceId = faceAuth.getDeviceId(this);
         etKey.setText(PreferencesUtil.getString("activate_on_key", ""));
         // TODO 测试直接写死
-        etKey.setText("ZUJN-TZD0-BPYP-BSSU");
+        etKey.setText("QY8C-NXN5-9XH7-8VCC");
 //        etKey.setText("FFUY-H4NL-NKJR-VG4P");// 闸机头
         tvDevice.setText("设备指纹：" + deviceId);
         addLisenter();

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.yibaiqi.face.recognition">
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
@@ -12,8 +12,7 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!-- 记录logcat日志功能 所需的权限 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 记录logcat日志功能 所需的权限 -->
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
@@ -36,26 +35,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ui.core.CMainActivity"></activity>
 
         <receiver
             android:name=".receiver.AutoBootReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter android:priority="1000">
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver>
-
-        <!-- <activity android:name=".MainActivity"> -->
+        </receiver> <!-- <activity android:name=".MainActivity"> -->
         <!-- <intent-filter> -->
         <!-- <action android:name="android.intent.action.MAIN" /> -->
         <!-- <action android:name="android.intent.action.VIEW"/> -->
-
-
         <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
         <!-- </intent-filter> -->
         <!-- </activity> -->
-
         <activity
             android:name="com.baidu.idl.sample.ui.MainActivity"
             android:launchMode="singleTop"
@@ -88,9 +83,7 @@
         <activity android:name="com.baidu.idl.sample.ui.DBImportActivity" />
         <activity android:name="com.baidu.idl.sample.ui.IminectRegisterActivity" />
         <activity android:name="com.baidu.idl.sample.ui.OrbbecProRegisterActivity" />
-        <activity android:name="com.baidu.idl.sample.ui.OrbbecMiniRegisterActivity" />
-
-        <!-- 安全设备指纹接入 start -->
+        <activity android:name="com.baidu.idl.sample.ui.OrbbecMiniRegisterActivity" /> <!-- 安全设备指纹接入 start -->
         <activity
             android:name="com.baidu.liantian.LiantianActivity"
             android:excludeFromRecents="true"
@@ -142,7 +135,9 @@
             android:name="appkey_avscan"
             android:value="100034" />
 
-        <activity android:name=".ui.SplashActivity">
+        <activity
+            android:name=".ui.core.SplashActivity"
+            android:theme="@style/AppTheme.Translucent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -150,7 +145,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.SynthActivity"></activity>
+        <activity android:name=".ui.SynthActivity" />
     </application>
 
 </manifest>

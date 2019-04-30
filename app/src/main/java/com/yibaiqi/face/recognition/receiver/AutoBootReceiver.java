@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.yibaiqi.face.recognition.ui.SplashActivity;
+import com.yibaiqi.face.recognition.ui.core.SplashActivity;
 
 /**
  * Created by @author xiaofu on 2019/2/27.

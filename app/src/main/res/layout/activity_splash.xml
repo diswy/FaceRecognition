@@ -5,87 +5,95 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.SplashActivity">
+    tools:context=".ui.core.SplashActivity">
 
     <LinearLayout
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:text="高电平开闸"
+                android:id="@+id/btnOn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="低电平关闸"
+                android:id="@+id/btnOff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="接线方式：控制口接主板的  6PIN 座子的RST 脚" />
+
+        </LinearLayout>
 
         <Button
-            android:text="高电平开闸"
-            android:id="@+id/btnOn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:text="低电平关闸"
-            android:id="@+id/btnOff"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
+            android:id="@+id/speak"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="接线方式：控制口接主板的  6PIN 座子的RST 脚" />
+            android:text="跳转界面到语音合成" />
+
+        <Button
+            android:id="@+id/jump"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="跳转界面" />
+
+        <Button
+            android:id="@+id/jump_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="跳转主界面" />
+
+        <Button
+            android:id="@+id/insert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="插入数据库" />
+
+        <Button
+            android:id="@+id/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="删除数据库" />
+
+        <Button
+            android:id="@+id/query_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="查询所有数据" />
+
+        <Button
+            android:id="@+id/query_by_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="查询数据库通过ID" />
+
+        <EditText
+            android:id="@+id/et_user_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/test_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/test_btn2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/speak"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="跳转界面到语音合成" />
-
-    <Button
-        android:id="@+id/jump"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="跳转界面" />
-
-    <Button
-        android:id="@+id/jump_main"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="跳转主界面" />
-
-    <Button
-        android:id="@+id/insert"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="插入数据库" />
-
-    <Button
-        android:id="@+id/delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="删除数据库" />
-
-    <Button
-        android:id="@+id/query_all"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="查询所有数据" />
-
-    <Button
-        android:id="@+id/query_by_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="查询数据库通过ID" />
-
-    <EditText
-        android:id="@+id/et_user_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/test_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/test_btn2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
 </LinearLayout>

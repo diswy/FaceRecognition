@@ -1,4 +1,4 @@
-package com.yibaiqi.face.recognition.ui;
+package com.yibaiqi.face.recognition.ui.core;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -6,7 +6,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.baidu.idl.sample.ui.MainActivity;
-import com.baidu.idl.sample.utils.ToastUtils;
 import com.google.gson.Gson;
 import com.seeku.android.Manager;
 import com.yibaiqi.face.recognition.App;
@@ -15,7 +14,10 @@ import com.yibaiqi.face.recognition.R;
 import com.yibaiqi.face.recognition.db.AppDatabase;
 import com.yibaiqi.face.recognition.di.DaggerActivityComponent;
 import com.yibaiqi.face.recognition.entity.User;
+import com.yibaiqi.face.recognition.ui.ConfigActivity;
+import com.yibaiqi.face.recognition.ui.SynthActivity;
 import com.yibaiqi.face.recognition.ui.base.BaseActivity;
+import com.yibaiqi.face.recognition.viewmodel.FaceViewModel;
 import com.yibaiqi.face.recognition.viewmodel.RongViewModel;
 import com.yibaiqi.face.recognition.viewmodel.UserViewModel;
 
@@ -53,6 +55,7 @@ public class SplashActivity extends BaseActivity {
                 .build()
                 .inject(this);
 
+        initFaceEngine();
 
         UserViewModel model = ViewModelProviders.of(this, App.getInstance().factory)
                 .get(UserViewModel.class);
@@ -168,4 +171,39 @@ public class SplashActivity extends BaseActivity {
 //        serverViewModel.sendTestMsg();
 
     }
+
+    //-----------------------------------------------------
+    private void initFaceEngine() {
+        FaceViewModel faceModel = ViewModelProviders.of(this, App.getInstance().factory).get(FaceViewModel.class);
+        faceModel.initBDFaceEngine();
+
+//        faceModel.registerDevice().observe(this, resource -> {
+//            if (resource == null)
+//                return;
+//
+//            System.out.println("--------->>>>>" + resource.message);
+//
+//            switch (resource.status) {
+//                case SUCCESS:
+//                    if (resource.data != null) {
+////                        faceModel.initBDFaceEngine(resource.data.getData());
+//                    }
+//                    faceModel.initBDFaceEngine();
+//                    break;
+//                case ERROR:
+//                    break;
+//                case LOADING:
+//                    break;
+//            }
+//        });
+
+        faceModel.getInitStatus().observe(this, status -> {
+            System.out.println("shazigui--------->>>" + status);
+            if (status != null && status) {
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            }
+        });
+
+    }
+
 }
