@@ -29,7 +29,6 @@ public class RongViewModel extends ViewModel {
      * 融云连接方法
      */
     public void connect(String token) {
-        System.out.println("--->>>>>>?");
 
         RongIMClient.connect(token, new RongIMClient.ConnectCallback() {
 

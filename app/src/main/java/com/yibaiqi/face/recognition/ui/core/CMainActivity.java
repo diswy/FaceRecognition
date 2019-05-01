@@ -2,6 +2,7 @@ package com.yibaiqi.face.recognition.ui.core;
 
 import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -34,6 +35,13 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack {
     @Override
     public void initView() {
         mCameraView = findViewById(R.id.layout_camera);
+        iv = findViewById(R.id.test_iv);
+
+        findViewById(R.id.test_btn).setOnClickListener(v -> {
+            Bitmap bitmap = screenShotView(mCameraView);
+            iv.setImageBitmap(bitmap);
+
+        });
 
     }
 
@@ -84,11 +92,11 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack {
 
     @Override
     public void onCallback(int code, LivenessModel livenessModel) {
-        System.out.println("-code= "+code);
+        System.out.println("-code= " + code);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (code == 0){
+                if (code == 0) {
                     Feature feature = livenessModel.getFeature();
 //                    mSimilariryTv.setText(String.format("相似度: %s", livenessModel.getFeatureScore()));
 //                    mNickNameTv.setText(String.format("%s，你好!", feature.getUserName()));
@@ -97,13 +105,25 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack {
                             + "/" + feature.getCropImageName();
                     Bitmap bitmap = Utils.getBitmapFromFile(imgPath);
 
-
-                    System.out.println("----姓名:"+feature.getUserName());
-
-                    System.out.println("-add:"+imgPath);
+                    System.out.println("----姓名:" + feature.getUserName());
+                    System.out.println("-add:" + imgPath);
                 }
 
             }
         });
+    }
+
+
+    /**
+     * 使用View的缓存功能，截取指定区域的View
+     */
+    private Bitmap screenShotView(View view) {
+        //开启缓存功能
+        view.setDrawingCacheEnabled(true);
+        //创建缓存
+        view.buildDrawingCache();
+        //获取缓存Bitmap
+        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+        return bitmap;
     }
 }

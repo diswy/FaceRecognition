@@ -44,6 +44,9 @@ public class FaceViewModel extends ViewModel {
         this.app = app;
     }
 
+    /**
+     * 人脸识别引擎初始化状态
+     */
     public LiveData<Boolean> getInitStatus() {
         return initSuccess;
     }
@@ -60,12 +63,8 @@ public class FaceViewModel extends ViewModel {
         return faceRepository.registerDevice(devId, mac);
     }
 
-    public void initBDFaceEngine() {
-        initLicenseOnLine("QY8C-NXN5-9XH7-8VCC");
-
-//        if (GlobalSet.FACE_AUTH_STATUS != 0) {// 未鉴权
-//            initLicenseOnLine("QY8C-NXN5-9XH7-8VCC");
-//        }
+    public void initBDFaceEngine(String key) {
+        initLicenseOnLine(key);
     }
 
     //--------私有方法

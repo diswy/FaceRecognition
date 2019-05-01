@@ -70,17 +70,6 @@ public class SplashActivity extends BaseActivity {
         });
 
 
-        final List<User> lists = new ArrayList<>();
-        lists.add(new User("马里奥", 18));
-        lists.add(new User("舞力全开", 28));
-        lists.add(new User("空洞骑士", 38));
-        lists.add(new User("火影忍者", 48));
-        lists.add(new User("海贼王", 58));
-        lists.add(new User("死神", 68));
-        lists.add(new User("死亡细胞", 78));
-        lists.add(new User("最终幻想", 98));
-
-
         findViewById(R.id.btnOn).setOnClickListener(v -> new Manager(getApplicationContext()).setGateIO(true));
         findViewById(R.id.btnOff).setOnClickListener(v -> new Manager(getApplicationContext()).setGateIO(false));
 
@@ -101,10 +90,6 @@ public class SplashActivity extends BaseActivity {
                 pos++;
             }
 
-            appExecutors.diskIO().execute(() -> {
-                database.userDao().insert(lists.get(pos));
-                System.out.println("------插入成功");
-            });
         });
 
         findViewById(R.id.delete).setOnClickListener(v -> {
@@ -175,20 +160,16 @@ public class SplashActivity extends BaseActivity {
     //-----------------------------------------------------
     private void initFaceEngine() {
         FaceViewModel faceModel = ViewModelProviders.of(this, App.getInstance().factory).get(FaceViewModel.class);
-        faceModel.initBDFaceEngine();
+        faceModel.initBDFaceEngine("QY8C-NXN5-9XH7-8VCC");// 测试写死
 
 //        faceModel.registerDevice().observe(this, resource -> {
 //            if (resource == null)
 //                return;
-//
-//            System.out.println("--------->>>>>" + resource.message);
-//
 //            switch (resource.status) {
 //                case SUCCESS:
 //                    if (resource.data != null) {
-////                        faceModel.initBDFaceEngine(resource.data.getData());
+//                        faceModel.initBDFaceEngine(resource.data.getData().getSerialNumber());
 //                    }
-//                    faceModel.initBDFaceEngine();
 //                    break;
 //                case ERROR:
 //                    break;
@@ -198,10 +179,9 @@ public class SplashActivity extends BaseActivity {
 //        });
 
         faceModel.getInitStatus().observe(this, status -> {
-            System.out.println("shazigui--------->>>" + status);
             if (status != null && status) {
-//                startActivity(new Intent(SplashActivity.this, CMainActivity.class));
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                startActivity(new Intent(SplashActivity.this, CMainActivity.class));
+//                startActivity(new Intent(SplashActivity.this, MainActivity.class));
             }
         });
 
