@@ -18,6 +18,15 @@ public class RegisterDevice {
     @SerializedName("serial_number")
     private String serialNumber;
     private String token;
+    private ExData data;
+
+    public ExData getData() {
+        return data;
+    }
+
+    public void setData(ExData data) {
+        this.data = data;
+    }
 
     public String getImToken() {
         return imToken;

@@ -19,9 +19,11 @@ import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.repository.FaceRepository;
 import com.yibaiqi.face.recognition.tools.Mac;
 import com.yibaiqi.face.recognition.vo.BaseResponse;
+import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.RegisterDevice;
 import com.yibaiqi.face.recognition.vo.Resource;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -67,6 +69,11 @@ public class FaceViewModel extends ViewModel {
         initLicenseOnLine(key);
     }
 
+    public void addRecord(){
+
+    }
+
+
     //--------私有方法
     private void initLicenseOnLine(final String key) {
         if (TextUtils.isEmpty(key)) {
@@ -77,6 +84,7 @@ public class FaceViewModel extends ViewModel {
         // 建议3288板子flagsThreads设置2,3399板子设置4
         faceAuth.setAnakinThreadsConfigure(2, 0);
         faceAuth.initLicenseOnLine(app, key, (code, response, licenseKey) -> {
+            System.out.println("------------code = "+code);
             if (code == 0) {// 初始化成功
                 // 初始化人脸
                 FaceSDKManager.getInstance().initModel(app);
@@ -95,6 +103,25 @@ public class FaceViewModel extends ViewModel {
                 initSuccess.postValue(false);
             }
         });
+    }
+
+    // 绑定设备
+    public void bindDevice(){
+        FaceAuth faceAuth = new FaceAuth();
+        faceRepository.bindDevice(faceAuth.getDeviceId(app));
+    }
+
+    //--------数据库相关
+    public void insert(List<DbOption> list) {
+        faceRepository.insert(list);
+    }
+
+    public void update(List<DbOption> list) {
+        faceRepository.update(list);
+    }
+
+    public void delete(List<DbOption> list) {
+        faceRepository.delete(list);
     }
 
 

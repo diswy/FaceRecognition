@@ -2,9 +2,11 @@ package com.yibaiqi.face.recognition.tools;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.os.Environment;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,6 +70,25 @@ public class FileUtil {
                     }
                 }
             }
+        }
+    }
+
+
+    public static void saveBitmap(Bitmap bitmap, String fileName) {
+        String path = EBQValue.CAPTURE_PATH;
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        File mFile = new File(path, fileName + ".jpg");
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+            fos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -6,23 +6,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.baidu.idl.sample.ui.MainActivity;
-import com.google.gson.Gson;
 import com.seeku.android.Manager;
 import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.AppExecutors;
 import com.yibaiqi.face.recognition.R;
 import com.yibaiqi.face.recognition.db.AppDatabase;
 import com.yibaiqi.face.recognition.di.DaggerActivityComponent;
-import com.yibaiqi.face.recognition.entity.User;
-import com.yibaiqi.face.recognition.ui.ConfigActivity;
 import com.yibaiqi.face.recognition.ui.SynthActivity;
 import com.yibaiqi.face.recognition.ui.base.BaseActivity;
 import com.yibaiqi.face.recognition.viewmodel.FaceViewModel;
 import com.yibaiqi.face.recognition.viewmodel.RongViewModel;
-import com.yibaiqi.face.recognition.viewmodel.UserViewModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -57,77 +50,15 @@ public class SplashActivity extends BaseActivity {
 
         initFaceEngine();
 
-        UserViewModel model = ViewModelProviders.of(this, App.getInstance().factory)
-                .get(UserViewModel.class);
-        System.out.println("------>>>SplashActivity" + model);
-        model.say();
-//        model.getMo().observe(this, movieResource -> {
-//            System.out.println("--->>>这里执行了");
-//        });
-        model.getMo2().observe(this, movieResource -> {
-            String ss = new Gson().toJson(movieResource);
-            System.out.println("--->>>这里执行了 2 这是真的" + ss);
-        });
-
-
         findViewById(R.id.btnOn).setOnClickListener(v -> new Manager(getApplicationContext()).setGateIO(true));
         findViewById(R.id.btnOff).setOnClickListener(v -> new Manager(getApplicationContext()).setGateIO(false));
 
         findViewById(R.id.speak).setOnClickListener(v -> {
             startActivity(new Intent(SplashActivity.this, SynthActivity.class));
         });
-        findViewById(R.id.jump).setOnClickListener(v -> {
-            startActivity(new Intent(SplashActivity.this, ConfigActivity.class));
-        });
         findViewById(R.id.jump_main).setOnClickListener(v -> {
             startActivity(new Intent(SplashActivity.this, MainActivity.class));
         });
-
-        findViewById(R.id.insert).setOnClickListener(v -> {
-            if (pos == 7) {
-                pos = 0;
-            } else {
-                pos++;
-            }
-
-        });
-
-        findViewById(R.id.delete).setOnClickListener(v -> {
-            appExecutors.diskIO().execute(() -> {
-                database.userDao().deleteAll();
-                System.out.println("------删除成功");
-            });
-        });
-
-        findViewById(R.id.query_all).setOnClickListener(v -> {
-            appExecutors.diskIO().execute(() -> {
-                List<User> dbList = database.userDao().getAll();
-                if (dbList == null || dbList.isEmpty()) {
-                    System.out.println("------此表为空，无数据");
-                } else {
-                    for (User user : dbList) {
-                        System.out.println("------查找所有用户" + user.toString());
-                    }
-                }
-            });
-
-        });
-        findViewById(R.id.query_by_id).setOnClickListener(v -> {
-            appExecutors.diskIO().execute(() -> {
-                try {
-                    User user = database.userDao().findById(Integer.parseInt(et.getText().toString()));
-                    if (user == null) {
-                        System.out.println("------查不到该用户");
-                    } else {
-                        System.out.println("------查找到该用户：" + user.toString());
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println("------异常：" + e.getMessage());
-                }
-            });
-        });
-
 
         //-------------------融云
         RongViewModel serverViewModel = ViewModelProviders.of(this)
@@ -154,7 +85,6 @@ public class SplashActivity extends BaseActivity {
         });
 
 //        serverViewModel.sendTestMsg();
-
     }
 
     //-----------------------------------------------------
@@ -180,8 +110,11 @@ public class SplashActivity extends BaseActivity {
 
         faceModel.getInitStatus().observe(this, status -> {
             if (status != null && status) {
+                faceModel.bindDevice();
                 startActivity(new Intent(SplashActivity.this, CMainActivity.class));
 //                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+
+                this.finish();
             }
         });
 

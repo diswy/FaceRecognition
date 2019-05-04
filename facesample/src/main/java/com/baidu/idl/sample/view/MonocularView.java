@@ -1,6 +1,8 @@
 package com.baidu.idl.sample.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.media.FaceDetector;
 import android.util.AttributeSet;
@@ -14,6 +16,7 @@ import com.baidu.idl.sample.callback.ILivenessCallBack;
 import com.baidu.idl.sample.common.GlobalSet;
 import com.baidu.idl.sample.manager.FaceSDKManager;
 import com.baidu.idl.sample.model.LivenessModel;
+import com.baidu.idl.sample.utils.Utils;
 
 import static com.baidu.idl.sample.common.GlobalSet.PERFER_HEIGH;
 import static com.baidu.idl.sample.common.GlobalSet.PREFER_WIDTH;
@@ -181,6 +184,8 @@ public class MonocularView extends BaseCameraView implements ILivenessCallBack {
             FaceSDKManager.getInstance().getFaceDetector().yuvToARGB(data,
                     PREFER_WIDTH, PERFER_HEIGH, argb, trackAngle, mirror);
             rgbData = argb;
+            // 保存送检时图片
+            myBitmap = Utils.getBitmap(argb, mTrackImageHeight, mTrackImageWidth);
 //            post(new Runnable() {
 //                @Override
 //                public void run() {
@@ -222,4 +227,12 @@ public class MonocularView extends BaseCameraView implements ILivenessCallBack {
             livenessCallBack.onCallback(code, livenessModel);
         }
     }
+
+    private Bitmap myBitmap;
+
+    public Bitmap getMyBitmap() {
+        return myBitmap;
+    }
+
+
 }
