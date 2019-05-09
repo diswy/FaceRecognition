@@ -6,6 +6,7 @@ import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.AppExecutors;
 import com.yibaiqi.face.recognition.db.AppDatabase;
 import com.yibaiqi.face.recognition.db.UserDao;
+import com.yibaiqi.face.recognition.tools.ACache;
 
 import javax.inject.Singleton;
 
@@ -31,4 +32,6 @@ public interface AppComponent {
     AppExecutors appExecutors();
 
     UserDao userDao();
+
+    ACache aCache();
 }

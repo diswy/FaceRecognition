@@ -1,6 +1,7 @@
 package com.yibaiqi.face.recognition.ui.core;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.util.DisplayMetrics;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.baidu.idl.facesdk.model.Feature;
 import com.baidu.idl.sample.callback.ILivenessCallBack;
@@ -28,6 +30,7 @@ import com.seeku.android.Manager;
 import com.test.demo.PlaySurfaceView;
 import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.R;
+import com.yibaiqi.face.recognition.di.DaggerActivityComponent;
 import com.yibaiqi.face.recognition.tools.EBQValue;
 import com.yibaiqi.face.recognition.tools.FileUtil;
 import com.yibaiqi.face.recognition.tools.TimeFormat;
@@ -40,7 +43,10 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
     private MonocularView mMonocularView;
     private ImageView ivCapture;
     private ImageView ivDb;
+    private ImageView btnSetting;
     private FaceViewModel faceModel;
+
+    private boolean isCameraSuccess = false;
 
     @Override
     public int getLayoutRes() {
@@ -52,13 +58,9 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         mCameraView = findViewById(R.id.layout_camera);
         ivCapture = findViewById(R.id.iv_capture);
         ivDb = findViewById(R.id.iv_db);
-
+        btnSetting = findViewById(R.id.btn_setting);
         // 海康威视
         m_osurfaceView = findViewById(R.id.Sur_Player);
-
-        findViewById(R.id.jietu).setOnClickListener(v -> {
-
-        });
     }
 
     @Override
@@ -69,13 +71,21 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         calculateCameraView();
         // 海康威视
         m_osurfaceView.getHolder().addCallback(this);
-        loginHik();
-        previewHik();
+    }
+
+    @Override
+    protected void initListener() {
+        btnSetting.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (faceModel.isCameraEnable() && !isCameraSuccess) {
+            loginHik();
+            previewHik();
+        }
+
         mMonocularView.onResume();
     }
 
@@ -137,7 +147,6 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
             } else {
                 ivCapture.setImageBitmap(null);
                 ivDb.setImageBitmap(null);
-                System.out.println("---------未匹配到人脸");
             }
 
         });
@@ -211,15 +220,18 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
 
     private int loginNormalDevice() {
         m_oNetDvrDeviceInfoV30 = new NET_DVR_DEVICEINFO_V30();
-        String strIP = "192.168.3.99";
-        int nPort = 8000;
-        String strUser = "admin";
-        String strPsd = "qaz123456";
+        String strIP = faceModel.getCameraIp();
+        int nPort = faceModel.getCameraPort();
+        String strUser = faceModel.getCameraAccount();
+        String strPsd = faceModel.getCameraPwd();
         int iLogID = HCNetSDK.getInstance().NET_DVR_Login_V30(strIP, nPort, strUser, strPsd, m_oNetDvrDeviceInfoV30);
         if (iLogID < 0) {
+            isCameraSuccess = false;
+            Toast.makeText(this, "监控摄像头登录失败，请检查您的设置后重新尝试", Toast.LENGTH_SHORT).show();
             return -1;
         }
-
+        Toast.makeText(this, "监控摄像头初始化成功", Toast.LENGTH_SHORT).show();
+        isCameraSuccess = true;
         if (m_oNetDvrDeviceInfoV30.byChanNum > 0) {
             m_iStartChan = m_oNetDvrDeviceInfoV30.byStartChan;
             m_iChanNum = m_oNetDvrDeviceInfoV30.byChanNum;

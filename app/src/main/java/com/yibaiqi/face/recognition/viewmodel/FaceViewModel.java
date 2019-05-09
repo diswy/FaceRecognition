@@ -69,7 +69,7 @@ public class FaceViewModel extends ViewModel {
         initLicenseOnLine(key);
     }
 
-    public void addRecord(){
+    public void addRecord() {
 
     }
 
@@ -84,7 +84,7 @@ public class FaceViewModel extends ViewModel {
         // 建议3288板子flagsThreads设置2,3399板子设置4
         faceAuth.setAnakinThreadsConfigure(2, 0);
         faceAuth.initLicenseOnLine(app, key, (code, response, licenseKey) -> {
-            System.out.println("------------code = "+code);
+            System.out.println("------------code = " + code);
             if (code == 0) {// 初始化成功
                 // 初始化人脸
                 FaceSDKManager.getInstance().initModel(app);
@@ -106,7 +106,7 @@ public class FaceViewModel extends ViewModel {
     }
 
     // 绑定设备
-    public void bindDevice(){
+    public void bindDevice() {
         FaceAuth faceAuth = new FaceAuth();
         faceRepository.bindDevice(faceAuth.getDeviceId(app));
     }
@@ -124,5 +124,25 @@ public class FaceViewModel extends ViewModel {
         faceRepository.delete(list);
     }
 
+    //--------摄像头
+    public boolean isCameraEnable() {
+        return faceRepository.isCameraEnable();
+    }
+
+    public String getCameraIp() {
+        return faceRepository.getCameraIp();
+    }
+
+    public String getCameraAccount() {
+        return faceRepository.getCameraAccount();
+    }
+
+    public String getCameraPwd() {
+        return faceRepository.getCameraPwd();
+    }
+
+    public int getCameraPort() {
+        return faceRepository.getCameraPort();
+    }
 
 }

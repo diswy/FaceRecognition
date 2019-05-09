@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 记录logcat日志功能 所需的权限 -->
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.CAPTURE_AUDIO_OUTPUT"/>
+    <uses-permission android:name="android.permission.CAPTURE_AUDIO_OUTPUT" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature
@@ -36,7 +36,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.core.CMainActivity"></activity>
+        <activity android:name=".ui.core.CameraSettingsActivity"></activity>
+        <activity android:name=".ui.core.SettingsActivity" />
+        <activity android:name=".ui.core.CMainActivity" />
 
         <receiver
             android:name=".receiver.AutoBootReceiver"
