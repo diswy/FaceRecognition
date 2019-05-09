@@ -12,6 +12,7 @@ import com.yibaiqi.face.recognition.AppExecutors;
 import com.yibaiqi.face.recognition.R;
 import com.yibaiqi.face.recognition.db.AppDatabase;
 import com.yibaiqi.face.recognition.di.DaggerActivityComponent;
+import com.yibaiqi.face.recognition.tools.ACache;
 import com.yibaiqi.face.recognition.ui.SynthActivity;
 import com.yibaiqi.face.recognition.ui.base.BaseActivity;
 import com.yibaiqi.face.recognition.viewmodel.FaceViewModel;
@@ -27,6 +28,8 @@ public class SplashActivity extends BaseActivity {
     AppDatabase database;
     @Inject
     AppExecutors appExecutors;
+    @Inject
+    ACache cache;
 
     private EditText et;
     private int pos = 0;
@@ -90,23 +93,24 @@ public class SplashActivity extends BaseActivity {
     //-----------------------------------------------------
     private void initFaceEngine() {
         FaceViewModel faceModel = ViewModelProviders.of(this, App.getInstance().factory).get(FaceViewModel.class);
-        faceModel.initBDFaceEngine("QY8C-NXN5-9XH7-8VCC");// 测试写死
 
-//        faceModel.registerDevice().observe(this, resource -> {
-//            if (resource == null)
-//                return;
-//            switch (resource.status) {
-//                case SUCCESS:
-//                    if (resource.data != null) {
-//                        faceModel.initBDFaceEngine(resource.data.getData().getSerialNumber());
-//                    }
-//                    break;
-//                case ERROR:
-//                    break;
-//                case LOADING:
-//                    break;
-//            }
-//        });
+        faceModel.registerDevice().observe(this, resource -> {
+            if (resource == null)
+                return;
+            switch (resource.status) {
+                case SUCCESS:
+                    if (resource.data != null) {
+                        cache.put("token", resource.data.getData().getToken());
+                        System.out.println("----->>>token=" + resource.data.getData().getToken());
+                        faceModel.initBDFaceEngine("QY8C-NXN5-9XH7-8VCC");// 测试写死
+                    }
+                    break;
+                case ERROR:
+                    break;
+                case LOADING:
+                    break;
+            }
+        });
 
         faceModel.getInitStatus().observe(this, status -> {
             if (status != null && status) {

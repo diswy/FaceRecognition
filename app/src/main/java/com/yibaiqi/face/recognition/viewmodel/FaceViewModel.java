@@ -1,12 +1,21 @@
 package com.yibaiqi.face.recognition.viewmodel;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.alibaba.sdk.android.oss.ClientConfiguration;
+import com.alibaba.sdk.android.oss.OSS;
+import com.alibaba.sdk.android.oss.OSSClient;
+import com.alibaba.sdk.android.oss.common.auth.OSSAuthCredentialsProvider;
+import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
+import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
 import com.baidu.idl.facesdk.FaceAuth;
 import com.baidu.idl.facesdk.callback.AuthCallback;
 import com.baidu.idl.sample.common.GlobalSet;
@@ -25,6 +34,7 @@ import com.yibaiqi.face.recognition.vo.Resource;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Observable;
 
 import javax.inject.Inject;
 
@@ -144,5 +154,33 @@ public class FaceViewModel extends ViewModel {
     public int getCameraPort() {
         return faceRepository.getCameraPort();
     }
+
+
+    //-------------OSS
+    public void initOSS(LifecycleOwner owner) {
+        faceRepository.getOSSConfig().observe(owner, ossConfig -> {
+            System.out.println("---->>>:" + ossConfig);
+
+            if (ossConfig != null && ossConfig.data != null && ossConfig.data.getData() != null) {
+
+                String ak = ossConfig.data.getData().getAccessKeyId();
+                String sk = ossConfig.data.getData().getAccessKeySecret();
+                String endpoint = ossConfig.data.getData().getEndpoint();
+                OSSCredentialProvider credentialProvider = new OSSPlainTextAKSKCredentialProvider(ak, sk);
+                ClientConfiguration conf = new ClientConfiguration();
+                conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
+                conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
+                conf.setMaxConcurrentRequest(5); // 最大并发请求书，默认5个
+                conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
+                OSS oss = new OSSClient(App.getInstance(), endpoint, credentialProvider, conf);
+            }
+        });
+    }
+
+
+    public void asyncPutImage(String objectName, String localFile) {
+
+    }
+
 
 }

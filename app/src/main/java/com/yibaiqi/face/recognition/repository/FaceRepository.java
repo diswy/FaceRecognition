@@ -12,6 +12,7 @@ import com.yibaiqi.face.recognition.network.NetworkResource;
 import com.yibaiqi.face.recognition.tools.ACache;
 import com.yibaiqi.face.recognition.vo.BaseResponse;
 import com.yibaiqi.face.recognition.vo.DbOption;
+import com.yibaiqi.face.recognition.vo.OSSConfig;
 import com.yibaiqi.face.recognition.vo.RegisterDevice;
 import com.yibaiqi.face.recognition.vo.Resource;
 
@@ -59,7 +60,7 @@ public class FaceRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<BaseResponse<String>>> createCall() {
-                return service.bindDevice(devId);
+                return service.bindDevice(mCache.getAsString("token"), devId);
             }
         }.asLiveData();
     }
@@ -114,5 +115,14 @@ public class FaceRepository {
         return mCache.getAsString(Key.KEY_CAMERA_PWD);
     }
 
-
+    //----------------OSS配置
+    public LiveData<Resource<BaseResponse<OSSConfig>>> getOSSConfig() {
+        return new NetworkResource<BaseResponse<OSSConfig>>(appExecutors) {
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<BaseResponse<OSSConfig>>> createCall() {
+                return service.getOSSConfig(mCache.getAsString("token"));
+            }
+        }.asLiveData();
+    }
 }

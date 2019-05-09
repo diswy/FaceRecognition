@@ -67,6 +67,8 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
     public void initialize() {
         faceModel = ViewModelProviders.of(this, App.getInstance().factory).get(FaceViewModel.class);
 
+        faceModel.initOSS(this);
+
         HCNetSDK.getInstance().NET_DVR_Init();
         calculateCameraView();
         // 海康威视
