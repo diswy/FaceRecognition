@@ -11,11 +11,18 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.alibaba.sdk.android.oss.ClientConfiguration;
+import com.alibaba.sdk.android.oss.ClientException;
 import com.alibaba.sdk.android.oss.OSS;
 import com.alibaba.sdk.android.oss.OSSClient;
+import com.alibaba.sdk.android.oss.ServiceException;
+import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
 import com.alibaba.sdk.android.oss.common.auth.OSSAuthCredentialsProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
+import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
+import com.alibaba.sdk.android.oss.model.OSSRequest;
+import com.alibaba.sdk.android.oss.model.PutObjectRequest;
+import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.baidu.idl.facesdk.FaceAuth;
 import com.baidu.idl.facesdk.callback.AuthCallback;
 import com.baidu.idl.sample.common.GlobalSet;
@@ -29,9 +36,11 @@ import com.yibaiqi.face.recognition.repository.FaceRepository;
 import com.yibaiqi.face.recognition.tools.Mac;
 import com.yibaiqi.face.recognition.vo.BaseResponse;
 import com.yibaiqi.face.recognition.vo.DbOption;
+import com.yibaiqi.face.recognition.vo.OSSConfig;
 import com.yibaiqi.face.recognition.vo.RegisterDevice;
 import com.yibaiqi.face.recognition.vo.Resource;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 import java.util.Observable;
@@ -157,28 +166,88 @@ public class FaceViewModel extends ViewModel {
 
 
     //-------------OSS
+    private OSS mOss;
+    private OSSConfig mOssConfig;
+
     public void initOSS(LifecycleOwner owner) {
         faceRepository.getOSSConfig().observe(owner, ossConfig -> {
             System.out.println("---->>>:" + ossConfig);
+            System.out.println("--->>>这里执行了");
 
             if (ossConfig != null && ossConfig.data != null && ossConfig.data.getData() != null) {
-
-                String ak = ossConfig.data.getData().getAccessKeyId();
-                String sk = ossConfig.data.getData().getAccessKeySecret();
+                mOssConfig = ossConfig.data.getData();
+//                String ak = ossConfig.data.getData().getAccessKeyId();
+//                String sk = ossConfig.data.getData().getAccessKeySecret();
                 String endpoint = ossConfig.data.getData().getEndpoint();
-                OSSCredentialProvider credentialProvider = new OSSPlainTextAKSKCredentialProvider(ak, sk);
+//                OSSCredentialProvider credentialProvider = new OSSPlainTextAKSKCredentialProvider(ak, sk);
+                OSSCredentialProvider credentialProvider = new OSSAuthCredentialsProvider("http://xueyiguan.10130422.com/sts-server/sts.php");
                 ClientConfiguration conf = new ClientConfiguration();
                 conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
                 conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
                 conf.setMaxConcurrentRequest(5); // 最大并发请求书，默认5个
                 conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
-                OSS oss = new OSSClient(App.getInstance(), endpoint, credentialProvider, conf);
+                mOss = new OSSClient(App.getInstance(), "http://" + endpoint, credentialProvider, conf);
+
+                System.out.println("---->>>:" + endpoint);
+                System.out.println("---->>>:" +mOssConfig.getBucketName() );
+
             }
         });
     }
 
 
     public void asyncPutImage(String objectName, String localFile) {
+        if (mOss == null) {
+            return;
+        }
+
+        if (objectName.equals("")) {
+            return;
+        }
+
+        File file = new File(localFile);
+        if (!file.exists()) {
+            return;
+        }
+        if (mOssConfig == null) {
+            return;
+        }
+
+        System.out.println("--->>>这里执行了");
+
+        PutObjectRequest put = new PutObjectRequest(mOssConfig.getBucketName(), objectName, localFile);
+        put.setCRC64(OSSRequest.CRC64Config.YES);
+        OSSAsyncTask task = mOss.asyncPutObject(put, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
+            @Override
+            public void onSuccess(PutObjectRequest request, PutObjectResult result) {
+                System.out.println("-----图片上传成功！");
+            }
+
+            @Override
+            public void onFailure(PutObjectRequest request, ClientException clientException, ServiceException serviceException) {
+                String info = "";
+                // 请求异常
+                if (clientException != null) {
+                    // 本地异常如网络异常等
+                    clientException.printStackTrace();
+                    info = clientException.toString();
+                }
+                if (serviceException != null) {
+                    // 服务异常
+                    System.out.println("---->>>>>" + serviceException.getErrorCode());
+                    System.out.println("---->>>>>" + serviceException.getRequestId());
+                    System.out.println("---->>>>>" + serviceException.getHostId());
+                    System.out.println("---->>>>>" + serviceException.getRawMessage());
+//                    Log.e("ErrorCode", serviceException.getErrorCode());
+//                    Log.e("RequestId", serviceException.getRequestId());
+//                    Log.e("HostId", serviceException.getHostId());
+//                    Log.e("RawMessage", serviceException.getRawMessage());
+                    info = serviceException.toString();
+                    System.out.println("---->>>>>" + info);
+                }
+
+            }
+        });
 
     }
 

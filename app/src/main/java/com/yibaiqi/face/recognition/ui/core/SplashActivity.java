@@ -115,7 +115,7 @@ public class SplashActivity extends BaseActivity {
         faceModel.getInitStatus().observe(this, status -> {
             if (status != null && status) {
                 faceModel.bindDevice();
-                startActivity(new Intent(SplashActivity.this, CMainActivity.class));
+//                startActivity(new Intent(SplashActivity.this, CMainActivity.class));
 //                startActivity(new Intent(SplashActivity.this, MainActivity.class));
 
                 this.finish();

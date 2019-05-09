@@ -74,7 +74,7 @@ public class FileUtil {
     }
 
 
-    public static void saveBitmap(Bitmap bitmap, String fileName) {
+    public static File saveBitmap(Bitmap bitmap, String fileName) {
         String path = EBQValue.CAPTURE_PATH;
         File file = new File(path);
         if (!file.exists()) {
@@ -87,8 +87,11 @@ public class FileUtil {
             fos = new FileOutputStream(mFile);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
             fos.flush();
+
+            return mFile;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 }

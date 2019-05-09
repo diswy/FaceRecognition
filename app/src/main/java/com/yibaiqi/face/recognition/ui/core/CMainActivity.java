@@ -37,6 +37,8 @@ import com.yibaiqi.face.recognition.tools.TimeFormat;
 import com.yibaiqi.face.recognition.ui.base.BaseActivity;
 import com.yibaiqi.face.recognition.viewmodel.FaceViewModel;
 
+import java.io.File;
+
 public class CMainActivity extends BaseActivity implements ILivenessCallBack, SurfaceHolder.Callback {
 
     private FrameLayout mCameraView;
@@ -403,7 +405,14 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         } else {
             System.out.println("--->>>截图失败");
         }
-        FileUtil.saveBitmap(bitmap, realFileName);
+
+        File f = FileUtil.saveBitmap(bitmap, realFileName);
+        if (f != null) {
+            System.out.println("--->>>保存成功"+realFileName);
+            faceModel.asyncPutImage(realFileName, f.getAbsolutePath());
+        }
+
+
     }
 
 
