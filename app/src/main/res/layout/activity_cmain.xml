@@ -114,4 +114,11 @@
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="img" />
 
+
+    <!--<TextView-->
+        <!--android:visibility="gone"-->
+        <!--android:background="@color/black"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
+
 </android.support.constraint.ConstraintLayout>

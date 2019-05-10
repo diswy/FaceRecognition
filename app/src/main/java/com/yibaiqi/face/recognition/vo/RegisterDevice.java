@@ -19,6 +19,16 @@ public class RegisterDevice {
     private String serialNumber;
     private String token;
     private ExData data;
+    @SerializedName("oss_config")
+    private OSSConfig ossConfig;
+
+    public OSSConfig getOssConfig() {
+        return ossConfig;
+    }
+
+    public void setOssConfig(OSSConfig ossConfig) {
+        this.ossConfig = ossConfig;
+    }
 
     public ExData getData() {
         return data;

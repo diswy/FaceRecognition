@@ -13,10 +13,13 @@ import com.yibaiqi.face.recognition.R;
 import com.yibaiqi.face.recognition.db.AppDatabase;
 import com.yibaiqi.face.recognition.di.DaggerActivityComponent;
 import com.yibaiqi.face.recognition.tools.ACache;
+import com.yibaiqi.face.recognition.tools.EBQValue;
 import com.yibaiqi.face.recognition.ui.SynthActivity;
 import com.yibaiqi.face.recognition.ui.base.BaseActivity;
 import com.yibaiqi.face.recognition.viewmodel.FaceViewModel;
 import com.yibaiqi.face.recognition.viewmodel.RongViewModel;
+import com.yibaiqi.face.recognition.vo.ExData;
+import com.yibaiqi.face.recognition.vo.OSSConfig;
 
 import javax.inject.Inject;
 
@@ -99,9 +102,20 @@ public class SplashActivity extends BaseActivity {
                 return;
             switch (resource.status) {
                 case SUCCESS:
-                    if (resource.data != null) {
+                    if (resource.data != null && resource.data.getData() != null) {
                         cache.put("token", resource.data.getData().getToken());
                         System.out.println("----->>>token=" + resource.data.getData().getToken());
+
+                        OSSConfig ossConfig = resource.data.getData().getOssConfig();
+                        if (ossConfig != null) {
+                            cache.put("oss_config", ossConfig);
+                        }
+
+                        ExData exData = resource.data.getData().getData();
+                        if (exData != null && exData.getUsers() != null) {
+                            cache.put("task_update", exData.getUsers());
+                        }
+
                         faceModel.initBDFaceEngine("QY8C-NXN5-9XH7-8VCC");// 测试写死
                     }
                     break;
@@ -115,10 +129,9 @@ public class SplashActivity extends BaseActivity {
         faceModel.getInitStatus().observe(this, status -> {
             if (status != null && status) {
                 faceModel.bindDevice();
-//                startActivity(new Intent(SplashActivity.this, CMainActivity.class));
+                startActivity(new Intent(SplashActivity.this, CMainActivity.class));
 //                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-
-                this.finish();
+//                this.finish();
             }
         });
 

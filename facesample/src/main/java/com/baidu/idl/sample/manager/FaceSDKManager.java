@@ -56,6 +56,20 @@ public class FaceSDKManager {
     }
 
 
+    private Boolean faceDetectorStatus = false;
+    private Boolean faceFeatureStatus = false;
+    private Boolean faceLivenessStatus = false;
+
+    public interface FaceModelInitListener {
+        void faceModelStatus(Boolean faceDetector, Boolean faceFeature, Boolean faceLive);
+    }
+
+    public void setFaceModelInitListener(FaceModelInitListener listener) {
+        this.faceModelInitListener = listener;
+    }
+
+    private FaceModelInitListener faceModelInitListener;
+
     public void initModel(final Context context) {
         faceDetector.initModel(context, "detect_rgb_anakin_2.0.0.bin",
                 "",
@@ -64,6 +78,11 @@ public class FaceSDKManager {
                     public void onResponse(int code, String response) {
                         ToastUtils.toast(context, response);
                         Log.d("yibaiqi", response);
+
+                        faceDetectorStatus = true;
+                        if (faceModelInitListener != null) {
+                            faceModelInitListener.faceModelStatus(true, faceFeatureStatus, faceLivenessStatus);
+                        }
                     }
                 });
         faceDetector.loadConfig(getFaceEnvironmentConfig());
@@ -74,6 +93,11 @@ public class FaceSDKManager {
                     public void onResponse(int code, String response) {
                         ToastUtils.toast(context, response);
                         Log.d("yibaiqi", response);
+
+                        faceFeatureStatus = true;
+                        if (faceModelInitListener != null) {
+                            faceModelInitListener.faceModelStatus(faceDetectorStatus, true, faceLivenessStatus);
+                        }
                     }
                 });
         faceLiveness.initModel(context, "liveness_rgb_anakin_2.0.0.bin",
@@ -83,6 +107,11 @@ public class FaceSDKManager {
                     public void onResponse(int code, String response) {
                         ToastUtils.toast(context, response);
                         Log.d("yibaiqi", response);
+
+                        faceLivenessStatus = true;
+                        if (faceModelInitListener != null) {
+                            faceModelInitListener.faceModelStatus(faceDetectorStatus, faceFeatureStatus, true);
+                        }
                     }
                 });
     }
@@ -96,7 +125,7 @@ public class FaceSDKManager {
         faceEnvironment.setPitch(30);
         faceEnvironment.setYaw(30);
         faceEnvironment.setRoll(30);
-        faceEnvironment.setCheckBlur(true);
+        faceEnvironment.setCheckBlur(false);
         faceEnvironment.setOcclusion(true);
         faceEnvironment.setIllumination(true);
         faceEnvironment.setDetectMethodType(FaceDetect.DetectType.DETECT_VIS);

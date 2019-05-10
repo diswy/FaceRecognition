@@ -69,12 +69,26 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
     public void initialize() {
         faceModel = ViewModelProviders.of(this, App.getInstance().factory).get(FaceViewModel.class);
 
-        faceModel.initOSS(this);
+        // 初始化OSS服务
+        faceModel.initOSS();
 
-        HCNetSDK.getInstance().NET_DVR_Init();
+        // 初始化下载服务
+        faceModel.initDownload(this);
+
+        // 初始化人脸识别
         calculateCameraView();
-        // 海康威视
+
+        // 初始化海康威视SDK
+        HCNetSDK.getInstance().NET_DVR_Init();
+        // 海康威视监视，1px*1px 为了实现截图
         m_osurfaceView.getHolder().addCallback(this);
+
+
+        // 处理人脸库收到的通知
+        faceModel.batchUpdate();
+
+//        faceModel.registerFace("123456","zhanglifu",EBQValue.REGISTER_PATH,"zhanglifu.jpg");
+//        faceModel.downloadPic("https://hbimg.huabanimg.com/c01dc820dae1cc1d971fb1c4ccd2c077a827a1396d9cd-CpTutl_fw658");
     }
 
     @Override
@@ -145,9 +159,9 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                 Bitmap myBitmap = mMonocularView.getMyBitmap();
                 ivCapture.setImageBitmap(myBitmap);
 
-                if (canSavePic()) {
-                    captureVideo(myBitmap, feature.getUserName());
-                }
+//                if (canSavePic()) {
+//                    captureVideo(myBitmap, feature.getUserName());
+//                }
             } else {
                 ivCapture.setImageBitmap(null);
                 ivDb.setImageBitmap(null);

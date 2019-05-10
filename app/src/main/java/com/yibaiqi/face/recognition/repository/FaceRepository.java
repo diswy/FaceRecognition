@@ -12,7 +12,7 @@ import com.yibaiqi.face.recognition.network.NetworkResource;
 import com.yibaiqi.face.recognition.tools.ACache;
 import com.yibaiqi.face.recognition.vo.BaseResponse;
 import com.yibaiqi.face.recognition.vo.DbOption;
-import com.yibaiqi.face.recognition.vo.OSSConfig;
+import com.yibaiqi.face.recognition.vo.OSSKey;
 import com.yibaiqi.face.recognition.vo.RegisterDevice;
 import com.yibaiqi.face.recognition.vo.Resource;
 
@@ -37,6 +37,14 @@ public class FaceRepository {
         this.appExecutors = appExecutors;
         this.userDao = userDao;
         this.mCache = aCache;
+    }
+
+    public ACache getCache() {
+        return mCache;
+    }
+
+    public AppExecutors getAppExecutors() {
+        return appExecutors;
     }
 
     /**
@@ -116,11 +124,11 @@ public class FaceRepository {
     }
 
     //----------------OSS配置
-    public LiveData<Resource<BaseResponse<OSSConfig>>> getOSSConfig() {
-        return new NetworkResource<BaseResponse<OSSConfig>>(appExecutors) {
+    public LiveData<Resource<BaseResponse<OSSKey>>> getOSSConfig() {
+        return new NetworkResource<BaseResponse<OSSKey>>(appExecutors) {
             @NonNull
             @Override
-            protected LiveData<ApiResponse<BaseResponse<OSSConfig>>> createCall() {
+            protected LiveData<ApiResponse<BaseResponse<OSSKey>>> createCall() {
                 return service.getOSSConfig(mCache.getAsString("token"));
             }
         }.asLiveData();

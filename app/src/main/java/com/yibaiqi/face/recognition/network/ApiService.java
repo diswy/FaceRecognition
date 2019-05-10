@@ -3,11 +3,9 @@ package com.yibaiqi.face.recognition.network;
 import android.arch.lifecycle.LiveData;
 
 import com.yibaiqi.face.recognition.vo.BaseResponse;
-import com.yibaiqi.face.recognition.vo.Movie;
-import com.yibaiqi.face.recognition.vo.OSSConfig;
+import com.yibaiqi.face.recognition.vo.OSSKey;
 import com.yibaiqi.face.recognition.vo.RegisterDevice;
 
-import io.reactivex.Flowable;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -29,6 +27,6 @@ public interface ApiService {
     LiveData<ApiResponse<BaseResponse<Object>>> addRecord(@Header("token") String token);
 
     @GET("devices/BrushFaceLog/oss_config")
-    LiveData<ApiResponse<BaseResponse<OSSConfig>>> getOSSConfig(@Header("token") String token);
+    LiveData<ApiResponse<BaseResponse<OSSKey>>> getOSSConfig(@Header("token") String token);
 
 }
