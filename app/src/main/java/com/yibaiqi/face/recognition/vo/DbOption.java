@@ -17,11 +17,22 @@ public class DbOption {
     private String real_name;
     @ColumnInfo(name = "face_image")
     private String face_image;
+    @ColumnInfo(name = "status")
+    private int status;// 0:add  1：delete
 
-    public DbOption(@NonNull String user_key, String real_name, String face_image) {
+    public DbOption(@NonNull String user_key, String real_name, String face_image, int status) {
         this.user_key = user_key;
         this.real_name = real_name;
         this.face_image = face_image;
+        this.status = status;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     @NonNull

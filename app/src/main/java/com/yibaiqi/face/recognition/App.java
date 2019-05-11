@@ -3,7 +3,6 @@ package com.yibaiqi.face.recognition;
 import android.app.Application;
 import android.arch.lifecycle.ViewModelProvider;
 
-import com.liulishuo.filedownloader.FileDownloader;
 import com.yibaiqi.face.recognition.di.AppComponent;
 import com.yibaiqi.face.recognition.di.DaggerAppComponent;
 

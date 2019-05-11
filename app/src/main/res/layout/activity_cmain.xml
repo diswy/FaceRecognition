@@ -97,6 +97,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
+        android:visibility="gone"
         android:text="截图！"
         android:id="@+id/jietu"
         android:layout_width="wrap_content"
@@ -120,5 +121,31 @@
         <!--android:background="@color/black"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent" />-->
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/test_btn_speak"
+            android:text="说话"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/test_btn_insert"
+            android:text="插入数据"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/test_btn_del"
+            android:text="删除一条数据"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

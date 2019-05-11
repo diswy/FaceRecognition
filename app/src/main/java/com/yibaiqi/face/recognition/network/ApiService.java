@@ -3,9 +3,15 @@ package com.yibaiqi.face.recognition.network;
 import android.arch.lifecycle.LiveData;
 
 import com.yibaiqi.face.recognition.vo.BaseResponse;
+import com.yibaiqi.face.recognition.vo.ExData;
 import com.yibaiqi.face.recognition.vo.OSSKey;
 import com.yibaiqi.face.recognition.vo.RegisterDevice;
+import com.yibaiqi.face.recognition.vo.Remote;
+import com.yibaiqi.face.recognition.vo.RemoteRecord;
 
+import java.util.List;
+
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -24,9 +30,12 @@ public interface ApiService {
     LiveData<ApiResponse<BaseResponse<String>>> bindDevice(@Header("token") String token, @Query("device_fingerprint") String key);
 
     @POST("devices/BrushFaceLog/add")
-    LiveData<ApiResponse<BaseResponse<Object>>> addRecord(@Header("token") String token);
+    LiveData<ApiResponse<BaseResponse<Object>>> addRecord(@Header("token") String token, @Body Remote remote);
 
     @GET("devices/BrushFaceLog/oss_config")
     LiveData<ApiResponse<BaseResponse<OSSKey>>> getOSSConfig(@Header("token") String token);
+
+    @GET("devices/FaceDevices/update_data")
+    LiveData<ApiResponse<BaseResponse<ExData>>> requestData(@Header("token") String token);
 
 }

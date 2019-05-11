@@ -96,4 +96,5 @@ dependencies {
     implementation 'top.zibin:Luban:1.1.8'
     implementation 'com.aliyun.dpa:oss-android-sdk:+'
     implementation 'com.liulishuo.filedownloader:library:1.7.6'
+    implementation 'top.zibin:Luban:1.1.8'
 }

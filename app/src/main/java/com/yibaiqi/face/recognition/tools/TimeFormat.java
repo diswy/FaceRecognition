@@ -54,7 +54,7 @@ public class TimeFormat {
     }
 
     public static String FULL(long timeMillis) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd,HH:mm:ss", Locale.CHINA);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timeMillis);
         return format.format(calendar.getTime());

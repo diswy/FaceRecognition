@@ -4,12 +4,16 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -21,6 +25,10 @@ import com.baidu.idl.sample.utils.DensityUtil;
 import com.baidu.idl.sample.utils.FileUtils;
 import com.baidu.idl.sample.utils.Utils;
 import com.baidu.idl.sample.view.MonocularView;
+import com.baidu.tts.chainofresponsibility.logger.LoggerProxy;
+import com.baidu.tts.client.SpeechSynthesizer;
+import com.baidu.tts.client.SpeechSynthesizerListener;
+import com.baidu.tts.client.TtsMode;
 import com.hcnetsdk.jna.HCNetSDKJNAInstance;
 import com.hikvision.netsdk.ExceptionCallBack;
 import com.hikvision.netsdk.HCNetSDK;
@@ -30,17 +38,39 @@ import com.seeku.android.Manager;
 import com.test.demo.PlaySurfaceView;
 import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.R;
-import com.yibaiqi.face.recognition.di.DaggerActivityComponent;
+import com.yibaiqi.face.recognition.control.InitConfig;
+import com.yibaiqi.face.recognition.control.MySyntherizer;
+import com.yibaiqi.face.recognition.control.NonBlockSyntherizer;
 import com.yibaiqi.face.recognition.tools.EBQValue;
 import com.yibaiqi.face.recognition.tools.FileUtil;
+import com.yibaiqi.face.recognition.tools.OfflineResource;
 import com.yibaiqi.face.recognition.tools.TimeFormat;
+import com.yibaiqi.face.recognition.tools.listener.UiMessageListener;
 import com.yibaiqi.face.recognition.ui.base.BaseActivity;
 import com.yibaiqi.face.recognition.viewmodel.FaceViewModel;
+import com.yibaiqi.face.recognition.viewmodel.RongViewModel;
+import com.yibaiqi.face.recognition.vo.DbOption;
+import com.yibaiqi.face.recognition.vo.MyRecord;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import io.rong.imlib.RongIMClient;
+
+import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.INIT_SUCCESS;
+import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.PRINT;
+import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.UI_CHANGE_INPUT_TEXT_SELECTION;
+import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.UI_CHANGE_SYNTHES_TEXT_SELECTION;
 
 public class CMainActivity extends BaseActivity implements ILivenessCallBack, SurfaceHolder.Callback {
-
+    private static final int CLOSE_DOOR = 728;
+    public static final int TASK = 999;
+    public static final int UPLOAD = 888;
     private FrameLayout mCameraView;
     private MonocularView mMonocularView;
     private ImageView ivCapture;
@@ -49,6 +79,23 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
     private FaceViewModel faceModel;
 
     private boolean isCameraSuccess = false;
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case CLOSE_DOOR:
+                    closeDoor();
+                    break;
+                case TASK:
+                    faceModel.updateTaskData();
+                    break;
+                case UPLOAD:
+                    faceModel.updateUploadData();
+                    break;
+            }
+        }
+    };
 
     @Override
     public int getLayoutRes() {
@@ -69,6 +116,11 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
     public void initialize() {
         faceModel = ViewModelProviders.of(this, App.getInstance().factory).get(FaceViewModel.class);
 
+        faceModel.initHandler(mHandler);
+
+        // 初始化语音合成服务
+        initialTts();
+
         // 初始化OSS服务
         faceModel.initOSS();
 
@@ -85,10 +137,63 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
 
 
         // 处理人脸库收到的通知
-        faceModel.batchUpdate();
-
+//        faceModel.batchUpdate();
 //        faceModel.registerFace("123456","zhanglifu",EBQValue.REGISTER_PATH,"zhanglifu.jpg");
 //        faceModel.downloadPic("https://hbimg.huabanimg.com/c01dc820dae1cc1d971fb1c4ccd2c077a827a1396d9cd-CpTutl_fw658");
+
+        faceModel.observerData(this);
+        faceModel.observerRecordData(this);
+
+        findViewById(R.id.test_btn_speak).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                say("晋宝宝呀，是个大坏蛋哟，哈哈哈。你说是不是");
+//                faceModel.syncRecord(CMainActivity.this, null);
+            }
+        });
+
+        findViewById(R.id.test_btn_insert).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<DbOption> list = new ArrayList<>();
+                list.add(new DbOption("xiaofu", "zlf", "", 0));
+                faceModel.insert(list);
+            }
+        });
+
+        findViewById(R.id.test_btn_del).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                faceModel.delete(new DbOption("xiaofu", "zlf", "", 1));
+            }
+        });
+
+        //--------融云
+        RongViewModel serverViewModel = ViewModelProviders.of(this)
+                .get(RongViewModel.class);
+        serverViewModel.getConnectStatus().observe(this, isConnect -> {
+            System.out.println("------------>>>>>getConnectStatus:" + isConnect);
+        });
+        serverViewModel.getRongMessage().observe(this, msg -> {
+            System.out.println("------------>>>>>getRongMessage:" + msg.toString());
+            Toast.makeText(this, msg.toString(), Toast.LENGTH_LONG).show();
+        });
+
+        //user1
+        serverViewModel.connect(faceModel.getRongToken());
+        //user2
+//        serverViewModel.connect("p4o/K1eHyS5DDWf3r16nCHQQxjv13DQkqZKYBm2cHzMC9g+G9YHutgyqJu0bBlWGGBj7gwF73fg=");
+
+//        serverViewModel.registerMessage();
+
+        RongIMClient.setOnReceiveMessageListener((message, left) -> {
+//            rongMessage.setValue(message);
+            System.out.println("------------>>>>>消息:" + message);
+            System.out.println("------------>>>>>没拉去:" + left);
+            faceModel.update(CMainActivity.this);
+            return false;
+        });
+
     }
 
     @Override
@@ -159,9 +264,12 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                 Bitmap myBitmap = mMonocularView.getMyBitmap();
                 ivCapture.setImageBitmap(myBitmap);
 
-//                if (canSavePic()) {
-//                    captureVideo(myBitmap, feature.getUserName());
-//                }
+                if (canSavePic()) {
+                    say(feature.getUserName() + "验证成功");
+                    openDoor();
+                    mHandler.sendEmptyMessageDelayed(CLOSE_DOOR, 3000L);
+                    captureVideo(feature.getUserId(), myBitmap);
+                }
             } else {
                 ivCapture.setImageBitmap(null);
                 ivDb.setImageBitmap(null);
@@ -405,37 +513,163 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
             tempTime = System.currentTimeMillis();
             return true;
         }
-        return (System.currentTimeMillis() - tempTime) > 3000;
+
+        if ((System.currentTimeMillis() - tempTime) > 5000) {
+            tempTime = System.currentTimeMillis();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
      * 获取摄像头截图,保存送检图片
      */
-    private void captureVideo(Bitmap bitmap, String fileName) {
+    private void captureVideo(String userKey, Bitmap bitmap) {
+        boolean hikvisonCapture = false;
+        boolean faceCapture = false;
         String formatTime = TimeFormat.FULL(System.currentTimeMillis());
-        String realFileName = formatTime + fileName;
-        if (HCNetSDKJNAInstance.getInstance().NET_DVR_CapturePictureBlock(m_iPlayID, EBQValue.HIK_PATH + realFileName + ".jpg", 0)) {
+        String realFileName = formatTime + userKey;// 时间+学生KEY
+        if (HCNetSDKJNAInstance.getInstance().NET_DVR_CapturePictureBlock(m_iPlayID, EBQValue.HIK_PATH + realFileName + "_hik.jpg", 0)) {
             System.out.println("--->>>截图成功");
+            hikvisonCapture = true;
         } else {
             System.out.println("--->>>截图失败");
         }
 
-        File f = FileUtil.saveBitmap(bitmap, realFileName);
+        File f = FileUtil.saveBitmap(bitmap, realFileName + "_face");
         if (f != null) {
-            System.out.println("--->>>保存成功"+realFileName);
-            faceModel.asyncPutImage(realFileName, f.getAbsolutePath());
+            faceCapture = true;
+            System.out.println("--->>>保存成功" + realFileName);
+//            faceModel.asyncPutImage(realFileName, f.getAbsolutePath());
         }
 
-
+        MyRecord record = new MyRecord(formatTime, userKey, realFileName,
+                hikvisonCapture, faceCapture);
+        faceModel.insert(record);
     }
 
 
+    //--------------开关门
     private void openDoor() {
         new Manager(getApplicationContext()).setGateIO(true);
     }
 
     private void closeDoor() {
         new Manager(getApplicationContext()).setGateIO(false);
+    }
+
+    //-------------语音合成
+    // 主控制类，所有合成控制方法从这个类开始
+    protected MySyntherizer synthesizer;
+    private Boolean isVoiceInit;
+    private Handler mainHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            handle(msg);
+        }
+    };
+
+    // TtsMode.MIX; 离在线融合，在线优先； TtsMode.ONLINE 纯在线； 没有纯离线
+    protected TtsMode ttsMode = TtsMode.MIX;
+    // 离线发音选择，VOICE_FEMALE即为离线女声发音。
+    // assets目录下bd_etts_common_speech_m15_mand_eng_high_am-mix_v3.0.0_20170505.dat为离线男声模型；
+    // assets目录下bd_etts_common_speech_f7_mand_eng_high_am-mix_v3.0.0_20170512.dat为离线女声模型
+    protected String offlineVoice = OfflineResource.VOICE_MALE;
+
+    /**
+     * 初始化引擎，需要的参数均在InitConfig类里
+     * <p>
+     * DEMO中提供了3个SpeechSynthesizerListener的实现
+     * MessageListener 仅仅用log.i记录日志，在logcat中可以看见
+     * UiMessageListener 在MessageListener的基础上，对handler发送消息，实现UI的文字更新
+     * FileSaveListener 在UiMessageListener的基础上，使用 onSynthesizeDataArrived回调，获取音频流
+     */
+    private void initialTts() {
+        LoggerProxy.printable(true); // 日志打印在logcat中
+        // 设置初始化参数
+        // 此处可以改为 含有您业务逻辑的SpeechSynthesizerListener的实现类
+        SpeechSynthesizerListener listener = new UiMessageListener(mainHandler);
+
+        Map<String, String> params = getParams();
+
+        // appId appKey secretKey 网站上您申请的应用获取。注意使用离线合成功能的话，需要应用中填写您app的包名。包名在build.gradle中获取。
+        InitConfig initConfig = new InitConfig(ttsMode, params, listener);
+        synthesizer = new NonBlockSyntherizer(this, initConfig, mainHandler); // 此处可以改为MySyntherizer 了解调用过程
+    }
+
+    /**
+     * 合成的参数，可以初始化时填写，也可以在合成前设置。
+     *
+     * @return
+     */
+    protected Map<String, String> getParams() {
+        Map<String, String> params = new HashMap<String, String>();
+        // 以下参数均为选填
+        // 设置在线发声音人： 0 普通女声（默认） 1 普通男声 2 特别男声 3 情感男声<度逍遥> 4 情感儿童声<度丫丫>
+        params.put(SpeechSynthesizer.PARAM_SPEAKER, "0");
+        // 设置合成的音量，0-9 ，默认 5
+        params.put(SpeechSynthesizer.PARAM_VOLUME, "9");
+        // 设置合成的语速，0-9 ，默认 5
+        params.put(SpeechSynthesizer.PARAM_SPEED, "5");
+        // 设置合成的语调，0-9 ，默认 5
+        params.put(SpeechSynthesizer.PARAM_PITCH, "5");
+
+        params.put(SpeechSynthesizer.PARAM_MIX_MODE, SpeechSynthesizer.MIX_MODE_DEFAULT);
+        // 该参数设置为TtsMode.MIX生效。即纯在线模式不生效。
+        // MIX_MODE_DEFAULT 默认 ，wifi状态下使用在线，非wifi离线。在线状态下，请求超时6s自动转离线
+        // MIX_MODE_HIGH_SPEED_SYNTHESIZE_WIFI wifi状态下使用在线，非wifi离线。在线状态下， 请求超时1.2s自动转离线
+        // MIX_MODE_HIGH_SPEED_NETWORK ， 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
+        // MIX_MODE_HIGH_SPEED_SYNTHESIZE, 2G 3G 4G wifi状态下使用在线，其它状态离线。在线状态下，请求超时1.2s自动转离线
+
+        // 离线资源文件， 从assets目录中复制到临时目录，需要在initTTs方法前完成
+        OfflineResource offlineResource = createOfflineResource(offlineVoice);
+        // 声学模型文件路径 (离线引擎使用), 请确认下面两个文件存在
+        params.put(SpeechSynthesizer.PARAM_TTS_TEXT_MODEL_FILE, offlineResource.getTextFilename());
+        params.put(SpeechSynthesizer.PARAM_TTS_SPEECH_MODEL_FILE,
+                offlineResource.getModelFilename());
+        return params;
+    }
+
+    protected OfflineResource createOfflineResource(String voiceType) {
+        OfflineResource offlineResource = null;
+        try {
+            offlineResource = new OfflineResource(this, voiceType);
+        } catch (IOException e) {
+            // IO 错误自行处理
+            e.printStackTrace();
+        }
+        return offlineResource;
+    }
+
+    protected void handle(Message msg) {
+        switch (msg.what) {
+            case INIT_SUCCESS:
+                isVoiceInit = true;
+                msg.what = PRINT;
+                break;
+            default:
+                break;
+        }
+
+        int what = msg.what;
+        switch (what) {
+            case PRINT:
+                break;
+            case UI_CHANGE_INPUT_TEXT_SELECTION:
+                break;
+            case UI_CHANGE_SYNTHES_TEXT_SELECTION:
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void say(String s) {
+        if (synthesizer != null && isVoiceInit) {
+            synthesizer.speak(s);
+        }
     }
 
 }

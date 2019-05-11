@@ -12,8 +12,12 @@ import com.yibaiqi.face.recognition.network.NetworkResource;
 import com.yibaiqi.face.recognition.tools.ACache;
 import com.yibaiqi.face.recognition.vo.BaseResponse;
 import com.yibaiqi.face.recognition.vo.DbOption;
+import com.yibaiqi.face.recognition.vo.ExData;
+import com.yibaiqi.face.recognition.vo.MyRecord;
 import com.yibaiqi.face.recognition.vo.OSSKey;
 import com.yibaiqi.face.recognition.vo.RegisterDevice;
+import com.yibaiqi.face.recognition.vo.Remote;
+import com.yibaiqi.face.recognition.vo.RemoteRecord;
 import com.yibaiqi.face.recognition.vo.Resource;
 
 import java.util.List;
@@ -73,6 +77,31 @@ public class FaceRepository {
         }.asLiveData();
     }
 
+    /**
+     * 上传记录
+     */
+    public LiveData<Resource<BaseResponse<Object>>> syncRecord(Remote remote) {
+        return new NetworkResource<BaseResponse<Object>>(appExecutors) {
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<BaseResponse<Object>>> createCall() {
+                return service.addRecord(mCache.getAsString("token"), remote);
+            }
+        }.asLiveData();
+    }
+
+    /**
+     * 获取数据
+     */
+    public LiveData<Resource<BaseResponse<ExData>>> requestData() {
+        return new NetworkResource<BaseResponse<ExData>>(appExecutors) {
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<BaseResponse<ExData>>> createCall() {
+                return service.requestData(mCache.getAsString("token"));
+            }
+        }.asLiveData();
+    }
 
     //-------------------数据库操作相关
     public void insert(List<DbOption> list) {
@@ -97,6 +126,38 @@ public class FaceRepository {
                 userDao.delete(list);
             }
         });
+    }
+
+    public void delete(DbOption data) {
+        appExecutors.diskIO().execute(() -> {
+            if (data != null) {
+                userDao.delete(data);
+            }
+        });
+    }
+
+    public void insert(MyRecord data) {
+        appExecutors.diskIO().execute(() -> {
+            if (data != null) {
+                userDao.insertRecord(data);
+            }
+        });
+    }
+
+    public void delete(MyRecord data) {
+        appExecutors.diskIO().execute(() -> {
+            if (data != null) {
+                userDao.deleteRecord(data);
+            }
+        });
+    }
+
+    public LiveData<List<MyRecord>> observeRecordAll() {
+        return userDao.observeRecordAll();
+    }
+
+    public LiveData<List<DbOption>> observeAll() {
+        return userDao.observeAll();
     }
 
     //------------摄像头
@@ -133,4 +194,6 @@ public class FaceRepository {
             }
         }.asLiveData();
     }
+
+
 }

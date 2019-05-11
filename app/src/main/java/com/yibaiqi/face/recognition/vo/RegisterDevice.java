@@ -18,7 +18,7 @@ public class RegisterDevice {
     @SerializedName("serial_number")
     private String serialNumber;
     private String token;
-    private ExData data;
+    private ExData face_data;
     @SerializedName("oss_config")
     private OSSConfig ossConfig;
 
@@ -31,11 +31,11 @@ public class RegisterDevice {
     }
 
     public ExData getData() {
-        return data;
+        return face_data;
     }
 
     public void setData(ExData data) {
-        this.data = data;
+        this.face_data = data;
     }
 
     public String getImToken() {

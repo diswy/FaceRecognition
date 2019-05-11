@@ -128,7 +128,6 @@ public class SynthActivity extends BaseActivity {
         } catch (IOException e) {
             // IO 错误自行处理
             e.printStackTrace();
-//            toPrint("【error】:copy files from assets failed." + e.getMessage());
         }
         return offlineResource;
     }

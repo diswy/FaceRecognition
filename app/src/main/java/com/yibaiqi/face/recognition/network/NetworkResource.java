@@ -20,7 +20,7 @@ public abstract class NetworkResource<RequestType> {
     @MainThread
     public NetworkResource(AppExecutors appExecutors) {
         this.appExecutors = appExecutors;
-        result.setValue(Resource.loading(null));
+        result.postValue(Resource.loading(null));
         fetchFromNetwork();
     }
 

@@ -8,7 +8,6 @@ import java.util.List;
  */
 public class DbUserOption implements Serializable {
     private List<DbOption> add;
-    private List<DbOption> update;
     private List<DbOption> delete;
 
     public List<DbOption> getAdd() {
@@ -17,14 +16,6 @@ public class DbUserOption implements Serializable {
 
     public void setAdd(List<DbOption> add) {
         this.add = add;
-    }
-
-    public List<DbOption> getUpdate() {
-        return update;
-    }
-
-    public void setUpdate(List<DbOption> update) {
-        this.update = update;
     }
 
     public List<DbOption> getDelete() {

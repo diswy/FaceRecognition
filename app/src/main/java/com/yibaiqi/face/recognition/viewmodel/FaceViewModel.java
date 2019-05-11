@@ -1,11 +1,16 @@
 package com.yibaiqi.face.recognition.viewmodel;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.alibaba.sdk.android.oss.ClientConfiguration;
@@ -29,7 +34,6 @@ import com.baidu.idl.sample.common.FaceEnvironment;
 import com.baidu.idl.sample.common.GlobalSet;
 import com.baidu.idl.sample.db.DBManager;
 import com.baidu.idl.sample.manager.FaceSDKManager;
-import com.baidu.idl.sample.manager.UserInfoManager;
 import com.baidu.idl.sample.model.ARGBImg;
 import com.baidu.idl.sample.utils.FeatureUtils;
 import com.baidu.idl.sample.utils.FileUtils;
@@ -38,31 +42,31 @@ import com.baidu.idl.sample.utils.ToastUtils;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadLargeFileListener;
 import com.liulishuo.filedownloader.FileDownloader;
+import com.liulishuo.filedownloader.IFileDownloadServiceProxy;
 import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.repository.FaceRepository;
 import com.yibaiqi.face.recognition.tools.ACache;
 import com.yibaiqi.face.recognition.tools.EBQValue;
 import com.yibaiqi.face.recognition.tools.Mac;
+import com.yibaiqi.face.recognition.ui.core.CMainActivity;
 import com.yibaiqi.face.recognition.vo.BaseResponse;
 import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.DbUserOption;
+import com.yibaiqi.face.recognition.vo.ExData;
+import com.yibaiqi.face.recognition.vo.MyRecord;
 import com.yibaiqi.face.recognition.vo.OSSConfig;
 import com.yibaiqi.face.recognition.vo.RegisterDevice;
+import com.yibaiqi.face.recognition.vo.Remote;
+import com.yibaiqi.face.recognition.vo.RemoteRecord;
 import com.yibaiqi.face.recognition.vo.Resource;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.Executors;
+import java.util.Random;
 
 import javax.inject.Inject;
-
-import io.reactivex.Flowable;
-import io.reactivex.Scheduler;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 import static com.baidu.idl.sample.common.GlobalSet.LICENSE_ONLINE;
 
@@ -71,7 +75,6 @@ import static com.baidu.idl.sample.common.GlobalSet.LICENSE_ONLINE;
  * Created by @author xiaofu on 2019/4/23.
  */
 public class FaceViewModel extends ViewModel {
-
     private final FaceRepository faceRepository;
     private final App app;
     private MutableLiveData<Boolean> initSuccess = new MutableLiveData<>();
@@ -80,6 +83,12 @@ public class FaceViewModel extends ViewModel {
     FaceViewModel(FaceRepository faceRepository, App app) {
         this.faceRepository = faceRepository;
         this.app = app;
+    }
+
+    private Handler handler;
+
+    public void initHandler(Handler handler) {
+        this.handler = handler;
     }
 
     /**
@@ -105,10 +114,9 @@ public class FaceViewModel extends ViewModel {
         initLicenseOnLine(key);
     }
 
-    public void addRecord() {
-
+    public String getRongToken() {
+        return faceRepository.getCache().getAsString("im_token");
     }
-
 
     //--------私有方法
     private void initLicenseOnLine(final String key) {
@@ -153,8 +161,15 @@ public class FaceViewModel extends ViewModel {
     }
 
     //--------数据库相关
+    private MediatorLiveData<List<DbOption>> mLiveData = new MediatorLiveData<>();
+    private MediatorLiveData<List<MyRecord>> mLiveRecordData = new MediatorLiveData<>();
+
     public void insert(List<DbOption> list) {
         faceRepository.insert(list);
+    }
+
+    public void insert(MyRecord data) {
+        faceRepository.insert(data);
     }
 
     public void update(List<DbOption> list) {
@@ -164,6 +179,83 @@ public class FaceViewModel extends ViewModel {
     public void delete(List<DbOption> list) {
         faceRepository.delete(list);
     }
+
+    public void delete(DbOption data) {
+//        faceRepository.delete(data);
+        delFaceFeature(data.getUser_key(), data.getReal_name(), data);
+    }
+
+    public void observerData(LifecycleOwner owner) {
+        mLiveData.observe(owner, list -> {
+            if (list != null && list.size() > 0) {
+                // 生成随机数轮询，即使某个task失败，也可以让别的任务继续执行
+                Random random = new Random();
+                int pos = random.nextInt(list.size());
+                DbOption item = list.get(pos);
+
+                switch (item.getStatus()) {
+                    case 0:// 新增
+                        System.out.println("------新增一条");
+//                        registerFace(item.getUser_key(), item.getReal_name(), item);
+                        downloadAndRegister(item.getUser_key(), item.getReal_name(), item.getFace_image(), item);
+                        break;
+                    case 1:// 删除
+                        System.out.println("------删除一条");
+                        delFaceFeature(item.getUser_key(), item.getReal_name(), item);
+                        break;
+                }
+
+            }
+        });
+        updateData();
+    }
+
+    public void observerRecordData(LifecycleOwner owner) {
+        mLiveRecordData.observe(owner, list -> {
+            System.out.println("----->>>数据：" + list);
+            if (list != null && list.size() > 0) {
+                System.out.println("----->>>数据：" + list.size());
+
+                // 生成随机数轮询，即使某个task失败，也可以让别的任务继续执行
+                Random random = new Random();
+                int pos = random.nextInt(list.size());
+                MyRecord myRecord = list.get(pos);
+                uploadOSSAndRecord(owner, myRecord);
+
+            }
+        });
+        updateRecordData();
+    }
+
+    // 可以人为刷新数据，用于失败后依旧通知刷新
+    private void updateData() {
+        handler.removeMessages(CMainActivity.TASK);
+        handler.sendEmptyMessageDelayed(CMainActivity.TASK, 3000L);
+    }
+
+    public void updateTaskData() {
+        mLiveData.addSource(faceRepository.observeAll(), new Observer<List<DbOption>>() {
+            @Override
+            public void onChanged(@Nullable List<DbOption> list) {
+                mLiveData.setValue(list);
+            }
+        });
+    }
+
+    private void updateRecordData() {
+        handler.removeMessages(CMainActivity.UPLOAD);
+        handler.sendEmptyMessageDelayed(CMainActivity.UPLOAD, 3000L);
+    }
+
+    public void updateUploadData() {
+        mLiveData.addSource(faceRepository.observeRecordAll(), new Observer<List<MyRecord>>() {
+            @Override
+            public void onChanged(@Nullable List<MyRecord> myRecords) {
+                mLiveRecordData.setValue(myRecords);
+            }
+        });
+    }
+
 
     //--------摄像头
     public boolean isCameraEnable() {
@@ -210,34 +302,47 @@ public class FaceViewModel extends ViewModel {
     }
 
     public void asyncPutImage(String objectName, String localFile) {
+        System.out.println("------------<><><>1");
         if (mOss == null) {
+            System.out.println("------------<><><>2");
+            updateRecordData();
             return;
         }
 
         if (objectName.equals("")) {
+            System.out.println("------------<><><>3");
             return;
         }
 
         File file = new File(localFile);
+        System.out.println("------------<><><>4");
         if (!file.exists()) {
+            System.out.println("------------<><><>5");
+            updateRecordData();
             return;
         }
         if (mOssConfig == null) {
+            System.out.println("------------<><><>6");
+            updateRecordData();
             return;
         }
-
-        System.out.println("--->>>这里执行了");
-
-        PutObjectRequest put = new PutObjectRequest(mOssConfig.getBucketName(), objectName, localFile);
+        System.out.println("------------<><><>7");
+        System.out.println("--->>>图片上传");
+        PutObjectRequest put = new PutObjectRequest(mOssConfig.getBucketName(), mOssConfig.getObjectPath() + objectName, localFile);
         put.setCRC64(OSSRequest.CRC64Config.YES);
         OSSAsyncTask task = mOss.asyncPutObject(put, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
             @Override
             public void onSuccess(PutObjectRequest request, PutObjectResult result) {
                 System.out.println("-----图片上传成功！");
+                if (myOssListener != null) {
+                    currentSuccess++;
+                    myOssListener.uploadSuccess();
+                }
             }
 
             @Override
             public void onFailure(PutObjectRequest request, ClientException clientException, ServiceException serviceException) {
+                updateRecordData();
                 String info = "";
                 // 请求异常
                 if (clientException != null) {
@@ -311,8 +416,117 @@ public class FaceViewModel extends ViewModel {
                 }).start();
     }
 
+    //---------组合事务
+    private void downloadAndRegister(String userKey, String userName, String picUrl, DbOption data) {
+        File file = new File(EBQValue.REGISTER_PATH);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        if (TextUtils.isEmpty(picUrl)) {
+            updateData();
+            return;
+        }
+
+        FileDownloader.getImpl().create(picUrl)
+                .setPath(EBQValue.REGISTER_PATH + userKey + ".jpg")
+                .setListener(new FileDownloadLargeFileListener() {
+                    @Override
+                    protected void pending(BaseDownloadTask task, long soFarBytes, long totalBytes) {
+
+                    }
+
+                    @Override
+                    protected void progress(BaseDownloadTask task, long soFarBytes, long totalBytes) {
+
+                    }
+
+                    @Override
+                    protected void paused(BaseDownloadTask task, long soFarBytes, long totalBytes) {
+
+                    }
+
+                    @Override
+                    protected void completed(BaseDownloadTask task) {
+                        // 图片下载完毕
+                        System.out.println("----------图片下载成功："+EBQValue.REGISTER_PATH + userKey + ".jpg");
+                        registerFace(userKey, userName, data);
+                    }
+
+                    @Override
+                    protected void error(BaseDownloadTask task, Throwable e) {
+                        // 出错了随机轮询另一个任务
+                        updateData();
+                    }
+
+                    @Override
+                    protected void warn(BaseDownloadTask task) {
+
+                    }
+                }).start();
+    }
+
+
+    private interface MyOssListener {
+        void uploadSuccess();
+    }
+
+    private int totalCount = 0;// 记录任务
+    private int currentSuccess = 0;// 成功个数
+
+    private MyOssListener myOssListener;
+
+    private void uploadOSSAndRecord(LifecycleOwner owner, MyRecord myRecord) {
+        totalCount = 0;// 保险起见，重置0
+        currentSuccess = 0;
+
+        if (myRecord.isHikStatus()) {
+            ++totalCount;
+        }
+        if (myRecord.isFaceStatus()) {
+            ++totalCount;
+        }
+
+        if (totalCount == 0) {// 两张图片都出错了，理论上极低概率~但是依旧需要上传
+
+            return;
+        }
+
+        myOssListener = new MyOssListener() {
+            @Override
+            public void uploadSuccess() {
+                System.out.println("-----------total=" + totalCount);
+                System.out.println("-----------currentSuccess=" + currentSuccess);
+                if (totalCount == currentSuccess) {// 图上传完成
+
+                    String hikPath = "";
+                    String facePath = "";
+                    if (myRecord.isHikStatus()) {
+                        hikPath = "https://" + mOssConfig.getBucketName() + ".oss-cn-hangzhou.aliyuncs.com/" + mOssConfig.getObjectPath() + myRecord.getFileName() + "_hik.jpg";
+                    }
+                    if (myRecord.isFaceStatus()) {
+                        facePath = "https://" + mOssConfig.getBucketName() + ".oss-cn-hangzhou.aliyuncs.com/" + mOssConfig.getObjectPath() + myRecord.getFileName() + "_face.jpg";
+                    }
+
+                    RemoteRecord recorde = new RemoteRecord(myRecord.getUser_key(),
+                            facePath, hikPath, myRecord.getCreate_time());
+                    syncRecord(owner, recorde, myRecord);
+                }
+            }
+        };
+
+        if (myRecord.isHikStatus()) {
+            System.out.println("------------<><><>海康");
+            asyncPutImage(myRecord.getFileName()+ "_hik.jpg", EBQValue.HIK_PATH + myRecord.getFileName() + "_hik.jpg");
+        }
+        if (myRecord.isFaceStatus()) {
+            System.out.println("------------<><><>人脸识别路径" + EBQValue.CAPTURE_PATH + myRecord.getFileName());
+            asyncPutImage(myRecord.getFileName()+ "_face.jpg", EBQValue.CAPTURE_PATH + myRecord.getFileName() + "_face.jpg");
+        }
+    }
+
     //----------------人脸注册
-    private void registerFace(String userKey, String userName) {
+    private void registerFace(String userKey, String userName, DbOption data) {
         faceRepository.getAppExecutors().diskIO().execute(() -> {
             File picPath = new File(EBQValue.REGISTER_PATH, userKey + ".jpg");
             Bitmap bitmap = BitmapFactory.decodeFile(picPath.getAbsolutePath());
@@ -362,7 +576,8 @@ public class FaceViewModel extends ViewModel {
                         if (facePicDir != null) {
                             File savePicPath = new File(facePicDir, userKey + ".jpg");
                             if (FileUtils.saveFile(savePicPath, bitmap)) {
-                                System.out.println("--->>>人脸注册成功->保存成功");
+                                System.out.println("--->>>人脸注册成功->保存成功:"+userKey);
+                                faceRepository.delete(data);
                             }
                         }
 
@@ -383,114 +598,13 @@ public class FaceViewModel extends ViewModel {
                 bitmap.recycle();
             }
 
+
+            updateData();
         });
     }
 
-
-    //--------------逻辑事务
-    public void batchUpdate() {
-        // 每次启动设备，也许会收到后台通知的操作
-        ACache cache = faceRepository.getCache();
-        DbUserOption exData = (DbUserOption) cache.getAsObject("task_update");
-        if (exData == null) {
-            // 空数据，没有收到通知，无需处理
-            return;
-        }
-
-        if (exData.getAdd() != null && exData.getAdd().size() > 0) {
-            // 数据库新增数据,需要注册人脸
-            Disposable disposable = Flowable.fromIterable(exData.getAdd())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.io())
-                    .subscribe(new Consumer<DbOption>() {
-                        @Override
-                        public void accept(DbOption dbOption) throws Exception {
-                            downloadAndRegister(dbOption.getUser_key(), dbOption.getReal_name(), dbOption.getFace_image(), false);
-                        }
-                    });
-        }
-
-        if (exData.getUpdate() != null && exData.getUpdate().size() > 0) {
-            // 人脸库需要更新，先删除->再添加
-            Disposable disposable = Flowable.fromIterable(exData.getAdd())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.io())
-                    .subscribe(new Consumer<DbOption>() {
-                        @Override
-                        public void accept(DbOption dbOption) throws Exception {
-                            downloadAndRegister(dbOption.getUser_key(), dbOption.getReal_name(), dbOption.getFace_image(), true);
-                        }
-                    });
-        }
-
-        if (exData.getDelete() != null && exData.getDelete().size() > 0) {
-            // 人脸库需要删除
-            Disposable disposable = Flowable.fromIterable(exData.getAdd())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.io())
-                    .subscribe(new Consumer<DbOption>() {
-                        @Override
-                        public void accept(DbOption dbOption) throws Exception {
-                            delFaceFeature(dbOption.getUser_key(), dbOption.getReal_name());
-                        }
-                    });
-        }
-
-        cache.remove("task_update");
-    }
-
-    //---------组合事务
-    private void downloadAndRegister(String userKey, String userName, String picUrl, Boolean needDel) {
-        if (needDel) {
-            delFaceFeature(userKey, userName);
-        }
-
-        File file = new File(EBQValue.REGISTER_PATH);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-
-        if (TextUtils.isEmpty(picUrl)) {
-            return;
-        }
-
-        FileDownloader.getImpl().create(picUrl)
-                .setPath(EBQValue.REGISTER_PATH + userKey + ".jpg")
-                .setListener(new FileDownloadLargeFileListener() {
-                    @Override
-                    protected void pending(BaseDownloadTask task, long soFarBytes, long totalBytes) {
-
-                    }
-
-                    @Override
-                    protected void progress(BaseDownloadTask task, long soFarBytes, long totalBytes) {
-
-                    }
-
-                    @Override
-                    protected void paused(BaseDownloadTask task, long soFarBytes, long totalBytes) {
-
-                    }
-
-                    @Override
-                    protected void completed(BaseDownloadTask task) {
-                        // 图片下载完毕
-                        registerFace(userKey, userName);
-                    }
-
-                    @Override
-                    protected void error(BaseDownloadTask task, Throwable e) {
-
-                    }
-
-                    @Override
-                    protected void warn(BaseDownloadTask task) {
-
-                    }
-                }).start();
-    }
-
-    private void delFaceFeature(String userKey, String name) {
+    // 人脸库中移除
+    private void delFaceFeature(String userKey, String name, DbOption data) {
         faceRepository.getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -501,8 +615,82 @@ public class FaceViewModel extends ViewModel {
                         if (feature.getUserId().equals(userKey)) {// 需要删除
                             List<Feature> delList = new ArrayList<>();
                             delList.add(feature);
-                            UserInfoManager.getInstance().batchRemoveFeatureInfo(delList, new UserInfoManager.UserInfoListener(), 1);
+
+                            FaceApi.getInstance().featureDelete(feature);
+                            FaceSDKManager.getInstance().getFeatureLRUCache().clear();
                         }
+                    }
+                }
+
+
+                faceRepository.delete(data);
+            }
+        });
+    }
+
+    // 上传记录
+    public void syncRecord(LifecycleOwner owner, RemoteRecord remoteRecord, MyRecord myRecord) {
+        System.out.println("------这里执行了么？！！！！！");
+        List<RemoteRecord> list = new ArrayList<>();
+        list.add(remoteRecord);
+        Remote remote = new Remote(list);
+//        list.add(remoteRecord);
+        faceRepository.syncRecord(remote).observe(owner, new Observer<Resource<BaseResponse<Object>>>() {
+            @Override
+            public void onChanged(@Nullable Resource<BaseResponse<Object>> data) {
+                if (data != null) {
+                    switch (data.status) {
+                        case SUCCESS:
+                            System.out.println("------这里执行了么？成功了吧~");
+                            faceRepository.delete(myRecord);
+                            break;
+                        case ERROR:
+                            break;
+                        case LOADING:
+                            break;
+                    }
+                }
+            }
+        });
+    }
+
+    // 更新
+    public void update(LifecycleOwner owner) {
+        faceRepository.requestData().observe(owner, new Observer<Resource<BaseResponse<ExData>>>() {
+            @Override
+            public void onChanged(@Nullable Resource<BaseResponse<ExData>> data) {
+                if (data != null) {
+                    switch (data.status) {
+                        case LOADING:
+                            break;
+                        case ERROR:
+                            break;
+                        case SUCCESS:
+                            if (data.data != null
+                                    && data.data.getData() != null
+                                    && data.data.getData().getUsers() != null) {
+
+                                DbUserOption mData = data.data.getData().getUsers();
+                                List<DbOption> list = new ArrayList<>();
+
+                                if (mData.getAdd() != null) {
+
+                                    for (DbOption item : mData.getAdd()) {
+                                        DbOption mDbOption = new DbOption(item.getUser_key(), item.getReal_name(), item.getFace_image(), 0);
+                                        list.add(mDbOption);
+                                    }
+
+                                }
+
+                                if (mData.getDelete() != null) {
+                                    for (DbOption item : mData.getDelete()) {
+                                        DbOption mDbOption = new DbOption(item.getUser_key(), item.getReal_name(), "", 1);
+                                        list.add(mDbOption);
+                                    }
+                                }
+                                insert(list);
+                            }
+                            break;
                     }
                 }
             }

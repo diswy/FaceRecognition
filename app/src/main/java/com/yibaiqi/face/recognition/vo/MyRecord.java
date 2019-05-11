@@ -16,20 +16,20 @@ public class MyRecord {
     private String create_time;
     @ColumnInfo(name = "user_key")
     private String user_key;
-    @ColumnInfo(name = "face_photo")
-    private String face_photo;
-    @ColumnInfo(name = "body_photo")
-    private String body_photo;
-    @ColumnInfo(name = "isSync")
-    private boolean isSync;// 是否网络同步过
+    @ColumnInfo(name = "file_name")
+    private String fileName;
+    @ColumnInfo(name = "hikStatus")
+    private boolean hikStatus;
+    @ColumnInfo(name = "faceStatus")
+    private boolean faceStatus;
 
-
-    public MyRecord(@NonNull String create_time, String user_key, String face_photo, String body_photo, boolean isSync) {
+    public MyRecord(@NonNull String create_time, String user_key, String fileName,
+                    boolean hikStatus, boolean faceStatus) {
         this.create_time = create_time;
         this.user_key = user_key;
-        this.face_photo = face_photo;
-        this.body_photo = body_photo;
-        this.isSync = isSync;
+        this.fileName = fileName;
+        this.hikStatus = hikStatus;
+        this.faceStatus = faceStatus;
     }
 
     @NonNull
@@ -49,27 +49,29 @@ public class MyRecord {
         this.user_key = user_key;
     }
 
-    public String getFace_photo() {
-        return face_photo;
+    public boolean isHikStatus() {
+        return hikStatus;
     }
 
-    public void setFace_photo(String face_photo) {
-        this.face_photo = face_photo;
+    public void setHikStatus(boolean hikStatus) {
+        this.hikStatus = hikStatus;
     }
 
-    public String getBody_photo() {
-        return body_photo;
+    public boolean isFaceStatus() {
+        return faceStatus;
     }
 
-    public void setBody_photo(String body_photo) {
-        this.body_photo = body_photo;
+    public void setFaceStatus(boolean faceStatus) {
+        this.faceStatus = faceStatus;
     }
 
-    public boolean isSync() {
-        return isSync;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setSync(boolean sync) {
-        isSync = sync;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
+
+
 }
