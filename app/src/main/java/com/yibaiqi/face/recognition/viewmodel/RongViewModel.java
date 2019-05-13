@@ -15,11 +15,6 @@ import io.rong.message.TextMessage;
 public class RongViewModel extends ViewModel {
 
     private MutableLiveData<Boolean> connectStatus = new MutableLiveData<>();
-    private MutableLiveData<Message> rongMessage = new MutableLiveData<>();
-
-    public MutableLiveData<Message> getRongMessage() {
-        return rongMessage;
-    }
 
     public MutableLiveData<Boolean> getConnectStatus() {
         return connectStatus;
@@ -38,7 +33,6 @@ public class RongViewModel extends ViewModel {
              */
             @Override
             public void onTokenIncorrect() {
-                System.out.println("--->>>>>>onTokenIncorrect");
 
             }
 
@@ -59,26 +53,10 @@ public class RongViewModel extends ViewModel {
             @Override
             public void onError(RongIMClient.ErrorCode errorCode) {
                 System.out.println("--->>>>>>onError:" + errorCode);
-
             }
         });
     }
 
-    /**
-     * 融云消息监听
-     * 如果Activity被释放回收无法收到回调事件
-     *
-     * @param message 收到的消息实体
-     * @param left    剩余未拉取消息数目
-     */
-//    public void registerMessage() {
-//        RongIMClient.setOnReceiveMessageListener((message, left) -> {
-//            rongMessage.setValue(message);
-//            System.out.println("--->>>>>>消息：" + message);
-//            System.out.println("--->>>>>>未拉取：" + left);
-//            return false;
-//        });
-//    }
 
     public void sendTestMsg() {
         TextMessage myTextMessage = TextMessage.obtain("我是消息内容");

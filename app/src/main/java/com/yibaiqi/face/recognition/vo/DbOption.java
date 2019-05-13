@@ -12,6 +12,8 @@ import android.support.annotation.NonNull;
 public class DbOption {
     @PrimaryKey
     @NonNull
+    private String data_key;
+    @ColumnInfo(name = "user_key")
     private String user_key;
     @ColumnInfo(name = "real_name")
     private String real_name;
@@ -20,11 +22,21 @@ public class DbOption {
     @ColumnInfo(name = "status")
     private int status;// 0:add  1：delete
 
-    public DbOption(@NonNull String user_key, String real_name, String face_image, int status) {
+    public DbOption(@NonNull String data_key, String user_key, String real_name, String face_image, int status) {
         this.user_key = user_key;
+        this.data_key = data_key;
         this.real_name = real_name;
         this.face_image = face_image;
         this.status = status;
+    }
+
+    @NonNull
+    public String getData_key() {
+        return data_key;
+    }
+
+    public void setData_key(@NonNull String data_key) {
+        this.data_key = data_key;
     }
 
     public int getStatus() {

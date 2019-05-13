@@ -120,12 +120,12 @@ public class FaceSDKManager {
         faceEnvironment.setMinFaceSize(50);
         faceEnvironment.setMaxFaceSize(-1);
         faceEnvironment.setDetectInterval(200);
-        faceEnvironment.setTrackInterval(500);
+        faceEnvironment.setTrackInterval(1000);
         faceEnvironment.setNoFaceSize(0.5f);
         faceEnvironment.setPitch(30);
         faceEnvironment.setYaw(30);
         faceEnvironment.setRoll(30);
-        faceEnvironment.setCheckBlur(false);
+        faceEnvironment.setCheckBlur(true);
         faceEnvironment.setOcclusion(true);
         faceEnvironment.setIllumination(true);
         faceEnvironment.setDetectMethodType(FaceDetect.DetectType.DETECT_VIS);

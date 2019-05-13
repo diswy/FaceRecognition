@@ -17,6 +17,18 @@ import java.io.InputStream;
 
 public class FileUtil {
 
+    public static boolean delFile(File file) {
+        boolean b = false;
+        try {
+            if (file.exists()) {
+                b = file.delete();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return b;
+    }
+
     // 创建一个临时目录，用于复制临时文件，如assets目录下的离线资源文件
     public static String createTmpDir(Context context) {
         String sampleDir = "baiduTTS";

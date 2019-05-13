@@ -25,6 +25,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Flowable;
+
 /**
  * Created by @author xiaofu on 2019/4/23.
  */
@@ -75,6 +77,13 @@ public class FaceRepository {
                 return service.bindDevice(mCache.getAsString("token"), devId);
             }
         }.asLiveData();
+    }
+
+    /**
+     * 绑定设备
+     */
+    public Flowable<String> bindDevice2(String devId) {
+        return service.bindDevice2(mCache.getAsString("token"), devId);
     }
 
     /**

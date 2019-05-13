@@ -27,6 +27,7 @@ import com.baidu.idl.sample.view.BinocularView;
 import com.baidu.idl.sample.view.CircleImageView;
 import com.baidu.idl.sample.view.CirclePercentView;
 import com.baidu.idl.sample.view.MonocularView;
+import com.seeku.android.Manager;
 
 import static com.baidu.idl.sample.common.GlobalSet.TYPE_PREVIEW_ANGLE;
 import static com.baidu.idl.sample.common.GlobalSet.TYPE_PREVIEW_TWO_HUNDERED_SEVENTY_ANGLE;
@@ -208,6 +209,9 @@ public class PassActivity extends BaseActivity implements ILivenessCallBack, Vie
                             mBitmap = bitmap;
                             mUserName = feature.getUserName();
                         }
+
+                        new Manager(getApplicationContext()).setGateIO(true);
+
                     } else {
                         mSimilariryTv.setText("未匹配到相似人脸");
                         mNickNameTv.setText("陌生访客");

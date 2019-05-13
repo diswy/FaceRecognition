@@ -11,6 +11,7 @@ import com.yibaiqi.face.recognition.vo.RemoteRecord;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -28,6 +29,9 @@ public interface ApiService {
 
     @POST("devices/FaceDevices/activation_success")
     LiveData<ApiResponse<BaseResponse<String>>> bindDevice(@Header("token") String token, @Query("device_fingerprint") String key);
+
+    @POST("devices/FaceDevices/activation_success")
+    Flowable<String> bindDevice2(@Header("token") String token, @Query("device_fingerprint") String key);
 
     @POST("devices/BrushFaceLog/add")
     LiveData<ApiResponse<BaseResponse<Object>>> addRecord(@Header("token") String token, @Body Remote remote);

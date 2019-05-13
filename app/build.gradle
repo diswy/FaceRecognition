@@ -5,7 +5,7 @@ android {
     defaultConfig {
         applicationId "com.yibaiqi.face.recognition"
         minSdkVersion 21
-        targetSdkVersion 23
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -89,7 +89,7 @@ dependencies {
     debugImplementation 'com.readystatesoftware.chuck:library:1.1.0'
     releaseImplementation 'com.readystatesoftware.chuck:library-no-op:1.1.0'
     implementation files('libs/com.baidu.tts_2.3.2.20180713_6101c2a.jar')
-    implementation files('libs/seekuapi1.4.jar')
+    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
     // 融云IM
     implementation project(':IMLib')
     api project(':hikVideo')

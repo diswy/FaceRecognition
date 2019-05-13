@@ -13,12 +13,12 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.baidu.idl.facesdk.model.Feature;
+import com.baidu.idl.facesdk.utils.PreferencesUtil;
 import com.baidu.idl.sample.callback.ILivenessCallBack;
 import com.baidu.idl.sample.model.LivenessModel;
 import com.baidu.idl.sample.utils.DensityUtil;
@@ -49,28 +49,27 @@ import com.yibaiqi.face.recognition.tools.listener.UiMessageListener;
 import com.yibaiqi.face.recognition.ui.base.BaseActivity;
 import com.yibaiqi.face.recognition.viewmodel.FaceViewModel;
 import com.yibaiqi.face.recognition.viewmodel.RongViewModel;
-import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.MyRecord;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import io.rong.imlib.RongIMClient;
 
+import static com.baidu.idl.sample.common.GlobalSet.TYPE_PREVIEW_ANGLE;
+import static com.baidu.idl.sample.common.GlobalSet.TYPE_PREVIEW_ZERO_ANGLE;
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.INIT_SUCCESS;
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.PRINT;
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.UI_CHANGE_INPUT_TEXT_SELECTION;
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.UI_CHANGE_SYNTHES_TEXT_SELECTION;
 
 public class CMainActivity extends BaseActivity implements ILivenessCallBack, SurfaceHolder.Callback {
-    private static final int CLOSE_DOOR = 728;
     public static final int TASK = 999;
     public static final int UPLOAD = 888;
+    public static final int REFRESH = 777;
+
     private FrameLayout mCameraView;
     private MonocularView mMonocularView;
     private ImageView ivCapture;
@@ -84,14 +83,14 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case CLOSE_DOOR:
-                    closeDoor();
-                    break;
                 case TASK:
                     faceModel.updateTaskData();
                     break;
                 case UPLOAD:
                     faceModel.updateUploadData();
+                    break;
+                case REFRESH:
+                    faceModel.update(CMainActivity.this);
                     break;
             }
         }
@@ -104,6 +103,9 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
 
     @Override
     public void initView() {
+        // 固定设备，闸机头默认需要设置0度
+        PreferencesUtil.putInt(TYPE_PREVIEW_ANGLE, TYPE_PREVIEW_ZERO_ANGLE);
+
         mCameraView = findViewById(R.id.layout_camera);
         ivCapture = findViewById(R.id.iv_capture);
         ivDb = findViewById(R.id.iv_db);
@@ -137,16 +139,17 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
 
 
         // 处理人脸库收到的通知
-//        faceModel.batchUpdate();
-//        faceModel.registerFace("123456","zhanglifu",EBQValue.REGISTER_PATH,"zhanglifu.jpg");
-//        faceModel.downloadPic("https://hbimg.huabanimg.com/c01dc820dae1cc1d971fb1c4ccd2c077a827a1396d9cd-CpTutl_fw658");
-
         faceModel.observerData(this);
-        faceModel.observerRecordData(this);
+
+        faceModel.observerRecordData(this, this);
+
+
+
 
         findViewById(R.id.test_btn_speak).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                openDoor();
 //                say("晋宝宝呀，是个大坏蛋哟，哈哈哈。你说是不是");
 //                faceModel.syncRecord(CMainActivity.this, null);
             }
@@ -155,45 +158,34 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         findViewById(R.id.test_btn_insert).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<DbOption> list = new ArrayList<>();
-                list.add(new DbOption("xiaofu", "zlf", "", 0));
-                faceModel.insert(list);
+                closeDoor();
+//                List<DbOption> list = new ArrayList<>();
+//                faceModel.insert(list);
             }
         });
 
         findViewById(R.id.test_btn_del).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                faceModel.delete(new DbOption("xiaofu", "zlf", "", 1));
+
             }
         });
 
-        //--------融云
+        //-------------------融云
         RongViewModel serverViewModel = ViewModelProviders.of(this)
                 .get(RongViewModel.class);
         serverViewModel.getConnectStatus().observe(this, isConnect -> {
-            System.out.println("------------>>>>>getConnectStatus:" + isConnect);
-        });
-        serverViewModel.getRongMessage().observe(this, msg -> {
-            System.out.println("------------>>>>>getRongMessage:" + msg.toString());
-            Toast.makeText(this, msg.toString(), Toast.LENGTH_LONG).show();
+            System.out.println(">>>>>>融云连接：状态" + isConnect);
         });
 
-        //user1
         serverViewModel.connect(faceModel.getRongToken());
-        //user2
-//        serverViewModel.connect("p4o/K1eHyS5DDWf3r16nCHQQxjv13DQkqZKYBm2cHzMC9g+G9YHutgyqJu0bBlWGGBj7gwF73fg=");
-
-//        serverViewModel.registerMessage();
 
         RongIMClient.setOnReceiveMessageListener((message, left) -> {
-//            rongMessage.setValue(message);
-            System.out.println("------------>>>>>消息:" + message);
-            System.out.println("------------>>>>>没拉去:" + left);
-            faceModel.update(CMainActivity.this);
+            System.out.println(">>>>>>融云：多次执行的那个：消息=" + message);
+            System.out.println(">>>>>>融云：多次执行的那个：未拉取=" + left);
+            mHandler.sendEmptyMessage(REFRESH);
             return false;
         });
-
     }
 
     @Override
@@ -231,6 +223,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(newWidth, newHeight);
         mMonocularView = new MonocularView(mContext);
         mMonocularView.setLivenessCallBack(this);
+        mCameraView.removeAllViews();
         mCameraView.addView(mMonocularView, layoutParams);
     }
 
@@ -267,7 +260,6 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                 if (canSavePic()) {
                     say(feature.getUserName() + "验证成功");
                     openDoor();
-                    mHandler.sendEmptyMessageDelayed(CLOSE_DOOR, 3000L);
                     captureVideo(feature.getUserId(), myBitmap);
                 }
             } else {
@@ -556,7 +548,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
     }
 
     private void closeDoor() {
-        new Manager(getApplicationContext()).setGateIO(false);
+//        new Manager(getApplicationContext()).setGateIO(false);
     }
 
     //-------------语音合成
