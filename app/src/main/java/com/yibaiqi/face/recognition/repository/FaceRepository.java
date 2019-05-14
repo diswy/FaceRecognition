@@ -26,6 +26,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Flowable;
+import io.reactivex.Scheduler;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by @author xiaofu on 2019/4/23.
@@ -114,51 +118,112 @@ public class FaceRepository {
 
     //-------------------数据库操作相关
     public void insert(List<DbOption> list) {
-        appExecutors.diskIO().execute(() -> {
-            if (list != null) {
-                userDao.insert(list);
-            }
-        });
+        Disposable disposable = Flowable.just(list)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<List<DbOption>>() {
+                    @Override
+                    public void accept(List<DbOption> list) throws Exception {
+                        if (list != null) {
+                            userDao.insert(list);
+                        }
+                    }
+                });
+
+//        appExecutors.diskIO().execute(() -> {
+//            if (list != null) {
+//                userDao.insert(list);
+//            }
+//        });
     }
 
     public void update(List<DbOption> list) {
-        appExecutors.diskIO().execute(() -> {
-            if (list != null) {
-                userDao.update(list);
-            }
-        });
+        Disposable disposable = Flowable.just(list)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<List<DbOption>>() {
+                    @Override
+                    public void accept(List<DbOption> list) throws Exception {
+                        if (list != null) {
+                            userDao.update(list);
+                        }
+                    }
+                });
+//        appExecutors.diskIO().execute(() -> {
+//            if (list != null) {
+//                userDao.update(list);
+//            }
+//        });
     }
 
     public void delete(List<DbOption> list) {
-        appExecutors.diskIO().execute(() -> {
-            if (list != null) {
-                userDao.delete(list);
-            }
-        });
+        Disposable disposable = Flowable.just(list)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<List<DbOption>>() {
+                    @Override
+                    public void accept(List<DbOption> list) throws Exception {
+                        if (list != null) {
+                            userDao.delete(list);
+                        }
+                    }
+                });
+//        appExecutors.diskIO().execute(() -> {
+//            if (list != null) {
+//                userDao.delete(list);
+//            }
+//        });
     }
 
     public void delete(DbOption data) {
-        appExecutors.diskIO().execute(() -> {
-            if (data != null) {
-                userDao.delete(data);
-            }
-        });
+        Disposable disposable = Flowable.just(data)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<DbOption>() {
+                    @Override
+                    public void accept(DbOption dbOption) throws Exception {
+                        userDao.delete(data);
+                    }
+                });
+//        appExecutors.diskIO().execute(() -> {
+//            if (data != null) {
+//                userDao.delete(data);
+//            }
+//        });
     }
 
     public void insert(MyRecord data) {
-        appExecutors.diskIO().execute(() -> {
-            if (data != null) {
-                userDao.insertRecord(data);
-            }
-        });
+        Disposable disposable = Flowable.just(data)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<MyRecord>() {
+                    @Override
+                    public void accept(MyRecord myRecord) throws Exception {
+                        userDao.insertRecord(data);
+                    }
+                });
+//        appExecutors.diskIO().execute(() -> {
+//            if (data != null) {
+//                userDao.insertRecord(data);
+//            }
+//        });
     }
 
     public void delete(MyRecord data) {
-        appExecutors.diskIO().execute(() -> {
-            if (data != null) {
-                userDao.deleteRecord(data);
-            }
-        });
+        Disposable disposable = Flowable.just(data)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<MyRecord>() {
+                    @Override
+                    public void accept(MyRecord myRecord) throws Exception {
+                        userDao.deleteRecord(data);
+                    }
+                });
+//        appExecutors.diskIO().execute(() -> {
+//            if (data != null) {
+//                userDao.deleteRecord(data);
+//            }
+//        });
     }
 
     public LiveData<List<MyRecord>> observeRecordAll() {

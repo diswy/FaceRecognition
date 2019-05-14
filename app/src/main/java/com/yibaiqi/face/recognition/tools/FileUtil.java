@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -102,6 +103,7 @@ public class FileUtil {
 
             return mFile;
         } catch (IOException e) {
+            Log.w("ebq", "记录：图片保存失败：理由：" + e.getMessage());
             e.printStackTrace();
         }
         return null;

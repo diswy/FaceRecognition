@@ -9,14 +9,12 @@
 
 	<FrameLayout
 		android:id="@+id/layout_camera"
-		android:layout_width="0dp"
-		android:layout_height="300dp"
-		android:layout_marginStart="32dp"
-		android:layout_marginTop="32dp"
-		android:layout_marginEnd="32dp"
+		android:layout_width="520px"
+		android:layout_height="420px"
+		android:layout_marginTop="60px"
 		android:background="@drawable/border_main"
 		android:gravity="center"
-		android:padding="20dp"
+		android:padding="10px"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />

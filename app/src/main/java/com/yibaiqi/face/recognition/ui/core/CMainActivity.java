@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.baidu.idl.facesdk.model.Feature;
+import com.baidu.idl.facesdk.utils.PreferencesUtil;
 import com.baidu.idl.sample.callback.ILivenessCallBack;
 import com.baidu.idl.sample.model.LivenessModel;
 import com.baidu.idl.sample.utils.DensityUtil;
@@ -61,6 +62,8 @@ import java.util.Map;
 
 import io.rong.imlib.RongIMClient;
 
+import static com.baidu.idl.sample.common.GlobalSet.TYPE_PREVIEW_ANGLE;
+import static com.baidu.idl.sample.common.GlobalSet.TYPE_PREVIEW_ZERO_ANGLE;
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.INIT_SUCCESS;
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.PRINT;
 
@@ -71,6 +74,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
     public static final int TASK = 999;
     public static final int UPLOAD = 888;
     public static final int REFRESH = 777;
+    public static final int DELAY_UPDATE = 666;
 
     private FrameLayout mCameraView;
     private MonocularView mMonocularView;
@@ -95,6 +99,9 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                     Log.i("ebq", "融云::::收到后端消息，自认为过滤了因此请求网络，更新数据");
                     faceModel.update(CMainActivity.this);
                     break;
+                case DELAY_UPDATE:
+                    faceModel.updateTaskDelay();
+                    break;
             }
         }
     };
@@ -107,7 +114,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
     @Override
     public void initView() {
         // 固定设备，闸机头默认需要设置0度
-//        PreferencesUtil.putInt(TYPE_PREVIEW_ANGLE, TYPE_PREVIEW_ZERO_ANGLE);
+        PreferencesUtil.putInt(TYPE_PREVIEW_ANGLE, TYPE_PREVIEW_ZERO_ANGLE);
 
         mCameraView = findViewById(R.id.layout_camera);
         ivCapture = findViewById(R.id.iv_capture);
@@ -159,14 +166,18 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
             public void onClick(View v) {
                 tempKey = String.valueOf(System.currentTimeMillis());
                 List<DbOption> list = new ArrayList<>();
-                DbOption mData = new DbOption(
-                        tempKey,
-                        "12345678",
-                        "张三",
+
+                for (int i = 0; i < 10; i++) {
+
+                    DbOption mData = new DbOption(
+                            tempKey + i,
+                            "12345678",
+                            "张三",
 //                        "https://yizhixiao.oss-cn-hangzhou.aliyuncs.com/2019-05-09%2022%3A25%3A04fff",
-                        "https://yizhixiao.oss-cn-hangzhou.aliyuncs.com/Face/400.jpg",
-                        0);// 新增用户
-                list.add(mData);
+                            "https://yizhixiao.oss-cn-hangzhou.aliyuncs.com/Face/400.jpg",
+                            0);// 新增用户
+                    list.add(mData);
+                }
                 faceModel.insert(list);
                 Log.i("ebq", "数据更新:来源人工测试新增");
             }
@@ -538,6 +549,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         boolean faceCapture = false;
         String formatTime = TimeFormat.FULL(System.currentTimeMillis());
         String realFileName = formatTime + userKey;// 时间+学生KEY
+        realFileName = realFileName.replace(":","-");
         if (HCNetSDKJNAInstance.getInstance().NET_DVR_CapturePictureBlock(m_iPlayID, EBQValue.HIK_PATH + realFileName + "_hik.jpg", 0)) {
             Log.w("ebq", "记录：海康威视截图成功。图片地址：" + EBQValue.HIK_PATH + realFileName + "_hik.jpg");
             hikvisonCapture = true;
@@ -550,6 +562,8 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
             Log.w("ebq", "记录：人脸识别送检图片地址：" + EBQValue.CAPTURE_PATH + realFileName + "_face.jpg");
             Log.w("ebq", "记录：人脸识别送检图片地址：文件读取地址：" + f.getAbsolutePath());
             faceCapture = true;
+        }else {
+            Log.w("ebq", "记录：送检图片保存失败");
         }
 
         MyRecord record = new MyRecord(formatTime, userKey, realFileName,

@@ -3,6 +3,7 @@ package com.yibaiqi.face.recognition.ui.core;
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -57,6 +58,9 @@ public class SplashActivity extends BaseActivity {
                 .appComponent(App.getInstance().getAppComponent())
                 .build()
                 .inject(this);
+        boolean a = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+        Log.e("ebq", "存储卡可用状态：" + a);
+
 
         ImageView iv = findViewById(R.id.iv_test);
         iv.post(new Runnable() {
@@ -77,6 +81,7 @@ public class SplashActivity extends BaseActivity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 .subscribe(aBoolean -> {
+                    Log.i("ebq", "权限" + aBoolean);
                     if (aBoolean) {
                         initFaceEngine();
                     }
@@ -144,8 +149,10 @@ public class SplashActivity extends BaseActivity {
                     }
                     break;
                 case ERROR:
+                    Log.i("ebq", "失败"+resource.message);
                     break;
                 case LOADING:
+                    Log.i("ebq", "加载中");
                     break;
             }
         });

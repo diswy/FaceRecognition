@@ -40,6 +40,7 @@ import com.baidu.idl.sample.utils.FeatureUtils;
 import com.baidu.idl.sample.utils.FileUtils;
 import com.baidu.idl.sample.utils.ImageUtils;
 import com.baidu.idl.sample.utils.ToastUtils;
+import com.baidu.idl.sample.view.MonocularView;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadLargeFileListener;
 import com.liulishuo.filedownloader.FileDownloader;
@@ -69,12 +70,15 @@ import java.util.Random;
 
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
 
 import static com.baidu.idl.sample.common.GlobalSet.LICENSE_ONLINE;
+import static com.yibaiqi.face.recognition.ui.core.CMainActivity.DELAY_UPDATE;
 
 /**
  * 人脸识别
@@ -86,6 +90,8 @@ public class FaceViewModel extends ViewModel {
     private final App app;
     private MutableLiveData<Boolean> initSuccess = new MutableLiveData<>();
 
+    private MonocularView mMonocularView;
+
     @Inject
     FaceViewModel(FaceRepository faceRepository, App app) {
         this.faceRepository = faceRepository;
@@ -93,6 +99,10 @@ public class FaceViewModel extends ViewModel {
     }
 
     private Handler handler;
+
+    public void initBDView(MonocularView mMonocularView) {
+        this.mMonocularView = mMonocularView;
+    }
 
     public void initHandler(Handler handler) {
         this.handler = handler;
@@ -192,6 +202,8 @@ public class FaceViewModel extends ViewModel {
     }
 
 
+    private List<DbOption> currentList = new ArrayList<>();
+
     public void observerData(LifecycleOwner owner) {
         mLiveData.observe(owner, list -> {
             if (list != null) {
@@ -199,44 +211,54 @@ public class FaceViewModel extends ViewModel {
             }
 
             if (list != null && list.size() > 0) {
-
-                List<DbOption> tempList = new ArrayList<>();
-                for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getStatus() == 1) {
-                        tempList.add(list.get(i));
-                    }
-                }
-
-                if (tempList.size() > 0) {
-                    Log.i("ebq", "数据更新:来源->数据库,需要删除的数据有" + tempList.size() + "条");
-                    Random random = new Random();
-                    int pos = random.nextInt(tempList.size());
-                    DbOption item = tempList.get(pos);
-
-                    delFaceFeature(item.getUser_key(), item.getReal_name(), item);
-                    return;
-                }
-
-                Log.i("ebq", "数据更新:来源->数据库,需要新增的数据：" + list.size() + "条");
-
-                // 生成随机数轮询，即使某个task失败，也可以让别的任务继续执行
-                Random random = new Random();
-                int pos = random.nextInt(list.size());
-                DbOption item = list.get(pos);
-                // 理论上先执行完所有的删除任务才会执行新增，保险起见就先这样留着吧
-                switch (item.getStatus()) {
-                    case 0:// 新增
-                        downloadAndRegister(item.getUser_key(), item.getReal_name(), item.getFace_image(), item);
-                        break;
-                    case 1:// 删除
-                        delFaceFeature(item.getUser_key(), item.getReal_name(), item);
-                        break;
-                }
-
+                currentList.clear();
+                currentList.addAll(list);
+                handler.removeMessages(DELAY_UPDATE);
+                handler.sendEmptyMessageDelayed(DELAY_UPDATE, 500);
             }
         });
 
         updateData();// 第一次进来执行一次就好了
+    }
+
+    public void updateTaskDelay() {
+        if (currentList == null || currentList.size() <= 0) {
+            return;
+        }
+
+        List<DbOption> tempList = new ArrayList<>();
+        for (int i = 0; i < currentList.size(); i++) {
+            if (currentList.get(i).getStatus() == 1) {
+                tempList.add(currentList.get(i));
+            }
+        }
+
+        if (tempList.size() > 0) {
+            Log.i("ebq", "数据更新:来源->数据库,需要删除的数据有" + tempList.size() + "条");
+            Random random = new Random();
+            int pos = random.nextInt(tempList.size());
+            DbOption item = tempList.get(pos);
+
+            delFaceFeature(item.getUser_key(), item.getReal_name(), item);
+            return;
+        }
+
+        Log.i("ebq", "数据更新:来源->数据库,需要新增的数据：" + currentList.size() + "条");
+
+        // 生成随机数轮询，即使某个task失败，也可以让别的任务继续执行
+        Random random = new Random();
+        int pos = random.nextInt(currentList.size());
+        DbOption item = currentList.get(pos);
+        // 理论上先执行完所有的删除任务才会执行新增，保险起见就先这样留着吧
+        switch (item.getStatus()) {
+            case 0:// 新增
+                downloadAndRegister(item.getUser_key(), item.getReal_name(), item.getFace_image(), item);
+                break;
+            case 1:// 删除
+                delFaceFeature(item.getUser_key(), item.getReal_name(), item);
+                break;
+        }
+
     }
 
     public void observerRecordData(Context context, LifecycleOwner owner) {
@@ -446,6 +468,14 @@ public class FaceViewModel extends ViewModel {
                     protected void completed(BaseDownloadTask task) {
                         // 图片下载完毕
                         Log.e("ebq", "下载：图片下载成功,图片路径" + EBQValue.REGISTER_PATH + userKey + ".jpg");
+//                        File oldFile = new File(EBQValue.REGISTER_PATH + userKey + ".jpg");
+//                        if (oldFile.exists()) {
+//                            boolean delStatus = oldFile.delete();
+//                            Log.e("ebq", "**事务**：注册到人脸库，不管失败与否，没啥用了删了吧，是否删除成功：" + delStatus);
+//                        }
+//                        // 不管成功与否，反正此任务都需要被删除了不然留着没有用
+//                        faceRepository.delete(data);
+
                         registerFace(userKey, userName, data);
                     }
 
@@ -550,96 +580,117 @@ public class FaceViewModel extends ViewModel {
 
     //----------------人脸注册
     private void registerFace(String userKey, String userName, DbOption data) {
-        faceRepository.getAppExecutors().diskIO().execute(() -> {
-            File picPath = new File(EBQValue.REGISTER_PATH, userKey + ".jpg");
-            Bitmap bitmap = BitmapFactory.decodeFile(picPath.getAbsolutePath());
-            ARGBImg argbImg = FeatureUtils.getImageInfo(bitmap);
-            FaceInfo[] faceInfos = new FaceInfo[1];
 
-            FaceEnvironment environment = new FaceEnvironment();
-            environment.detectInterval = environment.trackInterval = 0;
-            FaceSDKManager.getInstance().getFaceDetector().loadConfig(environment);
+        Disposable disposable = Flowable.just(data)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<DbOption>() {
+                    @Override
+                    public void accept(DbOption dbOption) throws Exception {
+                        File picPath = new File(EBQValue.REGISTER_PATH, userKey + ".jpg");
+                        Bitmap bitmap = BitmapFactory.decodeFile(picPath.getAbsolutePath());
+                        ARGBImg argbImg = FeatureUtils.getImageInfo(bitmap);
+                        FaceInfo[] faceInfos = new FaceInfo[1];
 
-            if (argbImg.width * argbImg.height <= 1000 * 1000) {
-                byte[] bytes = new byte[512];
-                float ret = -1;
-                ret = FaceApi.getInstance().getFeature(argbImg, bytes,
-                        FaceFeature.FeatureType.FEATURE_VIS, environment, faceInfos);
-                FaceInfo faceInfo = faceInfos[0];
-                if (ret == -1) {
-                    //失败
-                } else if (ret == 128) {
-                    Bitmap cropBitmap = null;
-                    String cropImgName = null;
-                    // 人脸抠图
-                    if (faceInfo != null) {
-                        cropBitmap = ImageUtils.noBlackBoundImgCrop(faceInfo.landmarks,
-                                argbImg.height, argbImg.width, argbImg.data);
+                        FaceEnvironment environment = new FaceEnvironment();
+                        environment.detectInterval = environment.trackInterval = 0;
+                        FaceSDKManager.getInstance().getFaceDetector().loadConfig(environment);
 
-                        if (cropBitmap == null) {
-                            cropBitmap = bitmap;
-                        }
-                        cropImgName = "crop_" + userKey + ".jpg";
-                    }
-                    Feature feature = new Feature();
-                    feature.setGroupId("0");
-                    feature.setUserId(userKey);
-                    feature.setFeature(bytes);
-                    feature.setImageName(userKey + ".jpg");
-                    feature.setUserName(userName);
-                    feature.setCropImageName(cropImgName);
+                        if (argbImg.width * argbImg.height <= 1000 * 1000) {
+                            byte[] bytes = new byte[512];
+                            float ret = -1;
+                            ret = FaceApi.getInstance().getFeature(argbImg, bytes,
+                                    FaceFeature.FeatureType.FEATURE_VIS, environment, faceInfos);
+                            FaceInfo faceInfo = faceInfos[0];
+                            if (ret == -1) {
+                                //失败
+                            } else if (ret == 128) {
+                                Bitmap cropBitmap = null;
+                                String cropImgName = null;
+                                // 人脸抠图
+                                if (faceInfo != null) {
+                                    cropBitmap = ImageUtils.noBlackBoundImgCrop(faceInfo.landmarks,
+                                            argbImg.height, argbImg.width, argbImg.data);
 
-                    // 保存数据库
-                    if (FaceApi.getInstance().featureAdd(feature)) {
-                        // 保存图片到新目录中
-                        File facePicDir = FileUtils.getFacePicDirectory();
-                        // 保存抠图图片到新目录中
-                        File faceCropDir = FileUtils.getFaceCropPicDirectory();
+                                    if (cropBitmap == null) {
+                                        cropBitmap = bitmap;
+                                    }
+                                    cropImgName = "crop_" + userKey + ".jpg";
+                                }
+                                Feature feature = new Feature();
+                                feature.setGroupId("0");
+                                feature.setUserId(userKey);
+                                feature.setFeature(bytes);
+                                feature.setImageName(userKey + ".jpg");
+                                feature.setUserName(userName);
+                                feature.setCropImageName(cropImgName);
 
-                        if (facePicDir != null) {
-                            File savePicPath = new File(facePicDir, userKey + ".jpg");
-                            if (FileUtils.saveFile(savePicPath, bitmap)) {
-                                Log.i("ebq", "人脸库：人脸注册成功");
-                            }
-                        }
+                                // 保存数据库
+                                if (FaceApi.getInstance().featureAdd(feature)) {
+                                    // 保存图片到新目录中
+                                    File facePicDir = FileUtils.getFacePicDirectory();
+                                    // 保存抠图图片到新目录中
+                                    File faceCropDir = FileUtils.getFaceCropPicDirectory();
 
-                        if (faceCropDir != null && cropBitmap != null) {
-                            File saveCropPath = new File(faceCropDir, cropImgName);
-                            if (FileUtils.saveFile(saveCropPath, cropBitmap)) {
-                                if (cropBitmap != null && !cropBitmap.isRecycled()) {
-                                    cropBitmap.recycle();
+                                    if (facePicDir != null) {
+                                        File savePicPath = new File(facePicDir, userKey + ".jpg");
+                                        if (FileUtils.saveFile(savePicPath, bitmap)) {
+                                            Log.i("ebq", "人脸库：人脸注册成功");
+                                        }
+                                    }
+
+                                    if (faceCropDir != null && cropBitmap != null) {
+                                        File saveCropPath = new File(faceCropDir, cropImgName);
+                                        if (FileUtils.saveFile(saveCropPath, cropBitmap)) {
+                                            if (cropBitmap != null && !cropBitmap.isRecycled()) {
+                                                cropBitmap.recycle();
+                                            }
+                                        }
+                                    }
                                 }
                             }
+                        } else {
+                            // 失败，图片太大 超过了1000*1000
                         }
+
+                        if (bitmap != null) {
+                            if (!bitmap.isRecycled()) {
+                                bitmap.recycle();
+                            }
+                        }
+
+                        // 还原检测参数配置
+                        environment.detectInterval = 200;
+                        environment.trackInterval = 1000;
+                        FaceSDKManager.getInstance().getFaceDetector().loadConfig(environment);
+
+                        FaceSDKManager.getInstance().getFeatureLRUCache().clear();
+                        int i = FaceSDKManager.getInstance().setFeature();
+
+                        File oldFile = new File(EBQValue.REGISTER_PATH + userKey + ".jpg");
+                        if (oldFile.exists()) {
+                            boolean delStatus = oldFile.delete();
+                            Log.e("ebq", "**事务**：注册到人脸库，不管失败与否，没啥用了删了吧，是否删除成功：" + delStatus);
+                        }
+                        Log.i("ebq", "人脸库：新增之后----当前人脸库数据：" + i + "条");
+                        // 不管成功与否，反正此任务都需要被删除了不然留着没有用
+                        faceRepository.delete(data);
                     }
-                }
-            } else {
-                // 失败，图片太大 超过了1000*1000
-            }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        File oldFile = new File(EBQValue.REGISTER_PATH + userKey + ".jpg");
+                        if (oldFile.exists()) {
+                            boolean delStatus = oldFile.delete();
+                            Log.e("ebq", "**事务**：注册到人脸库，不管失败与否，没啥用了删了吧，是否删除成功：" + delStatus);
+                        }
+                        faceRepository.delete(data);
 
-            if (bitmap != null) {
-                if (!bitmap.isRecycled()) {
-                    bitmap.recycle();
-                }
-            }
+                        Log.e("ebq", "**Rx事务**：发生了错误：" + throwable.getMessage());
 
-            // 还原检测参数配置
-            environment.detectInterval = 200;
-            environment.trackInterval = 1000;
-            FaceSDKManager.getInstance().getFaceDetector().loadConfig(environment);
+                    }
+                });
 
-            FaceSDKManager.getInstance().getFeatureLRUCache().clear();
-            int i = FaceSDKManager.getInstance().setFeature();
-
-            File oldFile = new File(EBQValue.REGISTER_PATH + userKey + ".jpg");
-            if (oldFile.exists()) {
-                boolean delStatus = oldFile.delete();
-                Log.e("ebq", "**事务**：注册到人脸库，不管失败与否，没啥用了删了吧，是否删除成功：" + delStatus);
-            }
-            Log.i("ebq", "人脸库：新增之后----当前人脸库数据：" + i + "条");
-            // 不管成功与否，反正此任务都需要被删除了不然留着没有用
-            faceRepository.delete(data);
-        });
     }
 
     // 人脸库中移除
