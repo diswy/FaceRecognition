@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.yibaiqi.face.recognition.App;
@@ -56,6 +57,15 @@ public class SplashActivity extends BaseActivity {
                 .appComponent(App.getInstance().getAppComponent())
                 .build()
                 .inject(this);
+
+        ImageView iv = findViewById(R.id.iv_test);
+        iv.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("ebq", "图标宽：" + iv.getWidth() + " ;图标高：" + iv.getHeight());
+            }
+        });
+
 
         DisplayMetrics dm = getResources().getDisplayMetrics();
         int width = dm.widthPixels;
@@ -121,7 +131,7 @@ public class SplashActivity extends BaseActivity {
                                             item.getUser_key(),
                                             item.getReal_name(),
                                             "",
-                                            0);
+                                            1);
                                     list.add(mData);
                                     delCount++;
                                 }
@@ -145,7 +155,7 @@ public class SplashActivity extends BaseActivity {
                 faceModel.bindDevice();
                 startActivity(new Intent(SplashActivity.this, CMainActivity.class));
 //                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                this.finish();
+//                this.finish();
             }
         });
     }

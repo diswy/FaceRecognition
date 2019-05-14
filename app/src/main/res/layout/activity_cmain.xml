@@ -1,151 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_main"
-    tools:context=".ui.core.CMainActivity">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@drawable/bg_main"
+	tools:ignore="PxUsage">
 
-    <FrameLayout
-        android:id="@+id/layout_camera"
-        android:layout_width="0dp"
-        android:layout_height="300dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:background="@drawable/border_main"
-        android:gravity="center"
-        android:padding="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+	<FrameLayout
+		android:id="@+id/layout_camera"
+		android:layout_width="0dp"
+		android:layout_height="300dp"
+		android:layout_marginStart="32dp"
+		android:layout_marginTop="32dp"
+		android:layout_marginEnd="32dp"
+		android:background="@drawable/border_main"
+		android:gravity="center"
+		android:padding="20dp"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
 
-    <FrameLayout
-        android:id="@+id/holder_capture"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/border_capture"
-        android:padding="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/holder_db"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_camera">
+	<FrameLayout
+		android:id="@+id/holder_capture"
+		android:layout_width="150dp"
+		android:layout_height="150dp"
+		android:layout_marginTop="32dp"
+		android:background="@drawable/border_capture"
+		android:padding="8dp"
+		app:layout_constraintEnd_toStartOf="@+id/holder_db"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/layout_camera">
 
-        <ImageView
-            android:id="@+id/iv_capture"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+		<ImageView
+			android:id="@+id/iv_capture"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" />
 
-    </FrameLayout>
+	</FrameLayout>
 
-    <FrameLayout
-        android:id="@+id/holder_db"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/border_capture"
-        android:padding="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/holder_capture"
-        app:layout_constraintTop_toBottomOf="@+id/layout_camera">
+	<FrameLayout
+		android:id="@+id/holder_db"
+		android:layout_width="150dp"
+		android:layout_height="150dp"
+		android:layout_marginTop="32dp"
+		android:background="@drawable/border_capture"
+		android:padding="8dp"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintStart_toEndOf="@+id/holder_capture"
+		app:layout_constraintTop_toBottomOf="@+id/layout_camera">
 
-        <ImageView
-            android:id="@+id/iv_db"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+		<ImageView
+			android:id="@+id/iv_db"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" />
 
-    </FrameLayout>
+	</FrameLayout>
 
+	<SurfaceView
+		android:id="@+id/Sur_Player"
+		android:layout_width="300px"
+		android:layout_height="200px"
+		android:layout_marginStart="8dp"
+		android:layout_marginBottom="8dp"
+		android:background="#0000ff00"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintStart_toStartOf="parent" />
 
-    <!--<ImageView-->
-    <!--android:id="@+id/test_iv"-->
-    <!--android:layout_width="200dp"-->
-    <!--android:layout_height="200dp"-->
-    <!--android:background="#fff"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toEndOf="parent" />-->
-
-    <!--<ImageView-->
-    <!--android:id="@+id/test_iv2"-->
-    <!--android:layout_width="200dp"-->
-    <!--android:layout_height="200dp"-->
-    <!--android:layout_marginBottom="100dp"-->
-    <!--android:background="#fff"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent" />-->
-
-    <!--<Button-->
-    <!--android:id="@+id/test_btn"-->
-    <!--android:layout_width="200dp"-->
-    <!--android:layout_height="50dp"-->
-    <!--android:layout_marginBottom="8dp"-->
-    <!--android:text="截图阿瑟东"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent" />-->
+	<Button
+		android:id="@+id/jietu"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="截图！"
+		android:visibility="gone" />
 
 
-    <SurfaceView
-        android:id="@+id/Sur_Player"
-        android:layout_width="1px"
-        android:layout_height="1px"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="#0000ff00"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:visibility="gone"
-        android:text="截图！"
-        android:id="@+id/jietu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+	<ImageView
+		android:id="@+id/btn_setting"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="8dp"
+		android:layout_marginEnd="8dp"
+		android:contentDescription="img"
+		android:src="@drawable/ic_setting"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
 
 
-    <ImageView
-        android:id="@+id/btn_setting"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_setting"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="img" />
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
 
+		<Button
+			android:id="@+id/test_btn_speak"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="说话" />
 
-    <!--<TextView-->
-        <!--android:visibility="gone"-->
-        <!--android:background="@color/black"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
+		<Button
+			android:id="@+id/test_btn_insert"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="插入数据" />
 
+		<Button
+			android:id="@+id/test_btn_del"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="删除一条数据" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <Button
-            android:id="@+id/test_btn_speak"
-            android:text="说话"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/test_btn_insert"
-            android:text="插入数据"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/test_btn_del"
-            android:text="删除一条数据"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
+	</LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

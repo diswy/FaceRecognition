@@ -43,7 +43,6 @@ import com.baidu.idl.sample.utils.ToastUtils;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadLargeFileListener;
 import com.liulishuo.filedownloader.FileDownloader;
-import com.liulishuo.filedownloader.IFileDownloadServiceProxy;
 import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.repository.FaceRepository;
 import com.yibaiqi.face.recognition.tools.ACache;
@@ -71,8 +70,6 @@ import java.util.Random;
 import javax.inject.Inject;
 
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
@@ -144,8 +141,8 @@ public class FaceViewModel extends ViewModel {
                 // 初始化数据库
                 DBManager.getInstance().init(app);
                 // 加载feature 内存
-                int c = FaceSDKManager.getInstance().setFeature();
-                System.out.println("--------------初始化，人脸库数据：" + c);
+                int i = FaceSDKManager.getInstance().setFeature();
+                Log.d("ebq", "人脸库：系统初始化，当前系统人脸库数量为：" + i);
                 GlobalSet.setLicenseOnLineKey(key);
                 GlobalSet.setLicenseStatus(LICENSE_ONLINE);
 
@@ -220,6 +217,8 @@ public class FaceViewModel extends ViewModel {
                     return;
                 }
 
+                Log.i("ebq", "数据更新:来源->数据库,需要新增的数据：" + list.size() + "条");
+
                 // 生成随机数轮询，即使某个task失败，也可以让别的任务继续执行
                 Random random = new Random();
                 int pos = random.nextInt(list.size());
@@ -236,30 +235,30 @@ public class FaceViewModel extends ViewModel {
 
             }
         });
-        updateData();
+
+        updateData();// 第一次进来执行一次就好了
     }
 
     public void observerRecordData(Context context, LifecycleOwner owner) {
         mLiveRecordData.observe(owner, list -> {
             if (list != null) {
-                System.out.println("刷脸记录、轮询任务数：" + list.size());
+                Log.i("ebq", "记录:来源->数据库,待执行任务总共：" + list.size() + "条");
             }
+
             if (list != null && list.size() > 0) {
-                System.out.println("----->>>数据：" + list.size());
                 // 生成随机数轮询，即使某个task失败，也可以让别的任务继续执行
                 Random random = new Random();
                 int pos = random.nextInt(list.size());
+
                 MyRecord myRecord = list.get(pos);
                 uploadOSSAndRecord(context, owner, myRecord);
-
             }
         });
-        updateRecordData();
+        updateRecordData();// 这里应该只执行一次
     }
 
     // 可以人为刷新数据，用于失败后依旧通知刷新
     private void updateData() {
-
         handler.removeMessages(CMainActivity.TASK);
         handler.sendEmptyMessageDelayed(CMainActivity.TASK, 3000L);
     }
@@ -413,9 +412,17 @@ public class FaceViewModel extends ViewModel {
         if (TextUtils.isEmpty(picUrl)) {
             errorCount++;
             faceRepository.delete(data);
-            Log.e("ebq", "错误：发生错误，累计发生错误数量：" + errorCount);
+            Log.e("ebq", "错误：图片地址为空，累计发生错误数量：" + errorCount);
             return;
         }
+
+        File oldFile = new File(EBQValue.REGISTER_PATH + userKey + ".jpg");
+        if (oldFile.exists()) {
+            boolean delStatus = oldFile.delete();
+            Log.e("ebq", "**事务**：存在老旧照片，是否删除：" + delStatus);
+        }
+
+        Log.i("ebq", "图片下载:开始下载图片：用户名：" + userName);
 
         FileDownloader.getImpl().create(picUrl)
                 .setPath(EBQValue.REGISTER_PATH + userKey + ".jpg")
@@ -438,14 +445,16 @@ public class FaceViewModel extends ViewModel {
                     @Override
                     protected void completed(BaseDownloadTask task) {
                         // 图片下载完毕
-                        System.out.println("----------图片下载成功：" + EBQValue.REGISTER_PATH + userKey + ".jpg");
+                        Log.e("ebq", "下载：图片下载成功,图片路径" + EBQValue.REGISTER_PATH + userKey + ".jpg");
                         registerFace(userKey, userName, data);
                     }
 
                     @Override
                     protected void error(BaseDownloadTask task, Throwable e) {
                         // 出错了随机轮询另一个任务
-                        updateData();
+                        errorCount++;
+                        faceRepository.delete(data);
+                        Log.e("ebq", "错误：图片下载错误，累计发生错误数量：" + errorCount);
                     }
 
                     @Override
@@ -469,15 +478,17 @@ public class FaceViewModel extends ViewModel {
         totalCount = 0;// 保险起见，重置0
         currentSuccess = 0;
 
-        if (myRecord.isHikStatus()) {
+        if (myRecord.isHikStatus()) {// 海康截图成功
             ++totalCount;
         }
-        if (myRecord.isFaceStatus()) {
+        if (myRecord.isFaceStatus()) {// 人脸识别截图成功
             ++totalCount;
         }
 
         if (totalCount == 0) {// 两张图片都出错了，理论上极低概率~但是依旧需要上传
-
+            RemoteRecord mRecord = new RemoteRecord(myRecord.getUser_key(),
+                    "", "", myRecord.getCreate_time());
+            syncRecord(owner, mRecord, myRecord);
             return;
         }
 
@@ -487,7 +498,6 @@ public class FaceViewModel extends ViewModel {
                 System.out.println("-----------total=" + totalCount);
                 System.out.println("-----------currentSuccess=" + currentSuccess);
                 if (totalCount == currentSuccess) {// 图上传完成
-
                     String hikPath = "";
                     String facePath = "";
                     if (myRecord.isHikStatus()) {
@@ -589,8 +599,7 @@ public class FaceViewModel extends ViewModel {
                         if (facePicDir != null) {
                             File savePicPath = new File(facePicDir, userKey + ".jpg");
                             if (FileUtils.saveFile(savePicPath, bitmap)) {
-                                System.out.println("--->>>人脸注册成功->保存成功:" + userKey);
-                                faceRepository.delete(data);
+                                Log.i("ebq", "人脸库：人脸注册成功");
                             }
                         }
 
@@ -621,10 +630,15 @@ public class FaceViewModel extends ViewModel {
 
             FaceSDKManager.getInstance().getFeatureLRUCache().clear();
             int i = FaceSDKManager.getInstance().setFeature();
-            System.out.println("--->>>人脸注册成功->保存成功:图库有数据:" + i);
 
-
-            updateData();
+            File oldFile = new File(EBQValue.REGISTER_PATH + userKey + ".jpg");
+            if (oldFile.exists()) {
+                boolean delStatus = oldFile.delete();
+                Log.e("ebq", "**事务**：注册到人脸库，不管失败与否，没啥用了删了吧，是否删除成功：" + delStatus);
+            }
+            Log.i("ebq", "人脸库：新增之后----当前人脸库数据：" + i + "条");
+            // 不管成功与否，反正此任务都需要被删除了不然留着没有用
+            faceRepository.delete(data);
         });
     }
 
@@ -644,9 +658,9 @@ public class FaceViewModel extends ViewModel {
                     }
                 }
 
-                FaceSDKManager.getInstance().setFeature();
+                int i = FaceSDKManager.getInstance().setFeature();
+                Log.i("ebq", "人脸库：删除之后----当前人脸库数据：" + i + "条");
                 faceRepository.delete(data);
-                Log.i("ebq", "数据更新:删除了人脸数据，并移除一条数据任务");
             }
         });
     }
@@ -692,31 +706,32 @@ public class FaceViewModel extends ViewModel {
                             if (data.data != null
                                     && data.data.getData() != null
                                     && data.data.getData().getUsers() != null) {
+
                                 DbUserOption mData = data.data.getData().getUsers();
                                 List<DbOption> list = new ArrayList<>();
+                                int addCount = 0;
+                                int delCount = 0;
 
                                 if (mData.getAdd() != null) {
-                                    int count = 0;
+
                                     for (DbOption item : mData.getAdd()) {
-                                        count++;
-                                        DbOption mDbOption = new DbOption(
-                                                item.getData_key(),
-                                                item.getUser_key(),
-                                                item.getReal_name(),
-                                                item.getFace_image(),
-                                                0);
-                                        list.add(mDbOption);
+                                        if (!TextUtils.isEmpty(item.getFace_image())) {
+                                            DbOption mDbOption = new DbOption(
+                                                    item.getData_key(),
+                                                    item.getUser_key(),
+                                                    item.getReal_name(),
+                                                    item.getFace_image(),
+                                                    0);// 新增用户
+                                            list.add(mDbOption);
+                                            addCount++;
+                                        }
                                     }
 
-                                    System.out.println("添加:" + count);
                                 }
 
                                 if (mData.getDelete() != null) {
-                                    int count = 0;
 
                                     for (DbOption item : mData.getDelete()) {
-                                        count++;
-
                                         DbOption mDbOption = new DbOption(
                                                 item.getData_key(),
                                                 item.getUser_key(),
@@ -724,12 +739,11 @@ public class FaceViewModel extends ViewModel {
                                                 "",
                                                 1);
                                         list.add(mDbOption);
+                                        delCount++;
                                     }
-                                    System.out.println("删除:" + count);
+
                                 }
-
-                                System.out.println("------------->>>>总任务数" + list.size());
-
+                                Log.i("ebq", "数据更新:来源->融云更新------新增数据:" + addCount + "条 ; 删除数据:" + delCount + "条");
                                 insert(list);
                             }
                             break;
