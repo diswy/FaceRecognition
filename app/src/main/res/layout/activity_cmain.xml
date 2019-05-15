@@ -59,8 +59,8 @@
 
 	<SurfaceView
 		android:id="@+id/Sur_Player"
-		android:layout_width="300px"
-		android:layout_height="200px"
+		android:layout_width="1px"
+		android:layout_height="1px"
 		android:layout_marginStart="8dp"
 		android:layout_marginBottom="8dp"
 		android:background="#0000ff00"
@@ -88,6 +88,7 @@
 
 
 	<LinearLayout
+        android:visibility="gone"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:orientation="vertical">

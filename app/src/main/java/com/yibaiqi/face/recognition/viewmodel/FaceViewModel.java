@@ -354,38 +354,39 @@ public class FaceViewModel extends ViewModel {
     }
 
     public void asyncPutImage(String objectName, String localFile, MyRecord myRecord) {
-        System.out.println("------------<><><>1");
+        Log.w("ebq", "上传记录：图片路径" + localFile);
         if (mOss == null) {
-            System.out.println("------------<><><>2");
+            Log.w("ebq", "上传记录：OSS服务为空");
             return;
         }
 
         if (objectName.equals("")) {
-            System.out.println("------------<><><>3");
+            Log.w("ebq", "上传记录：文件名为空");
             faceRepository.delete(myRecord);
             return;
         }
 
         final File file = new File(localFile);
-        System.out.println("------------<><><>4");
         if (!file.exists()) {
-            System.out.println("------------<><><>5");
+            Log.w("ebq", "上传记录：文件不存在");
             faceRepository.delete(myRecord);
             return;
         }
         if (mOssConfig == null) {
-            System.out.println("------------<><><>6");
+            Log.w("ebq", "上传记录：OSS配置为空");
             faceRepository.delete(myRecord);
             return;
         }
-        System.out.println("------------<><><>7");
-        System.out.println("--->>>图片上传");
+        Log.w("ebq", "桶名：" + mOssConfig.getBucketName());
+        Log.w("ebq", "KEY:" + mOssConfig.getObjectPath() + objectName);
+
+        Log.w("ebq", "上传记录：构建上传请求");
         PutObjectRequest put = new PutObjectRequest(mOssConfig.getBucketName(), mOssConfig.getObjectPath() + objectName, localFile);
         put.setCRC64(OSSRequest.CRC64Config.YES);
         OSSAsyncTask task = mOss.asyncPutObject(put, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
             @Override
             public void onSuccess(PutObjectRequest request, PutObjectResult result) {
-                System.out.println("-----图片上传成功！");
+                Log.w("ebq", "上传记录：图片上传成功");
                 FileUtil.delFile(file);
                 if (myOssListener != null) {
                     currentSuccess++;
@@ -412,7 +413,7 @@ public class FaceViewModel extends ViewModel {
                     info = serviceException.toString();
                     System.out.println("---->>>>>" + info);
                 }
-
+                Log.w("ebq", "上传记录：图片上传失败：理由：" + info);
             }
         });
 
@@ -542,16 +543,16 @@ public class FaceViewModel extends ViewModel {
             if (mFile.exists()) {
                 Log.w("ebq", "记录：海康上传，图片的确存在,开始执行图片压缩");
                 Luban.with(context).load(mFile)
-                        .ignoreBy(200)
-                        .setTargetDir(EBQValue.HIK_PATH + myRecord.getFileName() + "_hik_compress.jpg")
+                        .setTargetDir(getPath())
                         .setCompressListener(new OnCompressListener() {
                             @Override
                             public void onStart() {
-
+                                Log.w("ebq", "记录：海康，图片压缩开始");
                             }
 
                             @Override
                             public void onSuccess(File file) {
+                                Log.w("ebq", "记录：海康，图片压缩成功：途径：" + file.getAbsolutePath());
                                 FileUtil.delFile(mFile);
                                 asyncPutImage(myRecord.getFileName() + "_hik.jpg", file.getAbsolutePath(), myRecord);
                             }
@@ -561,7 +562,7 @@ public class FaceViewModel extends ViewModel {
                                 Log.i("ebq", "记录：海康图片压缩失败，删除本条记录");
                                 faceRepository.delete(myRecord);
                             }
-                        });
+                        }).launch();
             } else {
                 Log.i("ebq", "记录：海康图片不存在，数据有误删除数据");
                 faceRepository.delete(myRecord);
@@ -713,18 +714,17 @@ public class FaceViewModel extends ViewModel {
 
     // 上传记录
     public void syncRecord(LifecycleOwner owner, RemoteRecord remoteRecord, MyRecord myRecord) {
-        System.out.println("------这里执行了么？！！！！！");
+        Log.w("ebq", "上传记录：开始上传记录");
         List<RemoteRecord> list = new ArrayList<>();
         list.add(remoteRecord);
         Remote remote = new Remote(list);
-//        list.add(remoteRecord);
         faceRepository.syncRecord(remote).observe(owner, new Observer<Resource<BaseResponse<Object>>>() {
             @Override
             public void onChanged(@Nullable Resource<BaseResponse<Object>> data) {
                 if (data != null) {
                     switch (data.status) {
                         case SUCCESS:
-                            System.out.println("------这里执行了么？成功了吧~");
+                            Log.w("ebq", "上传记录：上传记录成功");
                             faceRepository.delete(myRecord);
                             break;
                         case ERROR:
@@ -798,5 +798,15 @@ public class FaceViewModel extends ViewModel {
                 }
             }
         });
+    }
+
+    private String getPath() {
+        String path = EBQValue.HIK_PATH;
+        File f = new File(path);
+        if (f.mkdirs()) {
+            Log.w("ebq", "海康压缩图片路径：" + path);
+            return path;
+        }
+        return path;
     }
 }

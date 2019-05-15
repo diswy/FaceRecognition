@@ -77,6 +77,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
     public static final int REFRESH = 777;
     public static final int MONOCULAR_RESUME = 555;
     public static final int MONOCULAR_PAUSE = 444;
+    public static final int VIDEO = 333;
 
     private FrameLayout mCameraView;
     private MonocularView mMonocularView;
@@ -84,6 +85,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
     private ImageView ivDb;
     private ImageView btnSetting;
     private FaceViewModel faceModel;
+    private boolean needPreview;
 
     private boolean isCameraSuccess = false;
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -109,6 +111,11 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                     if (mMonocularView != null){
                         Log.w("ebq", "百度：有任务暂停");
                         mMonocularView.onPause();
+                    }
+                    break;
+                case VIDEO:
+                    if (needPreview){
+                        previewHik();
                     }
                     break;
             }
@@ -150,7 +157,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         faceModel.initDownload(this);
 
         // 初始化人脸识别
-        calculateCameraView();
+//        calculateCameraView();
 
         // 初始化海康威视SDK
         HCNetSDK.getInstance().NET_DVR_Init();
@@ -166,7 +173,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         findViewById(R.id.test_btn_speak).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                previewHik();
             }
         });
 
@@ -233,13 +240,15 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
     @Override
     protected void onResume() {
         super.onResume();
+        calculateCameraView();
         if (faceModel.isCameraEnable() && !isCameraSuccess) {
+            needPreview = true;
             loginHik();
-            previewHik();
+
+            mHandler.removeMessages(VIDEO);
+            mHandler.sendEmptyMessageDelayed(VIDEO,5000);
         }
-        if (mMonocularView != null){
-            mMonocularView.onResume();
-        }
+
     }
 
     @Override
@@ -298,7 +307,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                 ivCapture.setImageBitmap(myBitmap);
 
                 if (canSavePic()) {
-//                    say(feature.getUserName() + "验证成功");
+                    say(feature.getUserName() + "验证成功");
                     openDoor();
                     captureVideo(feature.getUserId(), myBitmap);
                 }
@@ -486,9 +495,12 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                     m_bMultiPlay = false;
                 }
             } else {// preivew a channel
+                Log.v("ebq","摄像头：频道数量1");
                 if (m_iPlayID < 0) {
                     startSinglePreview();
+                    Log.v("ebq","摄像头：开始预览");
                 } else {
+                    Log.v("ebq","摄像头：停止预览");
                     stopSinglePreview();
                 }
             }
@@ -562,6 +574,10 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         String formatTime = TimeFormat.FULL(System.currentTimeMillis());
         String realFileName = formatTime + userKey;// 时间+学生KEY
         realFileName = realFileName.replace(":","-");
+        File mFile = new File(EBQValue.HIK_PATH);
+        if (!mFile.exists()){
+            mFile.mkdirs();
+        }
         if (HCNetSDKJNAInstance.getInstance().NET_DVR_CapturePictureBlock(m_iPlayID, EBQValue.HIK_PATH + realFileName + "_hik.jpg", 0)) {
             Log.w("ebq", "记录：海康威视截图成功。图片地址：" + EBQValue.HIK_PATH + realFileName + "_hik.jpg");
             hikvisonCapture = true;
