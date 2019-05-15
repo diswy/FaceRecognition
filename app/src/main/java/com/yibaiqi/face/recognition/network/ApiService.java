@@ -3,6 +3,7 @@ package com.yibaiqi.face.recognition.network;
 import android.arch.lifecycle.LiveData;
 
 import com.yibaiqi.face.recognition.vo.BaseResponse;
+import com.yibaiqi.face.recognition.vo.DeviceName;
 import com.yibaiqi.face.recognition.vo.ExData;
 import com.yibaiqi.face.recognition.vo.OSSKey;
 import com.yibaiqi.face.recognition.vo.RegisterDevice;
@@ -41,5 +42,8 @@ public interface ApiService {
 
     @GET("devices/FaceDevices/update_data")
     LiveData<ApiResponse<BaseResponse<ExData>>> requestData(@Header("token") String token);
+
+    @GET("devices/FaceDevices/get_info")
+    LiveData<ApiResponse<BaseResponse<DeviceName>>> getDevice(@Header("token") String token);
 
 }

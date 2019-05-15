@@ -64,6 +64,7 @@ import io.rong.imlib.RongIMClient;
 
 import static com.baidu.idl.sample.common.GlobalSet.TYPE_PREVIEW_ANGLE;
 import static com.baidu.idl.sample.common.GlobalSet.TYPE_PREVIEW_ZERO_ANGLE;
+import static com.baidu.idl.sample.common.GlobalSet.TYPE_TPREVIEW_NINETY_ANGLE;
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.INIT_SUCCESS;
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.PRINT;
 
@@ -74,7 +75,8 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
     public static final int TASK = 999;
     public static final int UPLOAD = 888;
     public static final int REFRESH = 777;
-    public static final int DELAY_UPDATE = 666;
+    public static final int MONOCULAR_RESUME = 555;
+    public static final int MONOCULAR_PAUSE = 444;
 
     private FrameLayout mCameraView;
     private MonocularView mMonocularView;
@@ -99,8 +101,15 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                     Log.i("ebq", "融云::::收到后端消息，自认为过滤了因此请求网络，更新数据");
                     faceModel.update(CMainActivity.this);
                     break;
-                case DELAY_UPDATE:
-                    faceModel.updateTaskDelay();
+                case MONOCULAR_RESUME:
+                    Log.w("ebq", "百度：resume");
+                    calculateCameraView();
+                    break;
+                case MONOCULAR_PAUSE:
+                    if (mMonocularView != null){
+                        Log.w("ebq", "百度：有任务暂停");
+                        mMonocularView.onPause();
+                    }
                     break;
             }
         }
@@ -114,7 +123,8 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
     @Override
     public void initView() {
         // 固定设备，闸机头默认需要设置0度
-        PreferencesUtil.putInt(TYPE_PREVIEW_ANGLE, TYPE_PREVIEW_ZERO_ANGLE);
+//        PreferencesUtil.putInt(TYPE_PREVIEW_ANGLE, TYPE_PREVIEW_ZERO_ANGLE);
+        PreferencesUtil.putInt(TYPE_PREVIEW_ANGLE, TYPE_TPREVIEW_NINETY_ANGLE);
 
         mCameraView = findViewById(R.id.layout_camera);
         ivCapture = findViewById(R.id.iv_capture);
@@ -153,11 +163,10 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         // 处理记录
         faceModel.observerRecordData(this, this);
 
-
         findViewById(R.id.test_btn_speak).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                say("测试语音~");
+
             }
         });
 
@@ -167,7 +176,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                 tempKey = String.valueOf(System.currentTimeMillis());
                 List<DbOption> list = new ArrayList<>();
 
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < 3; i++) {
 
                     DbOption mData = new DbOption(
                             tempKey + i,
@@ -228,8 +237,9 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
             loginHik();
             previewHik();
         }
-
-        mMonocularView.onResume();
+        if (mMonocularView != null){
+            mMonocularView.onResume();
+        }
     }
 
     @Override
@@ -253,6 +263,8 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         mMonocularView.setLivenessCallBack(this);
         mCameraView.removeAllViews();
         mCameraView.addView(mMonocularView, layoutParams);
+
+        mMonocularView.onResume();
     }
 
     @Override
@@ -286,7 +298,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                 ivCapture.setImageBitmap(myBitmap);
 
                 if (canSavePic()) {
-                    say(feature.getUserName() + "验证成功");
+//                    say(feature.getUserName() + "验证成功");
                     openDoor();
                     captureVideo(feature.getUserId(), myBitmap);
                 }

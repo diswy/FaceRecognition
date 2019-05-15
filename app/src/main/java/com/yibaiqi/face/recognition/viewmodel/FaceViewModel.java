@@ -54,6 +54,7 @@ import com.yibaiqi.face.recognition.ui.core.CMainActivity;
 import com.yibaiqi.face.recognition.vo.BaseResponse;
 import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.DbUserOption;
+import com.yibaiqi.face.recognition.vo.DeviceName;
 import com.yibaiqi.face.recognition.vo.ExData;
 import com.yibaiqi.face.recognition.vo.MyRecord;
 import com.yibaiqi.face.recognition.vo.OSSConfig;
@@ -78,7 +79,8 @@ import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
 
 import static com.baidu.idl.sample.common.GlobalSet.LICENSE_ONLINE;
-import static com.yibaiqi.face.recognition.ui.core.CMainActivity.DELAY_UPDATE;
+import static com.yibaiqi.face.recognition.ui.core.CMainActivity.MONOCULAR_PAUSE;
+import static com.yibaiqi.face.recognition.ui.core.CMainActivity.MONOCULAR_RESUME;
 
 /**
  * 人脸识别
@@ -89,8 +91,7 @@ public class FaceViewModel extends ViewModel {
     private final FaceRepository faceRepository;
     private final App app;
     private MutableLiveData<Boolean> initSuccess = new MutableLiveData<>();
-
-    private MonocularView mMonocularView;
+    private boolean needReload = false;// 需要重新加载人脸识别
 
     @Inject
     FaceViewModel(FaceRepository faceRepository, App app) {
@@ -99,10 +100,6 @@ public class FaceViewModel extends ViewModel {
     }
 
     private Handler handler;
-
-    public void initBDView(MonocularView mMonocularView) {
-        this.mMonocularView = mMonocularView;
-    }
 
     public void initHandler(Handler handler) {
         this.handler = handler;
@@ -181,6 +178,10 @@ public class FaceViewModel extends ViewModel {
                         throwable -> Log.d("ebq", "设备绑定：绑定设备出错:" + throwable.getMessage()));
     }
 
+    public LiveData<Resource<BaseResponse<DeviceName>>> getDevice() {
+        return faceRepository.getDevice();
+    }
+
     //--------数据库相关
     private MediatorLiveData<List<DbOption>> mLiveData = new MediatorLiveData<>();
     private MediatorLiveData<List<MyRecord>> mLiveRecordData = new MediatorLiveData<>();
@@ -202,34 +203,34 @@ public class FaceViewModel extends ViewModel {
     }
 
 
-    private List<DbOption> currentList = new ArrayList<>();
-
     public void observerData(LifecycleOwner owner) {
         mLiveData.observe(owner, list -> {
             if (list != null) {
                 Log.i("ebq", "数据更新:来源->数据库,待执行任务总共：" + list.size() + "条");
+                if (list.size() == 0 && needReload) {
+                    needReload = false;
+                    handler.sendEmptyMessage(MONOCULAR_RESUME);
+                }
             }
 
             if (list != null && list.size() > 0) {
-                currentList.clear();
-                currentList.addAll(list);
-                handler.removeMessages(DELAY_UPDATE);
-                handler.sendEmptyMessageDelayed(DELAY_UPDATE, 500);
+                needReload = true;
+                updateTaskDelay(list);
+//                handler.removeMessages(DELAY_UPDATE);
+//                handler.sendEmptyMessageDelayed(DELAY_UPDATE, 500);
             }
         });
 
         updateData();// 第一次进来执行一次就好了
     }
 
-    public void updateTaskDelay() {
-        if (currentList == null || currentList.size() <= 0) {
-            return;
-        }
-
+    public void updateTaskDelay(List<DbOption> taskList) {
+        handler.sendEmptyMessage(MONOCULAR_PAUSE);
+        Log.w("ebq", "任务：不休眠直接轮询执行任务，剩余任务数量：" + taskList.size());
         List<DbOption> tempList = new ArrayList<>();
-        for (int i = 0; i < currentList.size(); i++) {
-            if (currentList.get(i).getStatus() == 1) {
-                tempList.add(currentList.get(i));
+        for (int i = 0; i < taskList.size(); i++) {
+            if (taskList.get(i).getStatus() == 1) {
+                tempList.add(taskList.get(i));
             }
         }
 
@@ -243,12 +244,11 @@ public class FaceViewModel extends ViewModel {
             return;
         }
 
-        Log.i("ebq", "数据更新:来源->数据库,需要新增的数据：" + currentList.size() + "条");
-
+        Log.i("ebq", "数据更新:来源->数据库,需要新增的数据：" + taskList.size() + "条");
         // 生成随机数轮询，即使某个task失败，也可以让别的任务继续执行
         Random random = new Random();
-        int pos = random.nextInt(currentList.size());
-        DbOption item = currentList.get(pos);
+        int pos = random.nextInt(taskList.size());
+        DbOption item = taskList.get(pos);
         // 理论上先执行完所有的删除任务才会执行新增，保险起见就先这样留着吧
         switch (item.getStatus()) {
             case 0:// 新增
@@ -353,16 +353,16 @@ public class FaceViewModel extends ViewModel {
         mOss = new OSSClient(App.getInstance(), "http://" + endpoint, credentialProvider, conf);
     }
 
-    public void asyncPutImage(String objectName, String localFile) {
+    public void asyncPutImage(String objectName, String localFile, MyRecord myRecord) {
         System.out.println("------------<><><>1");
         if (mOss == null) {
             System.out.println("------------<><><>2");
-            updateRecordData();
             return;
         }
 
         if (objectName.equals("")) {
             System.out.println("------------<><><>3");
+            faceRepository.delete(myRecord);
             return;
         }
 
@@ -370,12 +370,12 @@ public class FaceViewModel extends ViewModel {
         System.out.println("------------<><><>4");
         if (!file.exists()) {
             System.out.println("------------<><><>5");
-            updateRecordData();
+            faceRepository.delete(myRecord);
             return;
         }
         if (mOssConfig == null) {
             System.out.println("------------<><><>6");
-            updateRecordData();
+            faceRepository.delete(myRecord);
             return;
         }
         System.out.println("------------<><><>7");
@@ -395,7 +395,7 @@ public class FaceViewModel extends ViewModel {
 
             @Override
             public void onFailure(PutObjectRequest request, ClientException clientException, ServiceException serviceException) {
-                updateRecordData();
+                faceRepository.delete(myRecord);
                 String info = "";
                 // 请求异常
                 if (clientException != null) {
@@ -468,14 +468,6 @@ public class FaceViewModel extends ViewModel {
                     protected void completed(BaseDownloadTask task) {
                         // 图片下载完毕
                         Log.e("ebq", "下载：图片下载成功,图片路径" + EBQValue.REGISTER_PATH + userKey + ".jpg");
-//                        File oldFile = new File(EBQValue.REGISTER_PATH + userKey + ".jpg");
-//                        if (oldFile.exists()) {
-//                            boolean delStatus = oldFile.delete();
-//                            Log.e("ebq", "**事务**：注册到人脸库，不管失败与否，没啥用了删了吧，是否删除成功：" + delStatus);
-//                        }
-//                        // 不管成功与否，反正此任务都需要被删除了不然留着没有用
-//                        faceRepository.delete(data);
-
                         registerFace(userKey, userName, data);
                     }
 
@@ -545,9 +537,10 @@ public class FaceViewModel extends ViewModel {
         };
 
         if (myRecord.isHikStatus()) {
-            System.out.println("------------<><><>海康");
+            Log.i("ebq", "记录：海康上传，图片路径：" + EBQValue.HIK_PATH + myRecord.getFileName() + "_hik.jpg");
             final File mFile = new File(EBQValue.HIK_PATH + myRecord.getFileName() + "_hik.jpg");
             if (mFile.exists()) {
+                Log.w("ebq", "记录：海康上传，图片的确存在,开始执行图片压缩");
                 Luban.with(context).load(mFile)
                         .ignoreBy(200)
                         .setTargetDir(EBQValue.HIK_PATH + myRecord.getFileName() + "_hik_compress.jpg")
@@ -560,21 +553,23 @@ public class FaceViewModel extends ViewModel {
                             @Override
                             public void onSuccess(File file) {
                                 FileUtil.delFile(mFile);
-                                asyncPutImage(myRecord.getFileName() + "_hik.jpg", file.getAbsolutePath());
+                                asyncPutImage(myRecord.getFileName() + "_hik.jpg", file.getAbsolutePath(), myRecord);
                             }
 
                             @Override
                             public void onError(Throwable e) {
-
+                                Log.i("ebq", "记录：海康图片压缩失败，删除本条记录");
+                                faceRepository.delete(myRecord);
                             }
                         });
             } else {
-                updateRecordData();
+                Log.i("ebq", "记录：海康图片不存在，数据有误删除数据");
+                faceRepository.delete(myRecord);
             }
         }
         if (myRecord.isFaceStatus()) {
-            System.out.println("------------<><><>人脸识别路径" + EBQValue.CAPTURE_PATH + myRecord.getFileName());
-            asyncPutImage(myRecord.getFileName() + "_face.jpg", EBQValue.CAPTURE_PATH + myRecord.getFileName() + "_face.jpg");
+            Log.i("ebq", "记录：送检图片，图片路径：" + EBQValue.CAPTURE_PATH + myRecord.getFileName() + "_face.jpg");
+            asyncPutImage(myRecord.getFileName() + "_face.jpg", EBQValue.CAPTURE_PATH + myRecord.getFileName() + "_face.jpg", myRecord);
         }
     }
 
@@ -733,6 +728,7 @@ public class FaceViewModel extends ViewModel {
                             faceRepository.delete(myRecord);
                             break;
                         case ERROR:
+                            faceRepository.delete(myRecord);
                             break;
                         case LOADING:
                             break;

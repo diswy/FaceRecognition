@@ -12,6 +12,7 @@ import com.yibaiqi.face.recognition.network.NetworkResource;
 import com.yibaiqi.face.recognition.tools.ACache;
 import com.yibaiqi.face.recognition.vo.BaseResponse;
 import com.yibaiqi.face.recognition.vo.DbOption;
+import com.yibaiqi.face.recognition.vo.DeviceName;
 import com.yibaiqi.face.recognition.vo.ExData;
 import com.yibaiqi.face.recognition.vo.MyRecord;
 import com.yibaiqi.face.recognition.vo.OSSKey;
@@ -112,6 +113,19 @@ public class FaceRepository {
             @Override
             protected LiveData<ApiResponse<BaseResponse<ExData>>> createCall() {
                 return service.requestData(mCache.getAsString("token"));
+            }
+        }.asLiveData();
+    }
+
+    /**
+     * 获取闸机属性和名字
+     */
+    public LiveData<Resource<BaseResponse<DeviceName>>> getDevice() {
+        return new NetworkResource<BaseResponse<DeviceName>>(appExecutors) {
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<BaseResponse<DeviceName>>> createCall() {
+                return service.getDevice(mCache.getAsString("token"));
             }
         }.asLiveData();
     }

@@ -9,8 +9,8 @@
 
 	<FrameLayout
 		android:id="@+id/layout_camera"
-		android:layout_width="520px"
-		android:layout_height="420px"
+		android:layout_width="300dp"
+		android:layout_height="300dp"
 		android:layout_marginTop="60px"
 		android:background="@drawable/border_main"
 		android:gravity="center"
