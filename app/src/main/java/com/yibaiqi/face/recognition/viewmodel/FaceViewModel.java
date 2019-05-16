@@ -344,7 +344,8 @@ public class FaceViewModel extends ViewModel {
 
         mOssConfig = ossConfig;
         String endpoint = ossConfig.getEndpoint();
-        OSSCredentialProvider credentialProvider = new OSSAuthCredentialsProvider("http://xueyiguan.10130422.com/sts-server/sts.php");
+//        OSSCredentialProvider credentialProvider = new OSSAuthCredentialsProvider("http://xueyiguan.10130422.com/sts-server/sts.php");
+        OSSCredentialProvider credentialProvider = new OSSAuthCredentialsProvider("https://www.yzx110.com/sts-server/sts.php");
         ClientConfiguration conf = new ClientConfiguration();
         conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
         conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
