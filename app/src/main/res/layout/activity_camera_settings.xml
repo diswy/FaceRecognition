@@ -75,10 +75,13 @@
 
     <TextView
         android:id="@+id/btn_commit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="280px"
+        android:layout_height="50px"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="50dp"
-        android:text="确认设置" />
+        android:background="@drawable/btn_bg"
+        android:gravity="center"
+        android:text="确认设置"
+        android:textColor="@color/white" />
 
 </LinearLayout>

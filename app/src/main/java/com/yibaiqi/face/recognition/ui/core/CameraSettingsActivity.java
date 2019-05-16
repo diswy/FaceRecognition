@@ -78,6 +78,9 @@ public class CameraSettingsActivity extends BaseActivity {
                 cache.put(Key.KEY_CAMERA_ACCOUNT, etAccount.getText().toString().trim());
                 cache.put(Key.KEY_CAMERA_PORT, etPort.getText().toString().trim());
                 cache.put(Key.KEY_CAMERA_PWD, etPwd.getText().toString().trim());
+
+                Toast.makeText(this, "摄像头设置成功", Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
     }

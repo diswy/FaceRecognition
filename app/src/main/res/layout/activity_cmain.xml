@@ -9,12 +9,12 @@
 
 	<FrameLayout
 		android:id="@+id/layout_camera"
-		android:layout_width="300dp"
-		android:layout_height="300dp"
-		android:layout_marginTop="60px"
+		android:layout_width="538px"
+		android:layout_height="424px"
+		android:layout_marginTop="120px"
 		android:background="@drawable/border_main"
 		android:gravity="center"
-		android:padding="10px"
+		android:padding="20px"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
@@ -74,7 +74,6 @@
 		android:text="截图！"
 		android:visibility="gone" />
 
-
 	<ImageView
 		android:id="@+id/btn_setting"
 		android:layout_width="wrap_content"
@@ -82,9 +81,9 @@
 		android:layout_marginTop="8dp"
 		android:layout_marginEnd="8dp"
 		android:contentDescription="img"
-		android:src="@drawable/ic_setting"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintTop_toTopOf="parent" />
+		android:src="@drawable/ic_settings"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintBottom_toBottomOf="parent" />
 
 
 	<LinearLayout

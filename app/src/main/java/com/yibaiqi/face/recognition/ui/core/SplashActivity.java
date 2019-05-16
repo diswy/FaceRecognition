@@ -162,7 +162,7 @@ public class SplashActivity extends BaseActivity {
                 faceModel.bindDevice();
                 startActivity(new Intent(SplashActivity.this, CMainActivity.class));
 //                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-//                this.finish();
+                this.finish();
             }
         });
     }

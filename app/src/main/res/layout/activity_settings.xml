@@ -1,62 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	tools:ignore="HardcodedText">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:padding="40px"
+    tools:ignore="HardcodedText">
 
-	<ImageView
-		android:id="@+id/imageView"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="8dp"
-		android:layout_marginTop="8dp"
-		android:src="@mipmap/ic_launcher"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50px"
+        android:src="@mipmap/ic_default_avatar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-	<TextView
-		android:id="@+id/tv_location"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="8dp"
-		android:text="加载中..."
-		android:textColor="@color/c333"
-		app:layout_constraintStart_toEndOf="@+id/imageView"
-		app:layout_constraintTop_toTopOf="@+id/imageView" />
+    <TextView
+        android:id="@+id/tv_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20px"
+        android:text="加载中..."
+        android:textColor="@color/c333"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="@+id/imageView" />
 
-	<TextView
-		android:id="@+id/tv_type"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="加载中..."
-		android:textColor="@color/c333"
-		app:layout_constraintStart_toStartOf="@+id/tv_location"
-		app:layout_constraintTop_toBottomOf="@+id/tv_location" />
+    <TextView
+        android:id="@+id/tv_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20px"
+        android:text="加载中..."
+        android:textColor="@color/c333"
+        app:layout_constraintStart_toStartOf="@+id/tv_location"
+        app:layout_constraintTop_toBottomOf="@+id/tv_location" />
 
-	<TextView
-		android:id="@+id/tv_device"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="加载中..."
-		android:textColor="@color/c333"
-		app:layout_constraintStart_toStartOf="@+id/tv_location"
-		app:layout_constraintTop_toBottomOf="@+id/tv_type" />
+    <TextView
+        android:id="@+id/tv_device"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20px"
+        android:text="加载中..."
+        android:textColor="@color/c333"
+        app:layout_constraintStart_toStartOf="@+id/tv_location"
+        app:layout_constraintTop_toBottomOf="@+id/tv_type" />
 
-	<TextView
-		android:id="@+id/btn_camera_setting"
-		android:layout_width="match_parent"
-		android:layout_height="50dp"
-		android:layout_marginStart="8dp"
-		android:layout_marginEnd="8dp"
-		android:gravity="center_vertical"
-		android:paddingStart="16dp"
-		android:paddingEnd="16dp"
-		android:text="设置摄像头"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/imageView" />
+    <TextView
+        android:id="@+id/btn_camera_setting"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="60px"
+        android:drawableStart="@drawable/ic_camrea"
+        android:drawablePadding="16px"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="设置摄像头"
+        android:textColor="#222"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
 </android.support.constraint.ConstraintLayout>
