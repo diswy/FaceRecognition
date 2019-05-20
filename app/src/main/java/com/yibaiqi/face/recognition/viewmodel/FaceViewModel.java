@@ -209,7 +209,6 @@ public class FaceViewModel extends ViewModel {
                 Log.i("ebq", "数据更新:来源->数据库,待执行任务总共：" + list.size() + "条");
                 if (list.size() == 0 && needReload) {
                     needReload = false;
-                    handler.sendEmptyMessage(MONOCULAR_RESUME);
                 }
             }
 
@@ -225,7 +224,6 @@ public class FaceViewModel extends ViewModel {
     }
 
     public void updateTaskDelay(List<DbOption> taskList) {
-        handler.sendEmptyMessage(MONOCULAR_PAUSE);
         Log.w("ebq", "任务：不休眠直接轮询执行任务，剩余任务数量：" + taskList.size());
         List<DbOption> tempList = new ArrayList<>();
         for (int i = 0; i < taskList.size(); i++) {
@@ -577,6 +575,7 @@ public class FaceViewModel extends ViewModel {
 
     //----------------人脸注册
     private void registerFace(String userKey, String userName, DbOption data) {
+        handler.sendEmptyMessage(MONOCULAR_PAUSE);
 
         Disposable disposable = Flowable.just(data)
                 .subscribeOn(Schedulers.io())
@@ -601,6 +600,7 @@ public class FaceViewModel extends ViewModel {
                             FaceInfo faceInfo = faceInfos[0];
                             if (ret == -1) {
                                 //失败
+                                Log.e("ebq","人脸注册：失败！！！=-1");
                             } else if (ret == 128) {
                                 Bitmap cropBitmap = null;
                                 String cropImgName = null;
@@ -624,6 +624,7 @@ public class FaceViewModel extends ViewModel {
 
                                 // 保存数据库
                                 if (FaceApi.getInstance().featureAdd(feature)) {
+                                    Log.e("ebq","人脸注册：添加成功！！！");
                                     // 保存图片到新目录中
                                     File facePicDir = FileUtils.getFacePicDirectory();
                                     // 保存抠图图片到新目录中
@@ -644,9 +645,12 @@ public class FaceViewModel extends ViewModel {
                                             }
                                         }
                                     }
+                                }else{
+                                    Log.e("ebq","人脸注册：添加失败！！！");
                                 }
                             }
                         } else {
+                            Log.e("ebq","人脸注册：失败！！！图片太大超过了1000*1000");
                             // 失败，图片太大 超过了1000*1000
                         }
 
@@ -672,6 +676,8 @@ public class FaceViewModel extends ViewModel {
                         Log.i("ebq", "人脸库：新增之后----当前人脸库数据：" + i + "条");
                         // 不管成功与否，反正此任务都需要被删除了不然留着没有用
                         faceRepository.delete(data);
+
+                        handler.sendEmptyMessage(MONOCULAR_RESUME);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -685,6 +691,7 @@ public class FaceViewModel extends ViewModel {
 
                         Log.e("ebq", "**Rx事务**：发生了错误：" + throwable.getMessage());
 
+                        handler.sendEmptyMessage(MONOCULAR_RESUME);
                     }
                 });
 
@@ -692,6 +699,8 @@ public class FaceViewModel extends ViewModel {
 
     // 人脸库中移除
     private void delFaceFeature(String userKey, String name, DbOption data) {
+        handler.sendEmptyMessage(MONOCULAR_PAUSE);
+
         faceRepository.getAppExecutors().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -709,6 +718,8 @@ public class FaceViewModel extends ViewModel {
                 int i = FaceSDKManager.getInstance().setFeature();
                 Log.i("ebq", "人脸库：删除之后----当前人脸库数据：" + i + "条");
                 faceRepository.delete(data);
+
+                handler.sendEmptyMessage(MONOCULAR_RESUME);
             }
         });
     }

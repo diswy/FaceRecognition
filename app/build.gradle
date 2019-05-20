@@ -97,4 +97,9 @@ dependencies {
     implementation 'com.aliyun.dpa:oss-android-sdk:+'
     implementation 'com.liulishuo.filedownloader:library:1.7.6'
     implementation 'top.zibin:Luban:1.1.8'
+
+    implementation  'com.umeng.umsdk:analytics:8.0.0'
+    implementation  'com.umeng.umsdk:common:2.0.0'
+
+    implementation 'com.github.nanchen2251:AppManager:1.0.1'
 }

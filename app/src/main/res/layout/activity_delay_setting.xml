@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	tools:context=".ui.core.DelaySettingActivity">
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:paddingStart="16dp"
+		android:paddingTop="16dp"
+		android:paddingEnd="16dp"
+		android:paddingBottom="16dp"
+		android:text="Tips:"
+		android:textColor="#222"
+		android:textStyle="bold" />
+
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingStart="16dp"
+		android:paddingEnd="16dp"
+		android:text="时间单位为毫秒，如果要设置1s，请在下方填写1000"
+		android:textColor="#222" />
+
+	<EditText
+		android:id="@+id/et_delay"
+		android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:background="@null"
+		android:gravity="center_vertical"
+		android:hint="请设置闸机延长时间，默认为0.3s"
+		android:inputType="number"
+		android:paddingStart="16dp"
+		android:paddingEnd="16dp"
+		android:textSize="16sp" />
+
+	<EditText
+		android:id="@+id/et_delay_face"
+		android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:background="@null"
+		android:gravity="center_vertical"
+		android:hint="请设置人脸识别延长时间，默认为5s"
+		android:inputType="number"
+		android:paddingStart="16dp"
+		android:paddingEnd="16dp"
+		android:textSize="16sp" />
+
+	<TextView
+		android:id="@+id/btn_commit"
+		android:layout_width="280px"
+		android:layout_height="50px"
+		android:layout_gravity="center_horizontal"
+		android:layout_marginTop="50dp"
+		android:background="@drawable/btn_bg"
+		android:gravity="center"
+		android:text="确认设置"
+		android:textColor="@color/white" />
+
+</LinearLayout>

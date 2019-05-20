@@ -10,22 +10,22 @@
 	<FrameLayout
 		android:id="@+id/layout_camera"
 		android:layout_width="538px"
-		android:layout_height="424px"
+		android:layout_height="510px"
 		android:layout_marginTop="120px"
 		android:background="@drawable/border_main"
 		android:gravity="center"
-		android:padding="20px"
+		android:padding="30px"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
 
 	<FrameLayout
 		android:id="@+id/holder_capture"
-		android:layout_width="150dp"
-		android:layout_height="150dp"
+		android:layout_width="245px"
+		android:layout_height="224px"
 		android:layout_marginTop="32dp"
 		android:background="@drawable/border_capture"
-		android:padding="8dp"
+		android:padding="20px"
 		app:layout_constraintEnd_toStartOf="@+id/holder_db"
 		app:layout_constraintHorizontal_bias="0.5"
 		app:layout_constraintStart_toStartOf="parent"
@@ -40,8 +40,8 @@
 
 	<FrameLayout
 		android:id="@+id/holder_db"
-		android:layout_width="150dp"
-		android:layout_height="150dp"
+		android:layout_width="245px"
+		android:layout_height="224px"
 		android:layout_marginTop="32dp"
 		android:background="@drawable/border_capture"
 		android:padding="8dp"
@@ -65,7 +65,7 @@
 		android:layout_marginBottom="8dp"
 		android:background="#0000ff00"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
+		app:layout_constraintEnd_toEndOf="parent" />
 
 	<Button
 		android:id="@+id/jietu"
@@ -102,13 +102,49 @@
 			android:id="@+id/test_btn_insert"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="插入数据" />
+			android:text="开门" />
 
 		<Button
 			android:id="@+id/test_btn_del"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="删除一条数据" />
+			android:text="关门" />
+
+		<Button
+			android:id="@+id/test_btn_1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="检测146索引是否有效" />
+		<Button
+			android:id="@+id/test_btn_2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="获取当前IO是输出还是输入" />
+		<Button
+			android:id="@+id/test_btn_3"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="设置为输入口" />
+		<Button
+			android:id="@+id/test_btn_4"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="设置为输出口" />
+		<Button
+			android:id="@+id/test_btn_5"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="获取当前IO口值" />
+		<Button
+			android:id="@+id/test_btn_6"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="设置为高电平" />
+		<Button
+			android:id="@+id/test_btn_7"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="设置为低电平" />
 
 	</LinearLayout>
 

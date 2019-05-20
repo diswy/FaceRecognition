@@ -7,6 +7,7 @@ import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.format.Time;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -21,7 +22,9 @@ import android.widget.Toast;
 import com.baidu.idl.facesdk.model.Feature;
 import com.baidu.idl.facesdk.utils.PreferencesUtil;
 import com.baidu.idl.sample.callback.ILivenessCallBack;
+import com.baidu.idl.sample.manager.FaceSDKManager;
 import com.baidu.idl.sample.model.LivenessModel;
+import com.baidu.idl.sample.ui.MainActivity;
 import com.baidu.idl.sample.utils.DensityUtil;
 import com.baidu.idl.sample.utils.FileUtils;
 import com.baidu.idl.sample.utils.Utils;
@@ -38,12 +41,16 @@ import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
 import com.seeku.android.Manager;
 import com.test.demo.PlaySurfaceView;
 import com.yibaiqi.face.recognition.App;
+import com.yibaiqi.face.recognition.Key;
 import com.yibaiqi.face.recognition.R;
 import com.yibaiqi.face.recognition.control.InitConfig;
 import com.yibaiqi.face.recognition.control.MySyntherizer;
 import com.yibaiqi.face.recognition.control.NonBlockSyntherizer;
+import com.yibaiqi.face.recognition.di.DaggerActivityComponent;
+import com.yibaiqi.face.recognition.tools.ACache;
 import com.yibaiqi.face.recognition.tools.EBQValue;
 import com.yibaiqi.face.recognition.tools.FileUtil;
+import com.yibaiqi.face.recognition.tools.GpioUtils;
 import com.yibaiqi.face.recognition.tools.OfflineResource;
 import com.yibaiqi.face.recognition.tools.TimeFormat;
 import com.yibaiqi.face.recognition.tools.listener.UiMessageListener;
@@ -56,9 +63,12 @@ import com.yibaiqi.face.recognition.vo.MyRecord;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import io.rong.imlib.RongIMClient;
 
@@ -70,6 +80,9 @@ import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.PR
 
 public class CMainActivity extends BaseActivity implements ILivenessCallBack, SurfaceHolder.Callback {
 
+    @Inject
+    ACache cache;
+
     private String tempKey;
 
     public static final int TASK = 999;
@@ -78,6 +91,11 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
     public static final int MONOCULAR_RESUME = 555;
     public static final int MONOCULAR_PAUSE = 444;
     public static final int VIDEO = 333;
+    public static final int OPEN_DOOR = 222;
+    public static final int CLOSE_DOOR = 111;
+
+    private int delay = 300;
+    private int delayFace = 5000;
 
     private FrameLayout mCameraView;
     private MonocularView mMonocularView;
@@ -105,18 +123,23 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                     break;
                 case MONOCULAR_RESUME:
                     Log.w("ebq", "百度：resume");
-                    calculateCameraView();
+//                    calculateCameraView();
+                    mMonocularView.onResume();
                     break;
                 case MONOCULAR_PAUSE:
-                    if (mMonocularView != null){
+                    if (mMonocularView != null) {
                         Log.w("ebq", "百度：有任务暂停");
-                        mMonocularView.onPause();
+                        FaceSDKManager.getInstance().getFaceLiveness().release();
+//                        mMonocularView.onPause();
                     }
                     break;
                 case VIDEO:
-                    if (needPreview){
+                    if (needPreview) {
                         previewHik();
                     }
+                    break;
+                case CLOSE_DOOR:
+                    closeDoor();
                     break;
             }
         }
@@ -129,9 +152,28 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
 
     @Override
     public void initView() {
+        DaggerActivityComponent.builder()
+                .appComponent(App.getInstance().getAppComponent())
+                .build()
+                .inject(this);
+
+
+        String sDelay = cache.getAsString(Key.KEY_DELAY);
+        String sDelay2 = cache.getAsString(Key.KEY_DELAY_FACE);
+        try {
+            if (sDelay != null) {
+                delay = Integer.parseInt(sDelay);
+            }
+            if (sDelay2 != null) {
+                delayFace = Integer.parseInt(sDelay2);
+            }
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
         // 固定设备，闸机头默认需要设置0度
-//        PreferencesUtil.putInt(TYPE_PREVIEW_ANGLE, TYPE_PREVIEW_ZERO_ANGLE);
-        PreferencesUtil.putInt(TYPE_PREVIEW_ANGLE, TYPE_TPREVIEW_NINETY_ANGLE);
+        PreferencesUtil.putInt(TYPE_PREVIEW_ANGLE, TYPE_PREVIEW_ZERO_ANGLE);
+//        PreferencesUtil.putInt(TYPE_PREVIEW_ANGLE, TYPE_TPREVIEW_NINETY_ANGLE);
 
         mCameraView = findViewById(R.id.layout_camera);
         ivCapture = findViewById(R.id.iv_capture);
@@ -173,46 +215,85 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         findViewById(R.id.test_btn_speak).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                previewHik();
+                startActivity(new Intent(CMainActivity.this, MainActivity.class));
             }
         });
 
         findViewById(R.id.test_btn_insert).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tempKey = String.valueOf(System.currentTimeMillis());
-                List<DbOption> list = new ArrayList<>();
-
-                for (int i = 0; i < 3; i++) {
-
-                    DbOption mData = new DbOption(
-                            tempKey + i,
-                            "12345678",
-                            "张三",
-//                        "https://yizhixiao.oss-cn-hangzhou.aliyuncs.com/2019-05-09%2022%3A25%3A04fff",
-                            "https://yizhixiao.oss-cn-hangzhou.aliyuncs.com/Face/400.jpg",
-                            0);// 新增用户
-                    list.add(mData);
-                }
-                faceModel.insert(list);
-                Log.i("ebq", "数据更新:来源人工测试新增");
+                GpioUtils.writeGpioValue(146, "0");
+//                tempKey = String.valueOf(System.currentTimeMillis());
+//                List<DbOption> list = new ArrayList<>();
+//
+//                for (int i = 0; i < 3; i++) {
+//
+//                    DbOption mData = new DbOption(
+//                            tempKey + i,
+//                            "12345678",
+//                            "张三",
+////                        "https://yizhixiao.oss-cn-hangzhou.aliyuncs.com/2019-05-09%2022%3A25%3A04fff",
+//                            "https://yizhixiao.oss-cn-hangzhou.aliyuncs.com/Face/400.jpg",
+//                            0);// 新增用户
+//                    list.add(mData);
+//                }
+//                faceModel.insert(list);
+//                Log.i("ebq", "数据更新:来源人工测试新增");
             }
         });
 
         findViewById(R.id.test_btn_del).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<DbOption> list = new ArrayList<>();
-                DbOption mData = new DbOption(
-                        tempKey,
-                        "12345678",
-                        "张三",
-                        "",
-                        1);
-                list.add(mData);
-                faceModel.insert(list);
-                Log.i("ebq", "数据更新:来源人工测试删除");
+                GpioUtils.writeGpioValue(146, "1");
+//                List<DbOption> list = new ArrayList<>();
+//                DbOption mData = new DbOption(
+//                        tempKey,
+//                        "12345678",
+//                        "张三",
+//                        "",
+//                        1);
+//                list.add(mData);
+//                faceModel.insert(list);
+//                Log.i("ebq", "数据更新:来源人工测试删除");
             }
+        });
+        int index = 146;
+        findViewById(R.id.test_btn_1).setOnClickListener(v -> {
+            GpioUtils.upgradeRootPermissionForExport();
+            if (GpioUtils.exportGpio(146)) {
+                Log.e("ebq", "获取IO：成功");
+                GpioUtils.upgradeRootPermissionForGpio(146);
+                String status = GpioUtils.getGpioDirection(146);
+                if ("".equals(status))
+                    Toast.makeText(this, "无效的GPIO", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(this, "有效的GPIO", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.e("ebq", "获取IO：失败");
+            }
+        });
+        findViewById(R.id.test_btn_2).setOnClickListener(v -> {
+            Toast.makeText(this, "当前io的类型 = " + GpioUtils.getGpioDirection(index), Toast.LENGTH_LONG).show();
+        });
+        findViewById(R.id.test_btn_3).setOnClickListener(v -> {
+            if (GpioUtils.setGpioDirection(index, 1))
+                Toast.makeText(this, "成功设置该io为输入口", Toast.LENGTH_LONG).show();
+        });
+        findViewById(R.id.test_btn_4).setOnClickListener(v -> {
+            if (GpioUtils.setGpioDirection(index, 0))
+                Toast.makeText(this, "成功设置该io为输出口", Toast.LENGTH_LONG).show();
+        });
+        findViewById(R.id.test_btn_5).setOnClickListener(v -> {
+            Toast.makeText(this, "当前io口的电平 = " + GpioUtils.getGpioValue(index), Toast.LENGTH_LONG).show();
+        });
+        findViewById(R.id.test_btn_6).setOnClickListener(v -> {
+            if (GpioUtils.writeGpioValue(index, "1"))
+                Toast.makeText(this, "成功设置该io高电平", Toast.LENGTH_LONG).show();
+        });
+        findViewById(R.id.test_btn_7).setOnClickListener(v -> {
+            if (GpioUtils.writeGpioValue(index, "0"))
+                Toast.makeText(this, "成功设置该io低电平", Toast.LENGTH_LONG).show();
         });
 
         //-------------------融云
@@ -246,7 +327,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
             loginHik();
 
             mHandler.removeMessages(VIDEO);
-            mHandler.sendEmptyMessageDelayed(VIDEO,5000);
+            mHandler.sendEmptyMessageDelayed(VIDEO, 5000);
         }
 
     }
@@ -267,6 +348,8 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         String[] newPixs = newPix.split(" ");
         int newWidth = Integer.parseInt(newPixs[0]);
         int newHeight = Integer.parseInt(newPixs[1]);
+        Log.w("ebq", "采集摄像头：宽：" + newWidth);
+        Log.w("ebq", "采集摄像头：高：" + newHeight);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(newWidth, newHeight);
         mMonocularView = new MonocularView(mContext);
         mMonocularView.setLivenessCallBack(this);
@@ -307,8 +390,8 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                 ivCapture.setImageBitmap(myBitmap);
 
                 if (canSavePic()) {
-                    say(feature.getUserName() + "验证成功");
-                    openDoor();
+//                    say(feature.getUserName() + getCurrentTime());
+//                    openDoor();
                     captureVideo(feature.getUserId(), myBitmap);
                 }
             } else {
@@ -495,12 +578,12 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                     m_bMultiPlay = false;
                 }
             } else {// preivew a channel
-                Log.v("ebq","摄像头：频道数量1");
+                Log.v("ebq", "摄像头：频道数量1");
                 if (m_iPlayID < 0) {
                     startSinglePreview();
-                    Log.v("ebq","摄像头：开始预览");
+                    Log.v("ebq", "摄像头：开始预览");
                 } else {
-                    Log.v("ebq","摄像头：停止预览");
+                    Log.v("ebq", "摄像头：停止预览");
                     stopSinglePreview();
                 }
             }
@@ -557,7 +640,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
             return true;
         }
 
-        if ((System.currentTimeMillis() - tempTime) > 5000) {
+        if ((System.currentTimeMillis() - tempTime) > delayFace) {
             tempTime = System.currentTimeMillis();
             return true;
         } else {
@@ -573,9 +656,9 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         boolean faceCapture = false;
         String formatTime = TimeFormat.FULL(System.currentTimeMillis());
         String realFileName = formatTime + userKey;// 时间+学生KEY
-        realFileName = realFileName.replace(":","-");
+        realFileName = realFileName.replace(":", "-");
         File mFile = new File(EBQValue.HIK_PATH);
-        if (!mFile.exists()){
+        if (!mFile.exists()) {
             mFile.mkdirs();
         }
         if (HCNetSDKJNAInstance.getInstance().NET_DVR_CapturePictureBlock(m_iPlayID, EBQValue.HIK_PATH + realFileName + "_hik.jpg", 0)) {
@@ -590,7 +673,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
             Log.w("ebq", "记录：人脸识别送检图片地址：" + EBQValue.CAPTURE_PATH + realFileName + "_face.jpg");
             Log.w("ebq", "记录：人脸识别送检图片地址：文件读取地址：" + f.getAbsolutePath());
             faceCapture = true;
-        }else {
+        } else {
             Log.w("ebq", "记录：送检图片保存失败");
         }
 
@@ -602,7 +685,25 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
 
     //--------------开关门
     private void openDoor() {
-        new Manager(getApplicationContext()).setGateIO(true);
+//        if (GpioUtils.writeGpioValue(146,"1")){{
+//            mHandler.sendEmptyMessageDelayed(CLOSE_DOOR,2000);
+//            Log.w("ebq","继电器：高电平");
+//        }}
+
+        if (GpioUtils.setGpioDirection(146, 0)) {
+            Log.e("ebq", "设置IO为输出口成功");
+            mHandler.sendEmptyMessageDelayed(CLOSE_DOOR, delay);
+        }
+
+    }
+
+    private void closeDoor() {
+//        if (GpioUtils.writeGpioValue(146,"0")){{
+//            Log.w("ebq","继电器：低电平");
+//        }}
+        if (GpioUtils.setGpioDirection(146, 1)) {
+            Log.e("ebq", "设置IO为输入口成功");
+        }
     }
 
     //-------------语音合成
@@ -706,4 +807,32 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        synthesizer.release();
+    }
+
+
+    private String getCurrentTime() {
+        Time t = new Time(); // or Time t=new Time("GMT+8"); 加上Time Zone资料
+        t.setToNow(); // 取得系统时间。
+        int hour = t.hour;    // 0-23
+        if (hour >= 0 && hour <= 9)
+            return "，早上好";
+
+        if (hour >= 9 && hour <= 12)
+            return "，上午好";
+
+        if (hour >= 12 && hour <= 13)
+            return "，中午好";
+
+        if (hour >= 13 && hour <= 18)
+            return "，下午好";
+
+        if (hour >= 18)
+            return "，晚上好";
+
+        return "，您好";
+    }
 }

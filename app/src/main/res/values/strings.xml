@@ -1,21 +1,21 @@
 <resources>
-    <string name="app_name">人脸识别</string>
+	<string name="app_name">人脸通行</string>
 
-    <string name="face_setting">设置</string>
-    <string name="face_id">设备ID</string>
-    <string name="face_track">检测</string>
-    <string name="face_recognize">识别</string>
-    <string name="face_livness">活体</string>
-    <string name="face_image">图片</string>
-    <string name="face_id_phone">证件照</string>
-    <string name="face_ir">红外图</string>
-    <string name="face_process">图片处理</string>
-    <string name="face_depth">深度图</string>
-    <string name="face_test">License算法</string>
-    <string name="face_attrs">属性</string>
-    <string name="face_image_attrs">图片属性</string>
-    <string name="face_image_gaze">注意力</string>
+	<string name="face_setting">设置</string>
+	<string name="face_id">设备ID</string>
+	<string name="face_track">检测</string>
+	<string name="face_recognize">识别</string>
+	<string name="face_livness">活体</string>
+	<string name="face_image">图片</string>
+	<string name="face_id_phone">证件照</string>
+	<string name="face_ir">红外图</string>
+	<string name="face_process">图片处理</string>
+	<string name="face_depth">深度图</string>
+	<string name="face_test">License算法</string>
+	<string name="face_attrs">属性</string>
+	<string name="face_image_attrs">图片属性</string>
+	<string name="face_image_gaze">注意力</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+	<!-- TODO: Remove or change this placeholder text -->
+	<string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

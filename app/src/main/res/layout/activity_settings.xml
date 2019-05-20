@@ -64,4 +64,52 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
+    <TextView
+        android:id="@+id/btn_delay_setting"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="60px"
+        android:drawableStart="@drawable/ic_zhaji"
+        android:drawablePadding="16px"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="闸机设置"
+        android:textColor="#222"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_camera_setting" />
+
+    <TextView
+        android:id="@+id/btn_face_db"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="60px"
+        android:drawableStart="@drawable/ic_face_ku"
+        android:drawablePadding="16px"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="人脸库"
+        android:textColor="#222"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_delay_setting" />
+
+    <TextView
+        android:id="@+id/btn_test"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="60px"
+        android:drawableStart="@drawable/ic_developer"
+        android:drawablePadding="16px"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="开发者模式"
+        android:textColor="#222"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_face_db" />
+
 </android.support.constraint.ConstraintLayout>

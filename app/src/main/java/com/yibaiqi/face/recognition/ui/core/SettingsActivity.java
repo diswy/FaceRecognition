@@ -4,8 +4,10 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.TextView;
 
+import com.baidu.idl.sample.ui.UserActivity;
 import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.R;
 import com.yibaiqi.face.recognition.ui.base.BaseActivity;
@@ -20,7 +22,7 @@ public class SettingsActivity extends BaseActivity {
 
     private TextView tvLoc, tvType, tvDevice;
 
-    private TextView btnCamera;
+    private TextView btnCamera,btnDelay,btnFace,btnTest;
 
 
     @Override
@@ -31,6 +33,9 @@ public class SettingsActivity extends BaseActivity {
     @Override
     public void initView() {
         btnCamera = findViewById(R.id.btn_camera_setting);
+        btnDelay = findViewById(R.id.btn_delay_setting);
+        btnFace = findViewById(R.id.btn_face_db);
+        btnTest = findViewById(R.id.btn_test);
         tvLoc = findViewById(R.id.tv_location);
         tvType = findViewById(R.id.tv_type);
         tvDevice = findViewById(R.id.tv_device);
@@ -68,6 +73,18 @@ public class SettingsActivity extends BaseActivity {
     protected void initListener() {
         btnCamera.setOnClickListener(v -> {
             startActivity(new Intent(this, CameraSettingsActivity.class));
+        });
+
+        btnDelay.setOnClickListener(v -> {
+            startActivity(new Intent(this, DelaySettingActivity.class));
+        });
+
+        btnFace.setOnClickListener(v -> {
+            startActivity(new Intent(this, UserActivity.class));
+        });
+
+        btnTest.setOnClickListener(v -> {
+            int i = Integer.parseInt("haha");
         });
     }
 }
