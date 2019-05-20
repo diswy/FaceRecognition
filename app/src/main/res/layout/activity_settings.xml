@@ -97,6 +97,22 @@
         app:layout_constraintTop_toBottomOf="@+id/btn_delay_setting" />
 
     <TextView
+        android:id="@+id/btn_face_config"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="60px"
+        android:drawableStart="@drawable/ic_face_ku"
+        android:drawablePadding="16px"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="人脸识别配置"
+        android:textColor="#222"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_face_db" />
+
+    <TextView
         android:id="@+id/btn_test"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -110,6 +126,6 @@
         android:textColor="#222"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_face_db" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_face_config" />
 
 </android.support.constraint.ConstraintLayout>

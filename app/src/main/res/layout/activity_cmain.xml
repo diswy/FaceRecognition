@@ -7,6 +7,7 @@
 	android:background="@drawable/bg_main"
 	tools:ignore="PxUsage">
 
+	<!--设备：宽 538，高510，上边距120-->
 	<FrameLayout
 		android:id="@+id/layout_camera"
 		android:layout_width="538px"
@@ -82,12 +83,12 @@
 		android:layout_marginEnd="8dp"
 		android:contentDescription="img"
 		android:src="@drawable/ic_settings"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintBottom_toBottomOf="parent" />
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintStart_toStartOf="parent" />
 
 
 	<LinearLayout
-        android:visibility="gone"
+		android:visibility="gone"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:orientation="vertical">
@@ -96,55 +97,69 @@
 			android:id="@+id/test_btn_speak"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="说话" />
+			android:text="注册界面" />
 
 		<Button
 			android:id="@+id/test_btn_insert"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="开门" />
+			android:text="暂停" />
 
 		<Button
 			android:id="@+id/test_btn_del"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="关门" />
+			android:text="恢复" />
 
-		<Button
-			android:id="@+id/test_btn_1"
+		<LinearLayout
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="检测146索引是否有效" />
-		<Button
-			android:id="@+id/test_btn_2"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="获取当前IO是输出还是输入" />
-		<Button
-			android:id="@+id/test_btn_3"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="设置为输入口" />
-		<Button
-			android:id="@+id/test_btn_4"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="设置为输出口" />
-		<Button
-			android:id="@+id/test_btn_5"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="获取当前IO口值" />
-		<Button
-			android:id="@+id/test_btn_6"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="设置为高电平" />
-		<Button
-			android:id="@+id/test_btn_7"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="设置为低电平" />
+			android:orientation="vertical"
+			android:visibility="gone">
+
+			<Button
+				android:id="@+id/test_btn_1"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="检测146索引是否有效" />
+
+			<Button
+				android:id="@+id/test_btn_2"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="获取当前IO是输出还是输入" />
+
+			<Button
+				android:id="@+id/test_btn_3"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="设置为输入口" />
+
+			<Button
+				android:id="@+id/test_btn_4"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="设置为输出口" />
+
+			<Button
+				android:id="@+id/test_btn_5"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="获取当前IO口值" />
+
+			<Button
+				android:id="@+id/test_btn_6"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="设置为高电平" />
+
+			<Button
+				android:id="@+id/test_btn_7"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="设置为低电平" />
+
+		</LinearLayout>
 
 	</LinearLayout>
 

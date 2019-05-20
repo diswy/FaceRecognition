@@ -22,7 +22,7 @@ public class SettingsActivity extends BaseActivity {
 
     private TextView tvLoc, tvType, tvDevice;
 
-    private TextView btnCamera,btnDelay,btnFace,btnTest;
+    private TextView btnCamera,btnDelay,btnFace,btnTest,btnFaceConfig;
 
 
     @Override
@@ -35,6 +35,7 @@ public class SettingsActivity extends BaseActivity {
         btnCamera = findViewById(R.id.btn_camera_setting);
         btnDelay = findViewById(R.id.btn_delay_setting);
         btnFace = findViewById(R.id.btn_face_db);
+        btnFaceConfig = findViewById(R.id.btn_face_config);
         btnTest = findViewById(R.id.btn_test);
         tvLoc = findViewById(R.id.tv_location);
         tvType = findViewById(R.id.tv_type);
@@ -81,6 +82,10 @@ public class SettingsActivity extends BaseActivity {
 
         btnFace.setOnClickListener(v -> {
             startActivity(new Intent(this, UserActivity.class));
+        });
+
+        btnFaceConfig.setOnClickListener(v -> {
+            startActivity(new Intent(this, FaceConfigActivity.class));
         });
 
         btnTest.setOnClickListener(v -> {

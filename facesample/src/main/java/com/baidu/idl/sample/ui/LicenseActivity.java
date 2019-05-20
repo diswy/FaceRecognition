@@ -17,6 +17,7 @@ import com.baidu.idl.facesdk.FaceAuth;
 import com.baidu.idl.facesdk.callback.AuthCallback;
 import com.baidu.idl.facesdk.callback.Callback;
 import com.baidu.idl.facesdk.utils.PreferencesUtil;
+import com.baidu.idl.sample.MyConfig;
 import com.baidu.idl.sample.R;
 import com.baidu.idl.sample.common.GlobalSet;
 import com.baidu.idl.sample.db.DBManager;
@@ -66,7 +67,7 @@ public class LicenseActivity extends BaseActivity implements View.OnClickListene
      */
     private void ifUserLicense() {
         int status = GlobalSet.getLicenseStatus();
-        System.out.println("------>::::"+status);
+        System.out.println("------>::::" + status);
         switch (status) {
             case 0:
                 return;
@@ -159,7 +160,7 @@ public class LicenseActivity extends BaseActivity implements View.OnClickListene
                 if (code == 0) {
                     GlobalSet.FACE_AUTH_STATUS = 0;
                     // 初始化人脸
-                    FaceSDKManager.getInstance().initModel(mContext);
+                    FaceSDKManager.getInstance().initModel(mContext, new MyConfig());
                     // 初始化数据库
                     DBManager.getInstance().init(getApplicationContext());
                     // 加载feature 内存
@@ -185,7 +186,7 @@ public class LicenseActivity extends BaseActivity implements View.OnClickListene
                 if (code == 0) {
                     GlobalSet.FACE_AUTH_STATUS = 0;
                     // 初始化人脸
-                    FaceSDKManager.getInstance().initModel(mContext);
+                    FaceSDKManager.getInstance().initModel(mContext, new MyConfig());
                     // 初始化数据库
                     DBManager.getInstance().init(getApplicationContext());
                     // 加载feature 内存
@@ -209,7 +210,7 @@ public class LicenseActivity extends BaseActivity implements View.OnClickListene
                         if (code == 0) {
                             GlobalSet.FACE_AUTH_STATUS = 0;
                             // 初始化人脸
-                            FaceSDKManager.getInstance().initModel(mContext);
+                            FaceSDKManager.getInstance().initModel(mContext, new MyConfig());
                             // 初始化数据库
                             DBManager.getInstance().init(getApplicationContext());
                             // 加载feature 内存
@@ -270,7 +271,7 @@ public class LicenseActivity extends BaseActivity implements View.OnClickListene
                         || v.getId() == R.id.bt_off_line_active
                         || v.getId() == R.id.bt_on_line_active
                         || v.getId() == R.id.btn_back
-                        ) {
+                ) {
                     ((TextView) v).setTextColor(getResources().getColor(R.color.white));
                 }
                 break;
@@ -279,7 +280,7 @@ public class LicenseActivity extends BaseActivity implements View.OnClickListene
                         || v.getId() == R.id.bt_off_line_active
                         || v.getId() == R.id.bt_on_line_active
                         || v.getId() == R.id.btn_back
-                        ) {
+                ) {
                     ((TextView) v).setTextColor(getResources().getColor(R.color.btnColor));
                 }
                 break;

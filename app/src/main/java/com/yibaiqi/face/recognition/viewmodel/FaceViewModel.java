@@ -30,6 +30,7 @@ import com.baidu.idl.facesdk.FaceAuth;
 import com.baidu.idl.facesdk.FaceFeature;
 import com.baidu.idl.facesdk.model.FaceInfo;
 import com.baidu.idl.facesdk.model.Feature;
+import com.baidu.idl.sample.MyConfig;
 import com.baidu.idl.sample.api.FaceApi;
 import com.baidu.idl.sample.common.FaceEnvironment;
 import com.baidu.idl.sample.common.GlobalSet;
@@ -79,6 +80,7 @@ import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
 
 import static com.baidu.idl.sample.common.GlobalSet.LICENSE_ONLINE;
+import static com.yibaiqi.face.recognition.Key.SETTING_BD_FACE;
 import static com.yibaiqi.face.recognition.ui.core.CMainActivity.MONOCULAR_PAUSE;
 import static com.yibaiqi.face.recognition.ui.core.CMainActivity.MONOCULAR_RESUME;
 
@@ -144,7 +146,16 @@ public class FaceViewModel extends ViewModel {
         faceAuth.initLicenseOnLine(app, key, (code, response, licenseKey) -> {
             if (code == 0) {// 初始化成功
                 // 初始化人脸
-                FaceSDKManager.getInstance().initModel(app);
+                MyConfig myConfig = new MyConfig();
+                ACache cache = ACache.get(app);
+                Object object = cache.getAsObject(SETTING_BD_FACE);
+                if (object != null) {
+                    if (object instanceof MyConfig) {
+                        myConfig = (MyConfig) object;
+                    }
+                }
+
+                FaceSDKManager.getInstance().initModel(app, myConfig);
                 // 初始化数据库
                 DBManager.getInstance().init(app);
                 // 加载feature 内存
@@ -600,7 +611,7 @@ public class FaceViewModel extends ViewModel {
                             FaceInfo faceInfo = faceInfos[0];
                             if (ret == -1) {
                                 //失败
-                                Log.e("ebq","人脸注册：失败！！！=-1");
+                                Log.e("ebq", "人脸注册：失败！！！=-1");
                             } else if (ret == 128) {
                                 Bitmap cropBitmap = null;
                                 String cropImgName = null;
@@ -624,7 +635,7 @@ public class FaceViewModel extends ViewModel {
 
                                 // 保存数据库
                                 if (FaceApi.getInstance().featureAdd(feature)) {
-                                    Log.e("ebq","人脸注册：添加成功！！！");
+                                    Log.e("ebq", "人脸注册：添加成功！！！");
                                     // 保存图片到新目录中
                                     File facePicDir = FileUtils.getFacePicDirectory();
                                     // 保存抠图图片到新目录中
@@ -645,12 +656,12 @@ public class FaceViewModel extends ViewModel {
                                             }
                                         }
                                     }
-                                }else{
-                                    Log.e("ebq","人脸注册：添加失败！！！");
+                                } else {
+                                    Log.e("ebq", "人脸注册：添加失败！！！");
                                 }
                             }
                         } else {
-                            Log.e("ebq","人脸注册：失败！！！图片太大超过了1000*1000");
+                            Log.e("ebq", "人脸注册：失败！！！图片太大超过了1000*1000");
                             // 失败，图片太大 超过了1000*1000
                         }
 

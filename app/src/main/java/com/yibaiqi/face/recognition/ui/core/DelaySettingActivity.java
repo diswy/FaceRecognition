@@ -1,6 +1,5 @@
 package com.yibaiqi.face.recognition.ui.core;
 
-import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;

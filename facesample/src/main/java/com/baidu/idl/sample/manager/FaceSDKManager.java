@@ -6,6 +6,7 @@ import android.util.Log;
 import com.baidu.idl.facesdk.FaceDetect;
 import com.baidu.idl.facesdk.FaceFeature;
 import com.baidu.idl.facesdk.model.Feature;
+import com.baidu.idl.sample.MyConfig;
 import com.baidu.idl.sample.api.FaceApi;
 import com.baidu.idl.sample.api.LRUCache;
 import com.baidu.idl.sample.callback.FaceCallback;
@@ -70,7 +71,7 @@ public class FaceSDKManager {
 
     private FaceModelInitListener faceModelInitListener;
 
-    public void initModel(final Context context) {
+    public void initModel(final Context context,final MyConfig myConfig) {
         faceDetector.initModel(context, "detect_rgb_anakin_2.0.0.bin",
                 "",
                 "align_2.0.0.anakin.bin", new FaceCallback() {
@@ -85,7 +86,7 @@ public class FaceSDKManager {
                         }
                     }
                 });
-        faceDetector.loadConfig(getFaceEnvironmentConfig());
+        faceDetector.loadConfig(getFaceEnvironmentConfig(myConfig));
         faceFeature.initModel(context, "",
                 "recognize_rgb_live_anakin_2.0.0.bin",
                 "", new FaceCallback() {
@@ -116,18 +117,18 @@ public class FaceSDKManager {
                 });
     }
 
-    public FaceEnvironment getFaceEnvironmentConfig() {
-        faceEnvironment.setMinFaceSize(50);
-        faceEnvironment.setMaxFaceSize(-1);
-        faceEnvironment.setDetectInterval(200);
-        faceEnvironment.setTrackInterval(1000);
-        faceEnvironment.setNoFaceSize(0.5f);
-        faceEnvironment.setPitch(30);
-        faceEnvironment.setYaw(30);
-        faceEnvironment.setRoll(30);
-        faceEnvironment.setCheckBlur(true);
-        faceEnvironment.setOcclusion(true);
-        faceEnvironment.setIllumination(true);
+    public FaceEnvironment getFaceEnvironmentConfig(MyConfig myConfig) {
+        faceEnvironment.setMinFaceSize(myConfig.getMinFace());
+        faceEnvironment.setMaxFaceSize(myConfig.getMaxFaceSize());
+        faceEnvironment.setDetectInterval(myConfig.getDetectInterval());
+        faceEnvironment.setTrackInterval(myConfig.getTrackInterval());
+        faceEnvironment.setNoFaceSize(myConfig.getNoFaceSize());
+        faceEnvironment.setPitch(myConfig.getPitch());
+        faceEnvironment.setYaw(myConfig.getYaw());
+        faceEnvironment.setRoll(myConfig.getRoll());
+        faceEnvironment.setCheckBlur(myConfig.isCheckBlur());
+        faceEnvironment.setOcclusion(myConfig.isOcclusion());
+        faceEnvironment.setIllumination(myConfig.isIllumination());
         faceEnvironment.setDetectMethodType(FaceDetect.DetectType.DETECT_VIS);
         return faceEnvironment;
     }

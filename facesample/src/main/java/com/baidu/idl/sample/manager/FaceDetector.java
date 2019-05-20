@@ -9,6 +9,7 @@ import android.content.Context;
 import com.baidu.idl.facesdk.FaceDetect;
 import com.baidu.idl.facesdk.callback.Callback;
 import com.baidu.idl.facesdk.model.FaceInfo;
+import com.baidu.idl.sample.MyConfig;
 import com.baidu.idl.sample.callback.FaceCallback;
 import com.baidu.idl.sample.common.FaceEnvironment;
 import com.baidu.idl.sample.model.ImageFrame;
@@ -68,7 +69,7 @@ public class FaceDetector {
      * @return 检测结果代码。
      */
     public FaceInfo[] trackMaxFace(int[] argb, int width, int height) {
-        int minDetectFace = FaceSDKManager.getInstance().getFaceEnvironmentConfig().getMinFaceSize();
+        int minDetectFace = FaceSDKManager.getInstance().getFaceEnvironmentConfig(new MyConfig()).getMinFaceSize();
         if (width < minDetectFace || height < minDetectFace) {
             return null;
         }

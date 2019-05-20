@@ -19,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.baidu.idl.facesdk.model.BDFaceSDKConfig;
 import com.baidu.idl.facesdk.model.Feature;
 import com.baidu.idl.facesdk.utils.PreferencesUtil;
 import com.baidu.idl.sample.callback.ILivenessCallBack;
@@ -78,7 +79,7 @@ import static com.baidu.idl.sample.common.GlobalSet.TYPE_TPREVIEW_NINETY_ANGLE;
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.INIT_SUCCESS;
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.PRINT;
 
-public class CMainActivity extends BaseActivity implements ILivenessCallBack, SurfaceHolder.Callback {
+public class CMainActivity extends BaseActivity implements SurfaceHolder.Callback {
 
     @Inject
     ACache cache;
@@ -123,14 +124,15 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                     break;
                 case MONOCULAR_RESUME:
                     Log.w("ebq", "百度：resume");
-//                    calculateCameraView();
-                    mMonocularView.onResume();
+                    calculateCameraView();
+//                    mMonocularView.onResume();
                     break;
                 case MONOCULAR_PAUSE:
                     if (mMonocularView != null) {
                         Log.w("ebq", "百度：有任务暂停");
-                        FaceSDKManager.getInstance().getFaceLiveness().release();
-//                        mMonocularView.onPause();
+//                        FaceSDKManager.getInstance().getFaceLiveness().release();
+                        mCameraView.removeAllViews();
+                        mMonocularView.onPause();
                     }
                     break;
                 case VIDEO:
@@ -156,7 +158,6 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
                 .appComponent(App.getInstance().getAppComponent())
                 .build()
                 .inject(this);
-
 
         String sDelay = cache.getAsString(Key.KEY_DELAY);
         String sDelay2 = cache.getAsString(Key.KEY_DELAY_FACE);
@@ -222,7 +223,15 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         findViewById(R.id.test_btn_insert).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GpioUtils.writeGpioValue(146, "0");
+                FaceSDKManager.getInstance().getFaceLiveness().setLivenessCallBack(null);
+
+//                mMonocularView.onPause();
+
+//                FaceSDKManager.getInstance().getFaceLiveness().release();
+//                FaceSDKManager.getInstance().getFaceLiveness()
+
+                Log.w("ebq-bd", "的确执行了释放");
+//                GpioUtils.writeGpioValue(146, "0");
 //                tempKey = String.valueOf(System.currentTimeMillis());
 //                List<DbOption> list = new ArrayList<>();
 //
@@ -245,7 +254,10 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         findViewById(R.id.test_btn_del).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GpioUtils.writeGpioValue(146, "1");
+
+//                mMonocularView.onResume();
+
+//                GpioUtils.writeGpioValue(146, "1");
 //                List<DbOption> list = new ArrayList<>();
 //                DbOption mData = new DbOption(
 //                        tempKey,
@@ -334,6 +346,7 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
 
     @Override
     protected void onStop() {
+        mCameraView.removeAllViews();
         mMonocularView.onPause();
         super.onStop();
     }
@@ -352,55 +365,56 @@ public class CMainActivity extends BaseActivity implements ILivenessCallBack, Su
         Log.w("ebq", "采集摄像头：高：" + newHeight);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(newWidth, newHeight);
         mMonocularView = new MonocularView(mContext);
-        mMonocularView.setLivenessCallBack(this);
+        mMonocularView.setLivenessCallBack(mILivenessCallBack);
         mCameraView.removeAllViews();
         mCameraView.addView(mMonocularView, layoutParams);
 
-        mMonocularView.onResume();
     }
 
-    @Override
-    public void onTip(int code, String msg) {
+    private ILivenessCallBack mILivenessCallBack = new ILivenessCallBack() {
+        @Override
+        public void onTip(int code, String msg) {
 
-    }
+        }
 
-    @Override
-    public void onCanvasRectCallback(LivenessModel livenessModel) {
+        @Override
+        public void onCanvasRectCallback(LivenessModel livenessModel) {
 
-    }
+        }
 
-    @Override
-    public void onCallback(int code, LivenessModel livenessModel) {
-        System.out.println("-code= " + code);
-        runOnUiThread(() -> {
-            if (code == 0) {
-                Feature feature = livenessModel.getFeature();
+        @Override
+        public void onCallback(int code, LivenessModel livenessModel) {
+            System.out.println("-code= " + code);
+            runOnUiThread(() -> {
+                if (code == 0) {
+                    Feature feature = livenessModel.getFeature();
 //                    mSimilariryTv.setText(String.format("相似度: %s", livenessModel.getFeatureScore()));
 //                    mNickNameTv.setText(String.format("%s，你好!", feature.getUserName()));
 
-                String imgPath = FileUtils.getFaceCropPicDirectory().getAbsolutePath()
-                        + "/" + feature.getCropImageName();
-                Bitmap bitmap = Utils.getBitmapFromFile(imgPath);
-                ivDb.setImageBitmap(bitmap);
-                System.out.println("----姓名:" + feature.getUserName());
-                System.out.println("-add:" + imgPath);
+                    String imgPath = FileUtils.getFaceCropPicDirectory().getAbsolutePath()
+                            + "/" + feature.getCropImageName();
+                    Bitmap bitmap = Utils.getBitmapFromFile(imgPath);
+                    ivDb.setImageBitmap(bitmap);
+                    System.out.println("----姓名:" + feature.getUserName());
+                    System.out.println("-add:" + imgPath);
 
-                // 显示送检图片
-                Bitmap myBitmap = mMonocularView.getMyBitmap();
-                ivCapture.setImageBitmap(myBitmap);
+                    // 显示送检图片
+                    Bitmap myBitmap = mMonocularView.getMyBitmap();
+                    ivCapture.setImageBitmap(myBitmap);
 
-                if (canSavePic()) {
-//                    say(feature.getUserName() + getCurrentTime());
-//                    openDoor();
-                    captureVideo(feature.getUserId(), myBitmap);
+                    if (canSavePic()) {
+                        say(feature.getUserName() + getCurrentTime());
+                        openDoor();
+                        captureVideo(feature.getUserId(), myBitmap);
+                    }
+                } else {
+                    ivCapture.setImageBitmap(null);
+                    ivDb.setImageBitmap(null);
                 }
-            } else {
-                ivCapture.setImageBitmap(null);
-                ivDb.setImageBitmap(null);
-            }
 
-        });
-    }
+            });
+        }
+    };
 
 
     //------------------海康摄像头

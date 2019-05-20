@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	tools:context=".ui.core.DelaySettingActivity">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingStart="16dp"
+			android:paddingTop="16dp"
+			android:paddingEnd="16dp"
+			android:paddingBottom="16dp"
+			android:text="Tips:"
+			android:textColor="#222"
+			android:textStyle="bold" />
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:lineSpacingExtra="4dp"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:text="该设置完成后，请完全退出应用后，下次进入生效，可以只设置需要设置的值，没有设置的为默认值。"
+			android:textColor="#222" />
+
+		<EditText
+			android:id="@+id/et_min"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:layout_marginTop="16dp"
+			android:background="@null"
+			android:gravity="center_vertical"
+			android:hint="请设置检测最小人脸值，默认为50"
+			android:inputType="number"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:textSize="16sp" />
+
+		<EditText
+			android:id="@+id/et_max"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:background="@null"
+			android:gravity="center_vertical"
+			android:hint="请设置检测最大人脸值，默认为-1（不做限制）"
+			android:inputType="number"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:textSize="16sp" />
+
+		<EditText
+			android:id="@+id/et_trackInterval"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:background="@null"
+			android:gravity="center_vertical"
+			android:hint="请设置人脸跟踪，检测的时间间隔，默认为500毫秒"
+			android:inputType="number"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:textSize="16sp" />
+
+		<EditText
+			android:id="@+id/et_detectInterval"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:background="@null"
+			android:gravity="center_vertical"
+			android:hint="请设置人脸跟踪，跟踪时间间隔，默认为1000毫秒"
+			android:inputType="number"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:textSize="16sp" />
+
+		<EditText
+			android:id="@+id/et_noFaceSize"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:background="@null"
+			android:gravity="center_vertical"
+			android:hint="请设置非人脸阈值，默认为0.5"
+			android:inputType="number"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:textSize="16sp" />
+
+		<EditText
+			android:id="@+id/et_pitch"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:background="@null"
+			android:gravity="center_vertical"
+			android:hint="请设置抬头低头角度，默认为15"
+			android:inputType="number"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:textSize="16sp" />
+
+		<EditText
+			android:id="@+id/et_yaw"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:background="@null"
+			android:gravity="center_vertical"
+			android:hint="请设置左右摇头角度，默认为15"
+			android:inputType="number"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:textSize="16sp" />
+
+		<EditText
+			android:id="@+id/et_roll"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:background="@null"
+			android:gravity="center_vertical"
+			android:hint="请设置偏头角度，默认为15"
+			android:inputType="number"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:textSize="16sp" />
+
+		<CheckBox
+			android:id="@+id/cb_isCheckBlur"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:checked="true"
+			android:text="是否进行模糊检测" />
+
+		<CheckBox
+			android:id="@+id/cb_isIllumination"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:checked="true"
+			android:text="是否进行光照检测" />
+
+		<CheckBox
+			android:id="@+id/cb_isOcclusion"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:checked="true"
+			android:text="是否进行遮挡检测" />
+
+		<TextView
+			android:id="@+id/btn_commit"
+			android:layout_width="280px"
+			android:layout_height="50px"
+			android:layout_gravity="center_horizontal"
+			android:layout_marginTop="20dp"
+			android:layout_marginBottom="60dp"
+			android:background="@drawable/btn_bg"
+			android:gravity="center"
+			android:text="确认设置"
+			android:textColor="@color/white" />
+
+	</LinearLayout>
+
+</ScrollView>

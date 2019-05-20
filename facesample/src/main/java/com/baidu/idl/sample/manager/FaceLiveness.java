@@ -556,10 +556,12 @@ public class FaceLiveness {
     public void release() {
         if (future != null) {
             future.cancel(true);
+            Log.w("ebq-bd","future1的确执行了释放");
         }
 
         if (future2 != null) {
             future2.cancel(true);
+            Log.w("ebq-bd","future2的确执行了释放");
         }
     }
 }

@@ -114,74 +114,74 @@ public class SplashActivity extends BaseActivity {
             }
         });
 
-        faceModel.initBDFaceEngine("QY8C-NXN5-9XH7-8VCC");
+//        faceModel.initBDFaceEngine("QY8C-NXN5-9XH7-8VCC");
 
-//        faceModel.registerDevice().observe(this, resource -> {
-//            if (resource == null)
-//                return;
-//            switch (resource.status) {
-//                case SUCCESS:
-//                    if (resource.data != null && resource.data.getData() != null) {
-//
-//                        cache.put("token", resource.data.getData().getToken());
-//                        cache.put("im_token", resource.data.getData().getImToken());
-//
-//                        OSSConfig ossConfig = resource.data.getData().getOssConfig();
-//                        if (ossConfig != null) {
-//                            cache.put("oss_config", ossConfig);
-//                            Log.i("ebq", "基础配置：OSS配置成功");
-//                        }
-//
-//                        ExData exData = resource.data.getData().getData();
-//                        if (exData != null && exData.getUsers() != null) {// 后台通知消息，也许有新操作
-//                            List<DbOption> list = new ArrayList<>();
-//                            int addCount = 0;
-//                            int delCount = 0;
-//
-//                            if (exData.getUsers().getAdd() != null) {
-//
-//                                for (DbOption item : exData.getUsers().getAdd()) {
-//                                    if (!TextUtils.isEmpty(item.getFace_image())) {
-//                                        DbOption mData = new DbOption(
-//                                                item.getData_key(),
-//                                                item.getUser_key(),
-//                                                item.getReal_name(),
-//                                                item.getFace_image(),
-//                                                0);// 新增用户
-//                                        list.add(mData);
-//                                        addCount++;
-//                                    }
-//                                }
-//
-//                            }
-//
-//                            if (exData.getUsers().getDelete() != null) {
-//                                for (DbOption item : exData.getUsers().getDelete()) {
-//                                    DbOption mData = new DbOption(
-//                                            item.getData_key(),
-//                                            item.getUser_key(),
-//                                            item.getReal_name(),
-//                                            "",
-//                                            1);
-//                                    list.add(mData);
-//                                    delCount++;
-//                                }
-//                            }
-//
-//                            Log.i("ebq", "数据更新:来源->启动注册设备------新增数据:" + addCount + "条 ; 删除数据:" + delCount + "条");
-//                            faceModel.insert(list);
-//                        }
-//                        faceModel.initBDFaceEngine(resource.data.getData().getSerialNumber());
-//                    }
-//                    break;
-//                case ERROR:
-//                    Log.i("ebq", "失败" + resource.message);
-//                    break;
-//                case LOADING:
-//                    Log.i("ebq", "加载中");
-//                    break;
-//            }
-//        });
+        faceModel.registerDevice().observe(this, resource -> {
+            if (resource == null)
+                return;
+            switch (resource.status) {
+                case SUCCESS:
+                    if (resource.data != null && resource.data.getData() != null) {
+
+                        cache.put("token", resource.data.getData().getToken());
+                        cache.put("im_token", resource.data.getData().getImToken());
+
+                        OSSConfig ossConfig = resource.data.getData().getOssConfig();
+                        if (ossConfig != null) {
+                            cache.put("oss_config", ossConfig);
+                            Log.i("ebq", "基础配置：OSS配置成功");
+                        }
+
+                        ExData exData = resource.data.getData().getData();
+                        if (exData != null && exData.getUsers() != null) {// 后台通知消息，也许有新操作
+                            List<DbOption> list = new ArrayList<>();
+                            int addCount = 0;
+                            int delCount = 0;
+
+                            if (exData.getUsers().getAdd() != null) {
+
+                                for (DbOption item : exData.getUsers().getAdd()) {
+                                    if (!TextUtils.isEmpty(item.getFace_image())) {
+                                        DbOption mData = new DbOption(
+                                                item.getData_key(),
+                                                item.getUser_key(),
+                                                item.getReal_name(),
+                                                item.getFace_image(),
+                                                0);// 新增用户
+                                        list.add(mData);
+                                        addCount++;
+                                    }
+                                }
+
+                            }
+
+                            if (exData.getUsers().getDelete() != null) {
+                                for (DbOption item : exData.getUsers().getDelete()) {
+                                    DbOption mData = new DbOption(
+                                            item.getData_key(),
+                                            item.getUser_key(),
+                                            item.getReal_name(),
+                                            "",
+                                            1);
+                                    list.add(mData);
+                                    delCount++;
+                                }
+                            }
+
+                            Log.i("ebq", "数据更新:来源->启动注册设备------新增数据:" + addCount + "条 ; 删除数据:" + delCount + "条");
+                            faceModel.insert(list);
+                        }
+                        faceModel.initBDFaceEngine(resource.data.getData().getSerialNumber());
+                    }
+                    break;
+                case ERROR:
+                    Log.i("ebq", "失败" + resource.message);
+                    break;
+                case LOADING:
+                    Log.i("ebq", "加载中");
+                    break;
+            }
+        });
 
     }
 }
