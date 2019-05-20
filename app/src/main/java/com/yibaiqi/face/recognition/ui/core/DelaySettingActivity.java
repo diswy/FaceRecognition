@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 public class DelaySettingActivity extends BaseActivity {
 
-    private EditText etDelay, etDelayFace;
+    private EditText etDelay, etDelayFace, etDelayRegister;
     private TextView btnCommit;
 
     @Inject
@@ -30,6 +30,7 @@ public class DelaySettingActivity extends BaseActivity {
     public void initView() {
         etDelay = findViewById(R.id.et_delay);
         etDelayFace = findViewById(R.id.et_delay_face);
+        etDelayRegister = findViewById(R.id.et_delay_register);
         btnCommit = findViewById(R.id.btn_commit);
     }
 
@@ -42,12 +43,17 @@ public class DelaySettingActivity extends BaseActivity {
 
         String sDelay = cache.getAsString(Key.KEY_DELAY);
         String sDelay2 = cache.getAsString(Key.KEY_DELAY_FACE);
+        String sDelay3 = cache.getAsString(Key.KEY_DELAY_REGISTER);
         if (sDelay != null) {
             etDelay.setText(sDelay);
         }
 
         if (sDelay2 != null) {
             etDelayFace.setText(sDelay2);
+        }
+
+        if (sDelay3 != null){
+            etDelayRegister.setText(sDelay3);
         }
     }
 
@@ -60,9 +66,15 @@ public class DelaySettingActivity extends BaseActivity {
                 cache.put(Key.KEY_DELAY, etS);
 
                 String etS2 = etDelayFace.getText().toString().trim();
-                int delay2 = Integer.parseInt(etS);
+                int delay2 = Integer.parseInt(etS2);
                 cache.put(Key.KEY_DELAY_FACE, etS2);
-                Toast.makeText(this, "闸机延迟和识别间隔设置成功", Toast.LENGTH_SHORT).show();
+
+                String etS3 = etDelayRegister.getText().toString().trim();
+                int delay3 = Integer.parseInt(etS3);
+                cache.put(Key.KEY_DELAY_REGISTER, etS3);
+
+
+                Toast.makeText(this, "设置成功", Toast.LENGTH_SHORT).show();
 
                 finish();
             } catch (NumberFormatException e) {

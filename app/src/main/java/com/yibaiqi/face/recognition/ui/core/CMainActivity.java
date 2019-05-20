@@ -19,10 +19,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.baidu.idl.facesdk.model.BDFaceSDKConfig;
 import com.baidu.idl.facesdk.model.Feature;
 import com.baidu.idl.facesdk.utils.PreferencesUtil;
 import com.baidu.idl.sample.callback.ILivenessCallBack;
+import com.baidu.idl.sample.manager.FaceLiveness;
 import com.baidu.idl.sample.manager.FaceSDKManager;
 import com.baidu.idl.sample.model.LivenessModel;
 import com.baidu.idl.sample.ui.MainActivity;
@@ -39,7 +39,6 @@ import com.hikvision.netsdk.ExceptionCallBack;
 import com.hikvision.netsdk.HCNetSDK;
 import com.hikvision.netsdk.NET_DVR_DEVICEINFO_V30;
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
-import com.seeku.android.Manager;
 import com.test.demo.PlaySurfaceView;
 import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.Key;
@@ -58,15 +57,11 @@ import com.yibaiqi.face.recognition.tools.listener.UiMessageListener;
 import com.yibaiqi.face.recognition.ui.base.BaseActivity;
 import com.yibaiqi.face.recognition.viewmodel.FaceViewModel;
 import com.yibaiqi.face.recognition.viewmodel.RongViewModel;
-import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.MyRecord;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -75,7 +70,6 @@ import io.rong.imlib.RongIMClient;
 
 import static com.baidu.idl.sample.common.GlobalSet.TYPE_PREVIEW_ANGLE;
 import static com.baidu.idl.sample.common.GlobalSet.TYPE_PREVIEW_ZERO_ANGLE;
-import static com.baidu.idl.sample.common.GlobalSet.TYPE_TPREVIEW_NINETY_ANGLE;
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.INIT_SUCCESS;
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.PRINT;
 
@@ -131,8 +125,9 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
                     if (mMonocularView != null) {
                         Log.w("ebq", "百度：有任务暂停");
 //                        FaceSDKManager.getInstance().getFaceLiveness().release();
-                        mCameraView.removeAllViews();
                         mMonocularView.onPause();
+                        mMonocularView.setLivenessCallBack(null);
+                        mMonocularView = null;
                     }
                     break;
                 case VIDEO:
@@ -334,6 +329,7 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
     protected void onResume() {
         super.onResume();
         calculateCameraView();
+
         if (faceModel.isCameraEnable() && !isCameraSuccess) {
             needPreview = true;
             loginHik();
@@ -348,6 +344,8 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
     protected void onStop() {
         mCameraView.removeAllViews();
         mMonocularView.onPause();
+        mMonocularView.setLivenessCallBack(null);
+        mMonocularView = null;
         super.onStop();
     }
 
@@ -356,6 +354,10 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
      * 计算并适配显示图像容器的宽高
      */
     private void calculateCameraView() {
+        // 重置状态为默认状态
+        FaceSDKManager.getInstance().getFaceLiveness()
+                .setCurrentTaskType(FaceLiveness.TaskType.TASK_TYPE_ONETON);
+
         String newPix;
         newPix = DensityUtil.calculateCameraView(mContext);
         String[] newPixs = newPix.split(" ");
@@ -367,8 +369,10 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
         mMonocularView = new MonocularView(mContext);
         mMonocularView.setLivenessCallBack(mILivenessCallBack);
         mCameraView.removeAllViews();
+
         mCameraView.addView(mMonocularView, layoutParams);
 
+        mMonocularView.onResume();
     }
 
     private ILivenessCallBack mILivenessCallBack = new ILivenessCallBack() {

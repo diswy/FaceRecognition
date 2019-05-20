@@ -50,6 +50,18 @@
 		android:paddingEnd="16dp"
 		android:textSize="16sp" />
 
+	<EditText
+		android:id="@+id/et_delay_register"
+		android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:background="@null"
+		android:gravity="center_vertical"
+		android:hint="请设置注册人脸时延迟注册的时间，默认为3s"
+		android:inputType="number"
+		android:paddingStart="16dp"
+		android:paddingEnd="16dp"
+		android:textSize="16sp" />
+
 	<TextView
 		android:id="@+id/btn_commit"
 		android:layout_width="280px"

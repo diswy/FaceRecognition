@@ -10,6 +10,7 @@ public class Key {
     public static String KEY_CAMERA_PWD = "KEY_CAMERA_PWD";
     public static String KEY_DELAY = "KEY_DELAY";
     public static String KEY_DELAY_FACE = "KEY_DELAY_FACE";
+    public static String KEY_DELAY_REGISTER = "KEY_DELAY_REGISTER";
 
 
     public static String SETTING_BD_FACE = "SETTING_BD_FACE";

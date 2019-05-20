@@ -35,6 +35,7 @@ import com.baidu.idl.sample.api.FaceApi;
 import com.baidu.idl.sample.common.FaceEnvironment;
 import com.baidu.idl.sample.common.GlobalSet;
 import com.baidu.idl.sample.db.DBManager;
+import com.baidu.idl.sample.manager.FaceLiveness;
 import com.baidu.idl.sample.manager.FaceSDKManager;
 import com.baidu.idl.sample.model.ARGBImg;
 import com.baidu.idl.sample.utils.FeatureUtils;
@@ -46,6 +47,7 @@ import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadLargeFileListener;
 import com.liulishuo.filedownloader.FileDownloader;
 import com.yibaiqi.face.recognition.App;
+import com.yibaiqi.face.recognition.Key;
 import com.yibaiqi.face.recognition.repository.FaceRepository;
 import com.yibaiqi.face.recognition.tools.ACache;
 import com.yibaiqi.face.recognition.tools.EBQValue;
@@ -69,6 +71,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -588,7 +591,23 @@ public class FaceViewModel extends ViewModel {
     private void registerFace(String userKey, String userName, DbOption data) {
         handler.sendEmptyMessage(MONOCULAR_PAUSE);
 
+        FaceSDKManager.getInstance().getFaceLiveness()
+                .setCurrentTaskType(FaceLiveness.TaskType.TASK_TYPE_REGIST);
+
+        ACache cache = ACache.get(app);
+        String sDelay = cache.getAsString(Key.KEY_DELAY_REGISTER);
+        int delay = 3000;
+        try {
+            if (sDelay != null) {
+                delay = Integer.parseInt(sDelay);
+            }
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            delay = 3000;
+        }
         Disposable disposable = Flowable.just(data)
+                .delay(delay, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(new Consumer<DbOption>() {
