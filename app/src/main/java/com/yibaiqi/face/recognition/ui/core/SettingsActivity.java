@@ -22,7 +22,7 @@ public class SettingsActivity extends BaseActivity {
 
     private TextView tvLoc, tvType, tvDevice;
 
-    private TextView btnCamera,btnDelay,btnFace,btnTest,btnFaceConfig;
+    private TextView btnCamera, btnDelay, btnFace, btnTest, btnFaceConfig;
 
 
     @Override
@@ -89,7 +89,7 @@ public class SettingsActivity extends BaseActivity {
         });
 
         btnTest.setOnClickListener(v -> {
-            int i = Integer.parseInt("haha");
+            startActivity(new Intent(this, MFaceActivity.class));
         });
     }
 }

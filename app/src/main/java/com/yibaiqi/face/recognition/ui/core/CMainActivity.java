@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.baidu.idl.facesdk.model.Feature;
-import com.baidu.idl.facesdk.utils.PreferencesUtil;
 import com.baidu.idl.sample.callback.ILivenessCallBack;
 import com.baidu.idl.sample.manager.FaceLiveness;
 import com.baidu.idl.sample.manager.FaceSDKManager;
@@ -68,8 +67,6 @@ import javax.inject.Inject;
 
 import io.rong.imlib.RongIMClient;
 
-import static com.baidu.idl.sample.common.GlobalSet.TYPE_PREVIEW_ANGLE;
-import static com.baidu.idl.sample.common.GlobalSet.TYPE_PREVIEW_ZERO_ANGLE;
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.INIT_SUCCESS;
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.PRINT;
 
@@ -93,6 +90,7 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
     private int delayFace = 5000;
 
     private FrameLayout mCameraView;
+    private FrameLayout mHint;
     private MonocularView mMonocularView;
     private ImageView ivCapture;
     private ImageView ivDb;
@@ -119,15 +117,11 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
                 case MONOCULAR_RESUME:
                     Log.w("ebq", "百度：resume");
                     calculateCameraView();
-//                    mMonocularView.onResume();
                     break;
                 case MONOCULAR_PAUSE:
                     if (mMonocularView != null) {
                         Log.w("ebq", "百度：有任务暂停");
-//                        FaceSDKManager.getInstance().getFaceLiveness().release();
-                        mMonocularView.onPause();
-                        mMonocularView.setLivenessCallBack(null);
-                        mMonocularView = null;
+                        mMonocularView.onBDPreviewPause();
                     }
                     break;
                 case VIDEO:
@@ -168,9 +162,7 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
             e.printStackTrace();
         }
         // 固定设备，闸机头默认需要设置0度
-        PreferencesUtil.putInt(TYPE_PREVIEW_ANGLE, TYPE_PREVIEW_ZERO_ANGLE);
-//        PreferencesUtil.putInt(TYPE_PREVIEW_ANGLE, TYPE_TPREVIEW_NINETY_ANGLE);
-
+        mHint = findViewById(R.id.ff_hint);
         mCameraView = findViewById(R.id.layout_camera);
         ivCapture = findViewById(R.id.iv_capture);
         ivDb = findViewById(R.id.iv_db);
@@ -208,6 +200,17 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
         // 处理记录
         faceModel.observerRecordData(this, this);
 
+        faceModel.getIsRegister().observe(this, aBoolean -> {
+            if (aBoolean == null)
+                return;
+
+            if (aBoolean) {
+                mHint.setVisibility(View.VISIBLE);
+            } else {
+                mHint.setVisibility(View.GONE);
+            }
+        });
+
         findViewById(R.id.test_btn_speak).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -218,14 +221,14 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
         findViewById(R.id.test_btn_insert).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FaceSDKManager.getInstance().getFaceLiveness().setLivenessCallBack(null);
+//                mMonocularView.onBDPreviewPause();
+//                Log.w("ebq-bd", "的确执行了释放");
 
 //                mMonocularView.onPause();
 
 //                FaceSDKManager.getInstance().getFaceLiveness().release();
 //                FaceSDKManager.getInstance().getFaceLiveness()
 
-                Log.w("ebq-bd", "的确执行了释放");
 //                GpioUtils.writeGpioValue(146, "0");
 //                tempKey = String.valueOf(System.currentTimeMillis());
 //                List<DbOption> list = new ArrayList<>();
@@ -249,8 +252,7 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
         findViewById(R.id.test_btn_del).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-//                mMonocularView.onResume();
+                mMonocularView.onBDPreviewResume();
 
 //                GpioUtils.writeGpioValue(146, "1");
 //                List<DbOption> list = new ArrayList<>();
@@ -328,6 +330,7 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
     @Override
     protected void onResume() {
         super.onResume();
+
         calculateCameraView();
 
         if (faceModel.isCameraEnable() && !isCameraSuccess) {
@@ -342,10 +345,7 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
 
     @Override
     protected void onStop() {
-        mCameraView.removeAllViews();
-        mMonocularView.onPause();
-        mMonocularView.setLivenessCallBack(null);
-        mMonocularView = null;
+        mMonocularView.onBDPreviewPause();
         super.onStop();
     }
 
@@ -703,11 +703,6 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
 
     //--------------开关门
     private void openDoor() {
-//        if (GpioUtils.writeGpioValue(146,"1")){{
-//            mHandler.sendEmptyMessageDelayed(CLOSE_DOOR,2000);
-//            Log.w("ebq","继电器：高电平");
-//        }}
-
         if (GpioUtils.setGpioDirection(146, 0)) {
             Log.e("ebq", "设置IO为输出口成功");
             mHandler.sendEmptyMessageDelayed(CLOSE_DOOR, delay);
@@ -716,9 +711,6 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
     }
 
     private void closeDoor() {
-//        if (GpioUtils.writeGpioValue(146,"0")){{
-//            Log.w("ebq","继电器：低电平");
-//        }}
         if (GpioUtils.setGpioDirection(146, 1)) {
             Log.e("ebq", "设置IO为输入口成功");
         }

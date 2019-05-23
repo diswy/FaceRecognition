@@ -16,6 +16,8 @@ import com.yibaiqi.face.recognition.ui.base.BaseActivity;
 
 import javax.inject.Inject;
 
+import static com.yibaiqi.face.recognition.Key.SETTING_BD_FACE;
+
 public class FaceConfigActivity extends BaseActivity {
 
     private EditText etMin, etMax, etTrack, etDetect, etNoFace, etPitch, etYaw, etRoll;
@@ -54,6 +56,30 @@ public class FaceConfigActivity extends BaseActivity {
                 .appComponent(App.getInstance().getAppComponent())
                 .build()
                 .inject(this);
+
+
+        // 初始化人脸
+        MyConfig myConfig = new MyConfig();
+        ACache cache = ACache.get(getApplication());
+        Object object = cache.getAsObject(SETTING_BD_FACE);
+        if (object != null) {
+            if (object instanceof MyConfig) {
+                myConfig = (MyConfig) object;
+            }
+        }
+
+        etMin.setText(String.valueOf(myConfig.getMinFace()));
+        etMax.setText(String.valueOf(myConfig.getMaxFaceSize()));
+        etTrack.setText(String.valueOf(myConfig.getTrackInterval()));
+        etDetect.setText(String.valueOf(myConfig.getDetectInterval()));
+        etNoFace.setText(String.valueOf(myConfig.getNoFaceSize()));
+        etPitch.setText(String.valueOf(myConfig.getPitch()));
+        etYaw.setText(String.valueOf(myConfig.getYaw()));
+        etRoll.setText(String.valueOf(myConfig.getRoll()));
+
+        cbBlur.setChecked(myConfig.isCheckBlur());
+        cbIllumination.setChecked(myConfig.isIllumination());
+        cbOcclusion.setChecked(myConfig.isOcclusion());
     }
 
     @Override

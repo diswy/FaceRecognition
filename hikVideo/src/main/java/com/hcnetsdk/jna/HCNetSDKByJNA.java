@@ -427,7 +427,7 @@ public interface HCNetSDKByJNA extends Library {
 		public int dwSize;
 		public short wZoneNo;		//readonly 
 		public byte	byJointSubSystem; //readonly 
-		public byte byType;			//type 0:real time ,1-24 hours,2-delay ,3-innter£¬4-key  5-fire alarm 6-boundary 7-24 hours without sound  8-24 hours support £¬9-24 hours shake 0xff-no
+		public byte byType;			//type 0:real time ,1-24 hours,2-delay ,3-innterÂ£Â¬4-key  5-fire alarm 6-boundary 7-24 hours without sound  8-24 hours support Â£Â¬9-24 hours shake 0xff-no
 		public byte[] byName = new byte[NAME_LEN];
 		public short wDetectorType;	// DETECTOR_TYPE
 		public short wInDelay;		
@@ -546,7 +546,7 @@ public interface HCNetSDKByJNA extends Library {
 	//public static class NET_DVR_NTPPARA extends Structure {
 		//	public byte[] sNTPServer = new byte[64];           /* Domain Name or IP addr of NTP server */
 		//	public short wInterval;		                       /* adjust time interval(hours) */
-		//	public byte byEnableNTP;                           /* enable NTP client 0-no£¬1-yes*/
+		//	public byte byEnableNTP;                           /* enable NTP client 0-noÂ£Â¬1-yes*/
 		//	public byte cTimeDifferenceH;                      /* UTC -12 ... +13 */
 		//	public byte cTimeDifferenceM;                      /* UTC minutes 0, 30, 45*/
 		//	public byte res1;
@@ -585,8 +585,8 @@ public interface HCNetSDKByJNA extends Library {
 
 		public static class NET_DVR_SINGLE_PLAN_SEGMENT extends Structure {
 		    public byte byEnable; 
-		    public byte byDoorStatus; //0-invalid£¬1-dormant£¬2-alawys open£¬3-alawys closed
-		    public byte byVerifyMode; //0-invalid£¬1-dormant£¬2-card+password 3-card £¬4-card or password£¬5-fingerprint£¬6-fingerprint and password£¬7-fingerprint or card£¬8-fingerprint and card£¬9-fingerprint and card and password
+		    public byte byDoorStatus; //0-invalidÂ£Â¬1-dormantÂ£Â¬2-alawys openÂ£Â¬3-alawys closed
+		    public byte byVerifyMode; //0-invalidÂ£Â¬1-dormantÂ£Â¬2-card+password 3-card Â£Â¬4-card or passwordÂ£Â¬5-fingerprintÂ£Â¬6-fingerprint and passwordÂ£Â¬7-fingerprint or cardÂ£Â¬8-fingerprint and cardÂ£Â¬9-fingerprint and card and password
 		    public byte[] byRes = new byte[5];
 		    public NET_DVR_TIME_SEGMENT struTimeSegment = new NET_DVR_TIME_SEGMENT();
 			@Override
@@ -704,7 +704,7 @@ public interface HCNetSDKByJNA extends Library {
 		    public byte byEnable; 
 		    public byte[] byRes1= new byte[3];
 		    public byte[] byTemplateName = new byte[TEMPLATE_NAME_LEN]; 
-		    public int dwWeekPlanNo; //ÖÜ¼Æ»®±àºÅ£¬0ÎªÎŞĞ§
+		    public int dwWeekPlanNo; //Ã–ÃœÂ¼Ã†Â»Â®Â±Ã ÂºÃ…Â£Â¬0ÃÂªÃÃÃÂ§
 		    public int[] dwHolidayGroupNo = new int[MAX_HOLIDAY_GROUP_NUM]; 
 		    public byte[] byRes2 = new byte[32];
 		    @Override
@@ -755,9 +755,9 @@ public interface HCNetSDKByJNA extends Library {
 			public byte byUSBNum;				//USB
 		        public byte byAuxoutNum;		
 		        public byte byAudioNum;			    
-			public byte byIPChanNum;			//low 8£¬high 8 see byHighIPChanNum 
+			public byte byIPChanNum;			//low 8Â£Â¬high 8 see byHighIPChanNum 
 			public byte byZeroChanNum;			
-		        public byte bySupport;              //0-not support£¬1-support£¬
+		        public byte bySupport;              //0-not supportÂ£Â¬1-supportÂ£Â¬
 		        //bySupport & 0x1, intelligent search
 		        //bySupport & 0x2, backup
 		        //bySupport & 0x4, compressinfo config
@@ -766,15 +766,15 @@ public interface HCNetSDKByJNA extends Library {
 		        //bySupport & 0x20, Raid card
 		        //bySupport & 0x40, IPSAN search
 			//bySupport & 0x80, rtp over rtsp
-			public byte byEsataUseage;		//Esata £¬0-backup£¬1-record
-		        public byte byIPCPlug;			//0-close £¬1-open
+			public byte byEsataUseage;		//Esata Â£Â¬0-backupÂ£Â¬1-record
+		        public byte byIPCPlug;			//0-close Â£Â¬1-open
 			public byte byStorageMode;		//0-HDD group,1-quota, 2-frame extract
-			public byte bySupport1;		 //0-not support£¬1-support£¬
+			public byte bySupport1;		 //0-not supportÂ£Â¬1-supportÂ£Â¬
 			//bySupport1 & 0x1, snmp v30
 			//bySupport1 & 0x2, playback or download
 			//bySupport1 & 0x4, alarm priority 	
 			//bySupport1 & 0x8, set alarm time extend
-			//bySupport1 & 0x10, multi HDD£¨over 33£©
+			//bySupport1 & 0x10, multi HDDÂ£Â¨over 33Â£Â©
 			//bySupport1 & 0x20, rtsp over http	
 			public short wDevType;
 			public byte[] byDevTypeName = new byte[DEV_TYPE_NAME_LEN];
@@ -843,7 +843,7 @@ public interface HCNetSDKByJNA extends Library {
 		public static class NET_DVR_CARD_READER_CFG_V50 extends Structure {
 		    public int dwSize;
 		    public byte byEnable;
-		    public byte byCardReaderType; //£¬1-DS-K110XM/MK/C/CK£¬2-DS-K192AM/AMP£¬3-DS-K192BM/BMP£¬4-DS-K182AM/AMP£¬5-DS-K182BM/BMP£¬6-DS-K182AMF/ACF£¬7-Î¤¸ù»ò485²»ÔÚÏß£¬8- DS-K1101M/MK£¬9- DS-K1101C/CK£¬10- DS-K1102M/MK/M-A£¬11- DS-K1102C/CK£¬12- DS-K1103M/MK£¬13- DS-K1103C/CK£¬14- DS-K1104M/MK£¬15- DS-K1104C/CK£¬16- DS-K1102S/SK/S-A£¬17- DS-K1102G/GK£¬18- DS-K1100S-B£¬19- DS-K1102EM/EMK£¬20- DS-K1102E/EK£¬21- DS-K1200EF£¬22- DS-K1200MF£¬23- DS-K1200CF£¬24- DS-K1300EF£¬25- DS-K1300MF£¬26- DS-K1300CF£¬27- DS-K1105E£¬28- DS-K1105M£¬29- DS-K1105C£¬30- DS-K182AMF£¬31- DS-K196AMF£¬32-DS-K194AMP£¬33-DS-K1T200EF/EF-C/MF/MF-C/CF/CF-C,34-DS-K1T300EF/EF-C/MF/MF-C/CF/CF-C£¬35-DS-K1T105E/E-C/M/M-C/C/C-C,36-DS-K1T803F/F-M/F-S/F-E,37-DS-K1A801F/F-M/F-S/F-E,38-DS-K1107M/MK,39-DS-K1107E/EK,40-DS-K1107S/SK,41-DS-K1108M/MK,42-DS-K1108E/EK,43-DS-K1108S/SK,44-DS-K1200F,45-DS-K1S110-I,46-DS-K1T200M-PG/PGC,47-DS-K1T200M-PZ/PZC,48-DS-K1109H
+		    public byte byCardReaderType; //Â£Â¬1-DS-K110XM/MK/C/CKÂ£Â¬2-DS-K192AM/AMPÂ£Â¬3-DS-K192BM/BMPÂ£Â¬4-DS-K182AM/AMPÂ£Â¬5-DS-K182BM/BMPÂ£Â¬6-DS-K182AMF/ACFÂ£Â¬7-ÃÂ¤Â¸Ã¹Â»Ã²485Â²Â»Ã”ÃšÃÃŸÂ£Â¬8- DS-K1101M/MKÂ£Â¬9- DS-K1101C/CKÂ£Â¬10- DS-K1102M/MK/M-AÂ£Â¬11- DS-K1102C/CKÂ£Â¬12- DS-K1103M/MKÂ£Â¬13- DS-K1103C/CKÂ£Â¬14- DS-K1104M/MKÂ£Â¬15- DS-K1104C/CKÂ£Â¬16- DS-K1102S/SK/S-AÂ£Â¬17- DS-K1102G/GKÂ£Â¬18- DS-K1100S-BÂ£Â¬19- DS-K1102EM/EMKÂ£Â¬20- DS-K1102E/EKÂ£Â¬21- DS-K1200EFÂ£Â¬22- DS-K1200MFÂ£Â¬23- DS-K1200CFÂ£Â¬24- DS-K1300EFÂ£Â¬25- DS-K1300MFÂ£Â¬26- DS-K1300CFÂ£Â¬27- DS-K1105EÂ£Â¬28- DS-K1105MÂ£Â¬29- DS-K1105CÂ£Â¬30- DS-K182AMFÂ£Â¬31- DS-K196AMFÂ£Â¬32-DS-K194AMPÂ£Â¬33-DS-K1T200EF/EF-C/MF/MF-C/CF/CF-C,34-DS-K1T300EF/EF-C/MF/MF-C/CF/CF-CÂ£Â¬35-DS-K1T105E/E-C/M/M-C/C/C-C,36-DS-K1T803F/F-M/F-S/F-E,37-DS-K1A801F/F-M/F-S/F-E,38-DS-K1107M/MK,39-DS-K1107E/EK,40-DS-K1107S/SK,41-DS-K1108M/MK,42-DS-K1108E/EK,43-DS-K1108S/SK,44-DS-K1200F,45-DS-K1S110-I,46-DS-K1T200M-PG/PGC,47-DS-K1T200M-PZ/PZC,48-DS-K1109H
 		    public byte byOkLedPolarity; 
 		    public byte byErrorLedPolarity; 
 		    public byte byBuzzerPolarity; 
@@ -3751,8 +3751,8 @@ public interface HCNetSDKByJNA extends Library {
     }
     
     public interface CHAR_ENCODE_CONVERT extends Callback {
-		public void invoke(Pointer pInput, int dwInputLen, 
-				int dwInEncodeType, String pOutput, int dwOutputLen, int dwOutEncodeType);
+		public void invoke(Pointer pInput, int dwInputLen,
+                           int dwInEncodeType, String pOutput, int dwOutputLen, int dwOutEncodeType);
 	}
     
     public static class NET_DVR_LOCAL_BYTE_ENCODE_CONVERT extends Structure{
@@ -3831,13 +3831,13 @@ public interface HCNetSDKByJNA extends Library {
         }
     }
     
-    //Çò»úÎ»ÖÃĞÅÏ¢
+    //Ã‡Ã²Â»ÃºÃÂ»Ã–ÃƒÃÃ…ÃÂ¢
     public static class NET_DVR_PTZPOS extends Structure
     {
-       public  short wAction;//»ñÈ¡Ê±¸Ã×Ö¶ÎÎŞĞ§
-       public  short wPanPos;//Ë®Æ½²ÎÊı
-       public  short wTiltPos;//´¹Ö±²ÎÊı
-       public  short wZoomPos;//±ä±¶²ÎÊı
+       public  short wAction;//Â»Ã±ÃˆÂ¡ÃŠÂ±Â¸ÃƒÃ—Ã–Â¶ÃÃÃÃÂ§
+       public  short wPanPos;//Ã‹Â®Ã†Â½Â²ÃÃŠÃ½
+       public  short wTiltPos;//Â´Â¹Ã–Â±Â²ÃÃŠÃ½
+       public  short wZoomPos;//Â±Ã¤Â±Â¶Â²ÃÃŠÃ½
 
     @Override
            protected List<String> getFieldOrder() {
@@ -3846,14 +3846,14 @@ public interface HCNetSDKByJNA extends Library {
     	}
     }
 
-    //±¨¾¯³¡¾°ĞÅÏ¢
+    //Â±Â¨Â¾Â¯Â³Â¡Â¾Â°ÃÃ…ÃÂ¢
     public static class NET_DVR_SCENE_INFO  extends Structure {
-           public int dwSceneID;              //³¡¾°ID, 0 - ±íÊ¾¸Ã³¡¾°ÎŞĞ§
-           public byte[] bySceneName = new byte[NAME_LEN];  //³¡¾°Ãû³Æ
-           public byte byDirection;            //¼à²â·½Ïò 1-ÉÏĞĞ£¬2-ÏÂĞĞ£¬3-Ë«Ïò£¬4-ÓÉ¶«ÏòÎ÷£¬5-ÓÉÄÏÏò±±£¬6-ÓÉÎ÷Ïò¶«£¬7-ÓÉ±±ÏòÄÏ£¬8-ÆäËü
-           public byte[] byRes1 = new byte[3];              //±£Áô
-           public NET_DVR_PTZPOS  struPtzPos = new NET_DVR_PTZPOS();             //Ptz ×ø±ê
-           public byte[] byRes2 = new byte[64] ;            //±£Áô
+           public int dwSceneID;              //Â³Â¡Â¾Â°ID, 0 - Â±Ã­ÃŠÂ¾Â¸ÃƒÂ³Â¡Â¾Â°ÃÃÃÂ§
+           public byte[] bySceneName = new byte[NAME_LEN];  //Â³Â¡Â¾Â°ÃƒÃ»Â³Ã†
+           public byte byDirection;            //Â¼Ã Â²Ã¢Â·Â½ÃÃ² 1-Ã‰ÃÃÃÂ£Â¬2-ÃÃ‚ÃÃÂ£Â¬3-Ã‹Â«ÃÃ²Â£Â¬4-Ã“Ã‰Â¶Â«ÃÃ²ÃÃ·Â£Â¬5-Ã“Ã‰Ã„ÃÃÃ²Â±Â±Â£Â¬6-Ã“Ã‰ÃÃ·ÃÃ²Â¶Â«Â£Â¬7-Ã“Ã‰Â±Â±ÃÃ²Ã„ÃÂ£Â¬8-Ã†Ã¤Ã‹Ã¼
+           public byte[] byRes1 = new byte[3];              //Â±Â£ÃÃ´
+           public NET_DVR_PTZPOS  struPtzPos = new NET_DVR_PTZPOS();             //Ptz Ã—Ã¸Â±Ãª
+           public byte[] byRes2 = new byte[64] ;            //Â±Â£ÃÃ´
 
     @Override
            protected List<String> getFieldOrder() {
@@ -3865,8 +3865,8 @@ public interface HCNetSDKByJNA extends Library {
 
 	public static class NET_DVR_DIRECTION extends Structure {
 
-		public NET_DVR_PTZPOS  struStartPoint = new NET_DVR_PTZPOS();             // ·½ÏòÆğÊ¼µã
-		public NET_DVR_PTZPOS  struEndPoint = new NET_DVR_PTZPOS();             // ·½Ïò½áÊøµã 
+		public NET_DVR_PTZPOS  struStartPoint = new NET_DVR_PTZPOS();             // Â·Â½ÃÃ²Ã†Ã°ÃŠÂ¼ÂµÃ£
+		public NET_DVR_PTZPOS  struEndPoint = new NET_DVR_PTZPOS();             // Â·Â½ÃÃ²Â½Ã¡ÃŠÃ¸ÂµÃ£ 
 		@Override
 		protected List<String> getFieldOrder() {
 			// TODO Auto-generated method stub
@@ -3874,17 +3874,17 @@ public interface HCNetSDKByJNA extends Library {
 		}
 	}
 	
-    // ½»Í¨ÊÂ¼şĞÅÏ¢
+    // Â½Â»ÃÂ¨ÃŠÃ‚Â¼Ã¾ÃÃ…ÃÂ¢
     public static class NET_DVR_AID_INFO  extends Structure {
-           public byte byRuleID;   // ¹æÔòĞòºÅ£¬Îª¹æÔòÅäÖÃ½á¹¹ÏÂ±ê£¬0-16
+           public byte byRuleID;   // Â¹Ã¦Ã”Ã²ÃÃ²ÂºÃ…Â£Â¬ÃÂªÂ¹Ã¦Ã”Ã²Ã…Ã¤Ã–ÃƒÂ½Ã¡Â¹Â¹ÃÃ‚Â±ÃªÂ£Â¬0-16
            public byte[] byRes1 = new byte[3];
-           public byte[] byRuleName = new byte[NAME_LEN]; //  ¹æÔòÃû³Æ
-           public int dwAIDType;  // ±¨¾¯ÊÂ¼şÀàĞÍ
-           public NET_DVR_DIRECTION struDirect = new NET_DVR_DIRECTION(); // ±¨¾¯Ö¸ÏòÇøÓò
-           public byte bySpeedLimit; //ÏŞËÙÖµ£¬µ¥Î»km/h[0,255]
-           public byte byCurrentSpeed; //µ±Ç°ËÙ¶ÈÖµ£¬µ¥Î»km/h[0,255]
-           public byte byVehicleEnterState; //³µÁ¾³öÈë×´Ì¬£º0- ÎŞĞ§£¬1- Ê»Èë£¬2- Ê»³ö 
-           public byte[] byRes2 = new byte[37];  // ±£Áô×Ö½Ú
+           public byte[] byRuleName = new byte[NAME_LEN]; //  Â¹Ã¦Ã”Ã²ÃƒÃ»Â³Ã†
+           public int dwAIDType;  // Â±Â¨Â¾Â¯ÃŠÃ‚Â¼Ã¾Ã€Ã ÃÃ
+           public NET_DVR_DIRECTION struDirect = new NET_DVR_DIRECTION(); // Â±Â¨Â¾Â¯Ã–Â¸ÃÃ²Ã‡Ã¸Ã“Ã²
+           public byte bySpeedLimit; //ÃÃÃ‹Ã™Ã–ÂµÂ£Â¬ÂµÂ¥ÃÂ»km/h[0,255]
+           public byte byCurrentSpeed; //ÂµÂ±Ã‡Â°Ã‹Ã™Â¶ÃˆÃ–ÂµÂ£Â¬ÂµÂ¥ÃÂ»km/h[0,255]
+           public byte byVehicleEnterState; //Â³ÂµÃÂ¾Â³Ã¶ÃˆÃ«Ã—Â´ÃŒÂ¬Â£Âº0- ÃÃÃÂ§Â£Â¬1- ÃŠÂ»ÃˆÃ«Â£Â¬2- ÃŠÂ»Â³Ã¶ 
+           public byte[] byRes2 = new byte[37];  // Â±Â£ÃÃ´Ã—Ã–Â½Ãš
 
     @Override
            protected List<String> getFieldOrder() {
@@ -4247,7 +4247,7 @@ public interface HCNetSDKByJNA extends Library {
 	int NET_DVR_GetUploadState(int lUploadHandle, IntByReference pProgress);
 	boolean NET_DVR_GetUploadResult(int lUploadHandle, Pointer lpOutBuffer, int dwOutBufferSize);
 	boolean NET_DVR_UploadClose(int lUploadHandle);
-	boolean NET_DVR_SetAlarmHostOut(int lUserID,int lAlarmOutPort,int lAlarmOutStatic);
+	boolean NET_DVR_SetAlarmHostOut(int lUserID, int lAlarmOutPort, int lAlarmOutStatic);
 	
 	int NET_DVR_CreateOpenEzvizUser(Pointer pLoginInfo, Pointer pDeviceInfo);
 	//int NET_DVR_CreateOpenEzvizUser(NET_DVR_OPEN_EZVIZ_USER_LOGIN_INFO pLoginInfo, NET_DVR_DEVICEINFO_V40 pDeviceInfo);
@@ -4265,12 +4265,12 @@ public interface HCNetSDKByJNA extends Library {
 	
 	public interface FMSGCallBack extends Callback {
 		public void invoke(int lCommand, NET_DVR_ALARMER pAlarmer,
-						   Pointer pAlarmInfo, int dwBufLen, Pointer pUser);
+                           Pointer pAlarmInfo, int dwBufLen, Pointer pUser);
 	}
 
 	public interface fRemoteConfigCallback extends Callback {
 		public void invoke(int dwType, Pointer lpBuffer, int dwBufLen,
-						   Pointer pUserData);
+                           Pointer pUserData);
 	}
 	
 	public interface FLoginResultCallBack extends Callback{

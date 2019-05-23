@@ -170,6 +170,26 @@ public class MonocularView extends BaseCameraView implements ILivenessCallBack {
         FaceSDKManager.getInstance().getFaceLiveness().clearInfo();
     }
 
+    public void onBDPreviewPause() {
+
+        if (mCamera != null) {
+            mCamera.setPreviewCallback(null);
+            mCamera.stopPreview();
+            mCamera.release();
+            mCamera = null;
+        }
+
+        if (mPreview != null) {
+            mPreview.release();
+        }
+        // 摄像头重启情况之前记录状态
+        FaceSDKManager.getInstance().getFaceLiveness().clearInfo();
+    }
+
+    public void onBDPreviewResume() {
+        onResume();
+    }
+
 
     private void dealRgb(byte[] data) {
         if (rgbData == null) {

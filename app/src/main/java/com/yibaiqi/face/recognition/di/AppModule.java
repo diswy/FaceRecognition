@@ -81,8 +81,8 @@ class AppModule {
                 .build();
         return new Retrofit.Builder()
                 .client(okHttpClient)
-//                .baseUrl("http://xueyiguan.10130422.com/")
                 .baseUrl("https://www.yzx110.com/")
+//                .baseUrl("http://toysns.com/")
                 .addConverterFactory(StringConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
