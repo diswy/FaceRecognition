@@ -206,7 +206,7 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
         faceModel.initDownload(this);
 
         // 初始化人脸识别
-//        calculateCameraView();
+        calculateCameraView();
 
         // 初始化海康威视SDK
         HCNetSDK.getInstance().NET_DVR_Init();
@@ -350,8 +350,10 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
     protected void onResume() {
         super.onResume();
 
-        mHandler.removeMessages(BD_INIT);
-        mHandler.sendEmptyMessageDelayed(BD_INIT, delayBD);
+        calculateCameraView();
+
+//        mHandler.removeMessages(BD_INIT);
+//        mHandler.sendEmptyMessageDelayed(BD_INIT, delayBD);
 
         if (faceModel.isCameraEnable() && !isCameraSuccess) {
             needPreview = true;
@@ -365,7 +367,9 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
 
     @Override
     protected void onStop() {
-        mMonocularView.onBDPreviewPause();
+        if (mMonocularView != null){
+            mMonocularView.onBDPreviewPause();
+        }
         super.onStop();
     }
 
@@ -832,7 +836,7 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
     }
 
     private void say(String s) {
-        if (synthesizer != null && isVoiceInit) {
+        if (synthesizer != null && isVoiceInit && s != null) {
             synthesizer.speak(s);
         }
     }

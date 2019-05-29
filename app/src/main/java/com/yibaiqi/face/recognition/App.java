@@ -2,6 +2,7 @@ package com.yibaiqi.face.recognition;
 
 import android.arch.lifecycle.ViewModelProvider;
 
+import com.baidu.idl.facesdk.utils.PreferencesUtil;
 import com.nanchen.crashmanager.CrashApplication;
 import com.nanchen.crashmanager.UncaughtExceptionHandlerImpl;
 import com.umeng.commonsdk.UMConfigure;
@@ -33,6 +34,7 @@ public class App extends CrashApplication {
         // 设置崩溃后自动重启 APP
         UncaughtExceptionHandlerImpl.getInstance().init(this, BuildConfig.DEBUG, true, 0, SplashActivity.class);
 
+        PreferencesUtil.initPrefs(this);
 
         // 融云初始化
         RongIMClient.init(this);

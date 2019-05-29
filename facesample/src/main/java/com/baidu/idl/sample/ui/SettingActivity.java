@@ -74,8 +74,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 R.string.setting_feature_threshold,
                 R.string.setting_live_status,
                 // R.string.setting_track_angle,
-                R.string.setting_camera_preview,
-                R.string.license_activate,
+//                R.string.setting_camera_preview,
+//                R.string.license_activate,
         };
 
         @Override

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.EditText;
 
 import com.baidu.idl.facesdk.FaceAuth;
+import com.baidu.idl.sample.ui.MainActivity;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.AppExecutors;

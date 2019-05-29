@@ -5,8 +5,10 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.baidu.idl.sample.ui.SettingActivity;
 import com.baidu.idl.sample.ui.UserActivity;
 import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.R;
@@ -24,6 +26,8 @@ public class SettingsActivity extends BaseActivity {
 
     private TextView btnCamera, btnDelay, btnFace, btnTest, btnFaceConfig;
 
+    private ImageView btnBDSetting;
+
 
     @Override
     public int getLayoutRes() {
@@ -40,6 +44,7 @@ public class SettingsActivity extends BaseActivity {
         tvLoc = findViewById(R.id.tv_location);
         tvType = findViewById(R.id.tv_type);
         tvDevice = findViewById(R.id.tv_device);
+        btnBDSetting = findViewById(R.id.btn_bd_settings);
     }
 
     @Override
@@ -90,6 +95,10 @@ public class SettingsActivity extends BaseActivity {
 
         btnTest.setOnClickListener(v -> {
             startActivity(new Intent(this, MFaceActivity.class));
+        });
+
+        btnBDSetting.setOnClickListener(v -> {
+            startActivity(new Intent(this, SettingActivity.class));
         });
     }
 }
