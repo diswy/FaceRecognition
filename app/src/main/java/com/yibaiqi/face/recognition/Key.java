@@ -12,6 +12,8 @@ public class Key {
     public static String KEY_DELAY_FACE = "KEY_DELAY_FACE";
     public static String KEY_DELAY_REGISTER = "KEY_DELAY_REGISTER";
 
+    public static String KEY_DELAY_BD = "KEY_DELAY_BD";
+
 
     public static String SETTING_BD_FACE = "SETTING_BD_FACE";
 }

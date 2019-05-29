@@ -85,6 +85,7 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
     public static final int VIDEO = 333;
     public static final int OPEN_DOOR = 222;
     public static final int CLOSE_DOOR = 111;
+    public static final int BD_INIT = 101;
 
     private int delay = 300;
     private int delayFace = 5000;
@@ -97,6 +98,8 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
     private ImageView btnSetting;
     private FaceViewModel faceModel;
     private boolean needPreview;
+
+    private int delayBD = 500;
 
     private boolean isCameraSuccess = false;
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -132,6 +135,9 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
                 case CLOSE_DOOR:
                     closeDoor();
                     break;
+                case BD_INIT:
+                    calculateCameraView();
+                    break;
             }
         }
     };
@@ -148,16 +154,29 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
                 .build()
                 .inject(this);
 
+        String bdDelay = cache.getAsString(Key.KEY_DELAY_BD);
+
+
         String sDelay = cache.getAsString(Key.KEY_DELAY);
         String sDelay2 = cache.getAsString(Key.KEY_DELAY_FACE);
         try {
             if (sDelay != null) {
                 delay = Integer.parseInt(sDelay);
             }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        try {
             if (sDelay2 != null) {
                 delayFace = Integer.parseInt(sDelay2);
             }
-
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        try {
+            if (bdDelay != null) {
+                delayBD = Integer.parseInt(bdDelay);
+            }
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
@@ -331,7 +350,8 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
     protected void onResume() {
         super.onResume();
 
-        calculateCameraView();
+        mHandler.removeMessages(BD_INIT);
+        mHandler.sendEmptyMessageDelayed(BD_INIT, delayBD);
 
         if (faceModel.isCameraEnable() && !isCameraSuccess) {
             needPreview = true;
@@ -355,8 +375,8 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
      */
     private void calculateCameraView() {
         // 重置状态为默认状态
-        FaceSDKManager.getInstance().getFaceLiveness()
-                .setCurrentTaskType(FaceLiveness.TaskType.TASK_TYPE_ONETON);
+//        FaceSDKManager.getInstance().getFaceLiveness()
+//                .setCurrentTaskType(FaceLiveness.TaskType.TASK_TYPE_ONETON);
 
         String newPix;
         newPix = DensityUtil.calculateCameraView(mContext);

@@ -1,87 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.core.CameraSettingsActivity">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	tools:context=".ui.core.CameraSettingsActivity">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp"
-        android:text="Tips:"
-        android:textColor="#222"
-        android:textStyle="bold" />
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:text="请在下方进行设置，如果已经设置过，默认会显示当前配置;确认后请点保存退出"
-        android:textColor="#222" />
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingStart="16dp"
+			android:paddingTop="16dp"
+			android:paddingEnd="16dp"
+			android:paddingBottom="16dp"
+			android:text="Tips:"
+			android:textColor="#222"
+			android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/et_ip"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        android:background="@null"
-        android:gravity="center_vertical"
-        android:hint="请设置摄像头的IP地址，格式为:192.168.1.99"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textSize="16sp" />
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:text="请在下方进行设置，如果已经设置过，默认会显示当前配置;确认后请点保存退出"
+			android:textColor="#222" />
 
-    <EditText
-        android:id="@+id/et_port"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@null"
-        android:gravity="center_vertical"
-        android:hint="请设置端口，默认为8000"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textSize="16sp" />
+		<TextView
+			android:textColor="@color/c333"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="32dp"
+			android:text="摄像头IP地址:" />
 
-    <EditText
-        android:id="@+id/et_account"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@null"
-        android:gravity="center_vertical"
-        android:hint="请设置账户名:默认为admin"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textSize="16sp" />
+		<EditText
+			android:id="@+id/et_ip"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:background="@null"
+			android:gravity="center_vertical"
+			android:hint="请设置摄像头的IP地址，格式为:192.168.1.99"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:textSize="16sp" />
 
-    <EditText
-        android:id="@+id/et_pwd"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@null"
-        android:gravity="center_vertical"
-        android:hint="请设置密码"
-        android:inputType="textPassword"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textSize="16sp" />
+		<TextView
+			android:textColor="@color/c333"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="摄像头连接端口:" />
 
-    <TextView
-        android:id="@+id/btn_commit"
-        android:layout_width="280px"
-        android:layout_height="50px"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50dp"
-        android:background="@drawable/btn_bg"
-        android:gravity="center"
-        android:text="确认设置"
-        android:textColor="@color/white" />
+		<EditText
+			android:id="@+id/et_port"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:background="@null"
+			android:gravity="center_vertical"
+			android:hint="请设置端口，默认为8000"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:textSize="16sp" />
 
-</LinearLayout>
+		<TextView
+			android:textColor="@color/c333"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="摄像头登陆名:" />
+
+		<EditText
+			android:id="@+id/et_account"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:background="@null"
+			android:gravity="center_vertical"
+			android:hint="请设置账户名:默认为admin"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:textSize="16sp" />
+
+		<TextView
+			android:textColor="@color/c333"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="摄像头登陆密码:" />
+
+		<EditText
+			android:id="@+id/et_pwd"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:background="@null"
+			android:gravity="center_vertical"
+			android:hint="请设置密码"
+			android:inputType="textPassword"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:textSize="16sp" />
+
+		<TextView
+			android:id="@+id/btn_commit"
+			android:layout_width="280px"
+			android:layout_height="50px"
+			android:layout_gravity="center_horizontal"
+			android:layout_marginTop="50dp"
+			android:background="@drawable/btn_bg"
+			android:gravity="center"
+			android:text="确认设置"
+			android:textColor="@color/white" />
+
+	</LinearLayout>
+
+</ScrollView>

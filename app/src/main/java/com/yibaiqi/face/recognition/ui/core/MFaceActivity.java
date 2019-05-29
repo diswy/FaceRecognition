@@ -1,12 +1,16 @@
 package com.yibaiqi.face.recognition.ui.core;
 
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.baidu.idl.facesdk.utils.PreferencesUtil;
+import com.yibaiqi.face.recognition.App;
+import com.yibaiqi.face.recognition.Key;
 import com.yibaiqi.face.recognition.R;
+import com.yibaiqi.face.recognition.tools.ACache;
 import com.yibaiqi.face.recognition.ui.base.BaseActivity;
 
 import static com.baidu.idl.sample.common.GlobalSet.TYPE_PREVIEW_ANGLE;
@@ -20,6 +24,8 @@ public class MFaceActivity extends BaseActivity {
     private RadioGroup rg;
     private RadioButton rb0, rb90, rb180, rb270;
     private TextView btn;
+    private EditText etBd;
+    private ACache cache;
 
     @Override
     public int getLayoutRes() {
@@ -34,12 +40,20 @@ public class MFaceActivity extends BaseActivity {
         rb180 = findViewById(R.id.btn_rb180);
         rb270 = findViewById(R.id.btn_rb270);
         btn = findViewById(R.id.btn_commit);
+        etBd = findViewById(R.id.et_delay_bd);
     }
 
     @Override
     public void initialize() {
         int previewAngle = PreferencesUtil.getInt(TYPE_PREVIEW_ANGLE, TYPE_TPREVIEW_NINETY_ANGLE);
         defaultPreviewAngle(previewAngle);
+
+        cache = ACache.get(App.getInstance());
+        String bdDelay = cache.getAsString(Key.KEY_DELAY_BD);
+        if (bdDelay != null) {
+            etBd.setText(bdDelay);
+        }
+
     }
 
     private void defaultPreviewAngle(int angle) {
@@ -60,6 +74,8 @@ public class MFaceActivity extends BaseActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                cache.put(Key.KEY_DELAY_BD, etBd.getText().toString().trim());
+
                 finish();
             }
         });
