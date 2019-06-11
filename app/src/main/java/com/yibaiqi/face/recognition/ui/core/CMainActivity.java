@@ -85,7 +85,6 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
     public static final int VIDEO = 333;
     public static final int OPEN_DOOR = 222;
     public static final int CLOSE_DOOR = 111;
-    public static final int BD_INIT = 101;
 
     private int delay = 300;
     private int delayFace = 5000;
@@ -119,7 +118,7 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
                     break;
                 case MONOCULAR_RESUME:
                     Log.w("ebq", "百度：resume");
-                    calculateCameraView();
+                    mMonocularView.onResume();
                     break;
                 case MONOCULAR_PAUSE:
                     if (mMonocularView != null) {
@@ -134,9 +133,6 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
                     break;
                 case CLOSE_DOOR:
                     closeDoor();
-                    break;
-                case BD_INIT:
-                    calculateCameraView();
                     break;
             }
         }
@@ -349,11 +345,7 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
     @Override
     protected void onResume() {
         super.onResume();
-
-        calculateCameraView();
-
-//        mHandler.removeMessages(BD_INIT);
-//        mHandler.sendEmptyMessageDelayed(BD_INIT, delayBD);
+        mMonocularView.onResume();
 
         if (faceModel.isCameraEnable() && !isCameraSuccess) {
             needPreview = true;
@@ -396,7 +388,6 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
 
         mCameraView.addView(mMonocularView, layoutParams);
 
-        mMonocularView.onResume();
     }
 
     private ILivenessCallBack mILivenessCallBack = new ILivenessCallBack() {

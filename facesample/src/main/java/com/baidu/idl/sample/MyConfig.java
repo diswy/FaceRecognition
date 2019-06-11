@@ -11,9 +11,9 @@ public class MyConfig implements Serializable {
     private int detectInterval = 200;
     private int trackInterval = 1000;
     private float noFaceSize = 0.5f;
-    private int pitch = 30;
-    private int yaw = 30;
-    private int roll = 30;
+    private int pitch = 15;
+    private int yaw = 15;
+    private int roll = 15;
     private boolean checkBlur = true;
     private boolean occlusion = true;
     private boolean illumination = true;
