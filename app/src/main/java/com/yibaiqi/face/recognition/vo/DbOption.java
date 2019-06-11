@@ -22,12 +22,32 @@ public class DbOption {
     @ColumnInfo(name = "status")
     private int status;// 0:add  1：delete
 
+    //2019.6.11新增字段
+    @ColumnInfo(name = "full_name")
+    private String full_name;
+    @ColumnInfo(name = "type_flag")
+    private int type_flag;
+    @ColumnInfo(name = "create_time")
+    private String create_time;
+
     public DbOption(@NonNull String data_key, String user_key, String real_name, String face_image, int status) {
         this.user_key = user_key;
         this.data_key = data_key;
         this.real_name = real_name;
         this.face_image = face_image;
         this.status = status;
+    }
+
+
+    public DbOption(@NonNull String data_key, String user_key, String real_name, String face_image, int status
+            , String full_name, int type_flag) {
+        this.user_key = user_key;
+        this.data_key = data_key;
+        this.real_name = real_name;
+        this.face_image = face_image;
+        this.status = status;
+        this.full_name = full_name;
+        this.type_flag = type_flag;
     }
 
     @NonNull
@@ -70,5 +90,30 @@ public class DbOption {
 
     public void setFace_image(String face_image) {
         this.face_image = face_image;
+    }
+
+
+    public String getFull_name() {
+        return full_name;
+    }
+
+    public void setFull_name(String full_name) {
+        this.full_name = full_name;
+    }
+
+    public int getType_flag() {
+        return type_flag;
+    }
+
+    public void setType_flag(int type_flag) {
+        this.type_flag = type_flag;
+    }
+
+    public String getCreate_time() {
+        return create_time;
+    }
+
+    public void setCreate_time(String create_time) {
+        this.create_time = create_time;
     }
 }

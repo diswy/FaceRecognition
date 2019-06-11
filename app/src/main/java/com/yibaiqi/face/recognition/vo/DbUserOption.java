@@ -1,5 +1,7 @@
 package com.yibaiqi.face.recognition.vo;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -7,6 +9,7 @@ import java.util.List;
  * Created by @author xiaofu on 2019/5/2.
  */
 public class DbUserOption implements Serializable {
+    @SerializedName(value = "add", alternate = {"change"})
     private List<DbOption> add;
     private List<DbOption> delete;
 

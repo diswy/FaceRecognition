@@ -115,7 +115,7 @@ public class SplashActivity extends BaseActivity {
             }
         });
 
-//        faceModel.initBDFaceEngine("QY8C-NXN5-9XH7-8VCC");
+        faceModel.initBDFaceEngine("QY8C-NXN5-9XH7-8VCC");
 
         faceModel.registerDevice().observe(this, resource -> {
             if (resource == null)

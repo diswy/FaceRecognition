@@ -6,7 +6,7 @@ import android.arch.persistence.room.RoomDatabase;
 import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.MyRecord;
 
-@Database(entities = {DbOption.class, MyRecord.class}, version = 2, exportSchema = false)
+@Database(entities = {DbOption.class, MyRecord.class}, version = 3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
 }
