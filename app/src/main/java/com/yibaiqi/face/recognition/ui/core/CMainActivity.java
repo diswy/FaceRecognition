@@ -21,8 +21,6 @@ import android.widget.Toast;
 
 import com.baidu.idl.facesdk.model.Feature;
 import com.baidu.idl.sample.callback.ILivenessCallBack;
-import com.baidu.idl.sample.manager.FaceLiveness;
-import com.baidu.idl.sample.manager.FaceSDKManager;
 import com.baidu.idl.sample.model.LivenessModel;
 import com.baidu.idl.sample.ui.MainActivity;
 import com.baidu.idl.sample.utils.DensityUtil;
@@ -56,7 +54,10 @@ import com.yibaiqi.face.recognition.tools.listener.UiMessageListener;
 import com.yibaiqi.face.recognition.ui.base.BaseActivity;
 import com.yibaiqi.face.recognition.viewmodel.FaceViewModel;
 import com.yibaiqi.face.recognition.viewmodel.RongViewModel;
+import com.yibaiqi.face.recognition.vo.LocalUser;
 import com.yibaiqi.face.recognition.vo.MyRecord;
+
+import org.reactivestreams.Publisher;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,6 +66,12 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import io.rong.imlib.RongIMClient;
 
 import static com.yibaiqi.face.recognition.tools.listener.MainHandlerConstant.INIT_SUCCESS;
@@ -359,7 +366,7 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
 
     @Override
     protected void onStop() {
-        if (mMonocularView != null){
+        if (mMonocularView != null) {
             mMonocularView.onBDPreviewPause();
         }
         super.onStop();
@@ -422,7 +429,27 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
                     ivCapture.setImageBitmap(myBitmap);
 
                     if (canSavePic()) {
-                        say(feature.getUserName() + getCurrentTime());
+                        Disposable disposable = Flowable.just(feature.getUserId())
+                                .subscribeOn(Schedulers.io())
+                                .flatMap(new Function<String, Publisher<String>>() {
+                                    @Override
+                                    public Publisher<String> apply(String s) throws Exception {
+                                        LocalUser user = faceModel.getUserByKey(s);
+                                        if (user == null) {
+                                            return Flowable.just("");
+                                        } else {
+                                            return Flowable.just(user.getReal_name());
+                                        }
+                                    }
+                                })
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Consumer<String>() {
+                                    @Override
+                                    public void accept(String s) throws Exception {
+                                        say(s + getCurrentTime());
+                                    }
+                                });
+//                        say(feature.getUserName() + getCurrentTime());
                         openDoor();
                         captureVideo(feature.getUserId(), myBitmap);
                     }

@@ -62,6 +62,7 @@ import com.yibaiqi.face.recognition.vo.DbUserOption;
 import com.yibaiqi.face.recognition.vo.DeviceName;
 import com.yibaiqi.face.recognition.vo.ExData;
 import com.yibaiqi.face.recognition.vo.ImportUser;
+import com.yibaiqi.face.recognition.vo.LocalUser;
 import com.yibaiqi.face.recognition.vo.MyRecord;
 import com.yibaiqi.face.recognition.vo.OSSConfig;
 import com.yibaiqi.face.recognition.vo.RegisterDevice;
@@ -225,6 +226,18 @@ public class FaceViewModel extends ViewModel {
         faceRepository.delete(list);
     }
 
+    public void userInsert(List<LocalUser> list) {
+        faceRepository.userInsert(list);
+    }
+
+    public void userDel(List<LocalUser> list) {
+        faceRepository.userDel(list);
+    }
+
+    public LocalUser getUserByKey(String key){
+        return faceRepository.getUserByKey(key);
+    }
+
 
     public void observerData(LifecycleOwner owner) {
         mLiveData.observe(owner, list -> {
@@ -233,6 +246,22 @@ public class FaceViewModel extends ViewModel {
             }
 
             if (list != null && list.size() > 0) {
+                // 本地用户表
+                List<LocalUser> insertOrUpdateUsers = new ArrayList<>();
+                List<LocalUser> delUsers = new ArrayList<>();
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).getType_flag() == 2) {// 更新本地数据库
+                        LocalUser localUser = new LocalUser(list.get(i).getUser_key(), list.get(i).getFull_name());
+                        insertOrUpdateUsers.add(localUser);
+                    }
+                    if (list.get(i).getType_flag() == 3) {// 删除本地数据库
+                        LocalUser localUser = new LocalUser(list.get(i).getUser_key(), list.get(i).getFull_name());
+                        delUsers.add(localUser);
+                    }
+                }
+                userInsert(insertOrUpdateUsers);
+                userDel(delUsers);
+
                 updateTaskDelay(list);
             }
 
@@ -1033,7 +1062,9 @@ public class FaceViewModel extends ViewModel {
                                                     item.getUser_key(),
                                                     item.getReal_name(),
                                                     item.getFace_image(),
-                                                    0);// 新增用户
+                                                    0,
+                                                    item.getFull_name(),
+                                                    item.getType_flag());// 新增用户
                                             list.add(mDbOption);
                                             addCount++;
                                         }
@@ -1049,7 +1080,9 @@ public class FaceViewModel extends ViewModel {
                                                 item.getUser_key(),
                                                 item.getReal_name(),
                                                 "",
-                                                1);
+                                                1,
+                                                item.getFull_name(),
+                                                item.getType_flag());
                                         list.add(mDbOption);
                                         delCount++;
                                     }

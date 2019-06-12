@@ -10,8 +10,8 @@
 	<!--设备：宽 538，高510，上边距120-->
 	<FrameLayout
 		android:id="@+id/layout_camera"
-		android:layout_width="538px"
-		android:layout_height="510px"
+		android:layout_width="300dp"
+		android:layout_height="300dp"
 		android:layout_marginTop="120px"
 		android:background="@drawable/border_main"
 		android:gravity="center"

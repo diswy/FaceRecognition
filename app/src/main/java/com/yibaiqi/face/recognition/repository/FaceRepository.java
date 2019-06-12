@@ -14,6 +14,7 @@ import com.yibaiqi.face.recognition.vo.BaseResponse;
 import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.DeviceName;
 import com.yibaiqi.face.recognition.vo.ExData;
+import com.yibaiqi.face.recognition.vo.LocalUser;
 import com.yibaiqi.face.recognition.vo.MyRecord;
 import com.yibaiqi.face.recognition.vo.OSSKey;
 import com.yibaiqi.face.recognition.vo.RegisterDevice;
@@ -247,6 +248,36 @@ public class FaceRepository {
     public LiveData<List<DbOption>> observeAll() {
         return userDao.observeAll();
     }
+
+
+
+    public void userInsert(List<LocalUser> list){
+        Disposable disposable = Flowable.just(list)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<List<LocalUser>>() {
+                    @Override
+                    public void accept(List<LocalUser> localUsers) throws Exception {
+                        userDao.insertUsers(localUsers);
+                    }
+                });
+    }
+    public void userDel(List<LocalUser> list){
+        Disposable disposable = Flowable.just(list)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<List<LocalUser>>() {
+                    @Override
+                    public void accept(List<LocalUser> localUsers) throws Exception {
+                        userDao.deleteUsers(localUsers);
+                    }
+                });
+    }
+
+    public LocalUser getUserByKey(String key){
+        return userDao.getUser(key);
+    }
+
 
     //------------摄像头
     public boolean isCameraEnable() {

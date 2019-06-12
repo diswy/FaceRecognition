@@ -22,6 +22,7 @@ import com.yibaiqi.face.recognition.ui.base.BaseActivity;
 import com.yibaiqi.face.recognition.viewmodel.FaceViewModel;
 import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.ExData;
+import com.yibaiqi.face.recognition.vo.LocalUser;
 import com.yibaiqi.face.recognition.vo.OSSConfig;
 
 import java.util.ArrayList;
@@ -115,7 +116,7 @@ public class SplashActivity extends BaseActivity {
             }
         });
 
-        faceModel.initBDFaceEngine("QY8C-NXN5-9XH7-8VCC");
+//        faceModel.initBDFaceEngine("QY8C-NXN5-9XH7-8VCC");
 
         faceModel.registerDevice().observe(this, resource -> {
             if (resource == null)
@@ -135,35 +136,57 @@ public class SplashActivity extends BaseActivity {
 
                         ExData exData = resource.data.getData().getData();
                         if (exData != null && exData.getUsers() != null) {// 后台通知消息，也许有新操作
-                            List<DbOption> list = new ArrayList<>();
+                            List<DbOption> list = new ArrayList<>();// 百度数据库任务
                             int addCount = 0;
                             int delCount = 0;
 
-                            if (exData.getUsers().getAdd() != null) {
+
+                            List<LocalUser> insertOrUpdateUsers = new ArrayList<>();
+                            List<LocalUser> delUsers = new ArrayList<>();
+
+                            if (exData.getUsers().getAdd() != null) {// 2019.6.11 add->change
 
                                 for (DbOption item : exData.getUsers().getAdd()) {
-                                    if (!TextUtils.isEmpty(item.getFace_image())) {
-                                        DbOption mData = new DbOption(
-                                                item.getData_key(),
-                                                item.getUser_key(),
-                                                item.getReal_name(),
-                                                item.getFace_image(),
-                                                0);// 新增用户
-                                        list.add(mData);
-                                        addCount++;
+                                    // 不管是1 还是 2 都需要维护本地数据库
+                                    LocalUser localUser = new LocalUser(item.getUser_key(), item.getFull_name());
+                                    insertOrUpdateUsers.add(localUser);
+
+
+                                    if (item.getType_flag() == 1) {//1 代表新增(需操作人脸库，和本地数据库)
+                                        if (!TextUtils.isEmpty(item.getFace_image())) {
+                                            DbOption mData = new DbOption(
+                                                    item.getData_key(),
+                                                    item.getUser_key(),
+                                                    item.getReal_name(),
+                                                    item.getFace_image(),
+                                                    0,
+                                                    item.getFull_name(),
+                                                    item.getType_flag());// 新增用户
+                                            list.add(mData);
+                                            addCount++;
+                                        }
                                     }
+
+
                                 }
 
                             }
 
                             if (exData.getUsers().getDelete() != null) {
                                 for (DbOption item : exData.getUsers().getDelete()) {
+                                    // 维护本地用户表，需要删除的人员
+                                    LocalUser localUser = new LocalUser(item.getUser_key(), item.getFull_name());
+                                    delUsers.add(localUser);
+
+
                                     DbOption mData = new DbOption(
                                             item.getData_key(),
                                             item.getUser_key(),
                                             item.getReal_name(),
                                             "",
-                                            1);
+                                            1,
+                                            item.getFull_name(),
+                                            item.getType_flag());
                                     list.add(mData);
                                     delCount++;
                                 }
@@ -171,6 +194,9 @@ public class SplashActivity extends BaseActivity {
 
                             Log.i("ebq", "数据更新:来源->启动注册设备------新增数据:" + addCount + "条 ; 删除数据:" + delCount + "条");
                             faceModel.insert(list);
+
+                            faceModel.userInsert(insertOrUpdateUsers);
+                            faceModel.userDel(delUsers);
                         }
                         faceModel.initBDFaceEngine(resource.data.getData().getSerialNumber());
                     }

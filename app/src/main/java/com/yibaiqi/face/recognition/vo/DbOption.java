@@ -30,13 +30,13 @@ public class DbOption {
     @ColumnInfo(name = "create_time")
     private String create_time;
 
-    public DbOption(@NonNull String data_key, String user_key, String real_name, String face_image, int status) {
-        this.user_key = user_key;
-        this.data_key = data_key;
-        this.real_name = real_name;
-        this.face_image = face_image;
-        this.status = status;
-    }
+//    public DbOption(@NonNull String data_key, String user_key, String real_name, String face_image, int status) {
+//        this.user_key = user_key;
+//        this.data_key = data_key;
+//        this.real_name = real_name;
+//        this.face_image = face_image;
+//        this.status = status;
+//    }
 
 
     public DbOption(@NonNull String data_key, String user_key, String real_name, String face_image, int status

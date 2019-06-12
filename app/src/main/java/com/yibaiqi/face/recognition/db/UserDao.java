@@ -10,6 +10,7 @@ import android.arch.persistence.room.Update;
 
 import com.yibaiqi.face.recognition.entity.User;
 import com.yibaiqi.face.recognition.vo.DbOption;
+import com.yibaiqi.face.recognition.vo.LocalUser;
 import com.yibaiqi.face.recognition.vo.MyRecord;
 
 import java.util.List;
@@ -45,6 +46,10 @@ public interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertRecord(List<MyRecord> list);
 
+    // 本地用户表
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertUsers(List<LocalUser> list);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertRecord(MyRecord myRecord);
 
@@ -60,8 +65,14 @@ public interface UserDao {
     @Delete
     void deleteRecord(MyRecord dbOption);
 
+    @Delete
+    void deleteUsers(List<LocalUser> list);
+
     @Query("SELECT * FROM MyRecord")
     List<MyRecord> getRecordAll();// 只会执行一次
+
+    @Query("SELECT * FROM LocalUser WHERE user_key is :user_key")
+    LocalUser getUser(String user_key);
 
     @Query("SELECT * FROM MyRecord")
     LiveData<List<MyRecord>> observeRecordAll();// 只会执行一次

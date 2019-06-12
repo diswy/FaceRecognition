@@ -32,7 +32,7 @@ public class App extends CrashApplication {
         appComponent.inject(this);
 
         // 设置崩溃后自动重启 APP
-        UncaughtExceptionHandlerImpl.getInstance().init(this, BuildConfig.DEBUG, true, 0, SplashActivity.class);
+//        UncaughtExceptionHandlerImpl.getInstance().init(this, BuildConfig.DEBUG, true, 0, SplashActivity.class);
 
         PreferencesUtil.initPrefs(this);
 
