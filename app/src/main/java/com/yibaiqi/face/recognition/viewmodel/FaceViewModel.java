@@ -250,7 +250,7 @@ public class FaceViewModel extends ViewModel {
                 List<LocalUser> insertOrUpdateUsers = new ArrayList<>();
                 List<LocalUser> delUsers = new ArrayList<>();
                 for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getType_flag() == 2) {// 更新本地数据库
+                    if (list.get(i).getType_flag() == 2 || list.get(i).getType_flag() == 1) {// 更新本地数据库
                         LocalUser localUser = new LocalUser(list.get(i).getUser_key(), list.get(i).getFull_name());
                         insertOrUpdateUsers.add(localUser);
                     }
@@ -301,7 +301,9 @@ public class FaceViewModel extends ViewModel {
         // 理论上先执行完所有的删除任务才会执行新增，保险起见就先这样留着吧
         switch (item.getStatus()) {
             case 0:// 新增
-                downloadAndRegister(item.getUser_key(), item.getReal_name(), item.getFace_image(), item);
+                if (item.getType_flag() == 1){
+                    downloadAndRegister(item.getUser_key(), item.getReal_name(), item.getFace_image(), item);
+                }
                 break;
             case 1:// 删除
                 delFaceFeature(item.getUser_key(), item.getReal_name(), item);
