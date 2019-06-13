@@ -234,7 +234,7 @@ public class FaceViewModel extends ViewModel {
         faceRepository.userDel(list);
     }
 
-    public LocalUser getUserByKey(String key){
+    public LocalUser getUserByKey(String key) {
         return faceRepository.getUserByKey(key);
     }
 
@@ -301,8 +301,10 @@ public class FaceViewModel extends ViewModel {
         // 理论上先执行完所有的删除任务才会执行新增，保险起见就先这样留着吧
         switch (item.getStatus()) {
             case 0:// 新增
-                if (item.getType_flag() == 1){
+                if (item.getType_flag() == 1) {
                     downloadAndRegister(item.getUser_key(), item.getReal_name(), item.getFace_image(), item);
+                } else {
+                    faceRepository.delete(item);
                 }
                 break;
             case 1:// 删除
@@ -551,6 +553,7 @@ public class FaceViewModel extends ViewModel {
 
         @Override
         protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+            Log.e("ybq", "下载进行中：" + soFarBytes + "   total=" + totalBytes);
         }
 
         @Override
