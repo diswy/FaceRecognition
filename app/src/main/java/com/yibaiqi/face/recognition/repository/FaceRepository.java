@@ -11,10 +11,13 @@ import com.yibaiqi.face.recognition.network.ApiService;
 import com.yibaiqi.face.recognition.network.NetworkResource;
 import com.yibaiqi.face.recognition.tools.ACache;
 import com.yibaiqi.face.recognition.vo.BaseResponse;
+import com.yibaiqi.face.recognition.vo.DbClassOptionContent;
+import com.yibaiqi.face.recognition.vo.DbLeaveOptionContent;
 import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.DeviceName;
 import com.yibaiqi.face.recognition.vo.ExData;
 import com.yibaiqi.face.recognition.vo.GlobalConfig;
+import com.yibaiqi.face.recognition.vo.Leaves;
 import com.yibaiqi.face.recognition.vo.LocalUser;
 import com.yibaiqi.face.recognition.vo.MyRecord;
 import com.yibaiqi.face.recognition.vo.OSSKey;
@@ -22,6 +25,7 @@ import com.yibaiqi.face.recognition.vo.RegisterDevice;
 import com.yibaiqi.face.recognition.vo.Remote;
 import com.yibaiqi.face.recognition.vo.RemoteRecord;
 import com.yibaiqi.face.recognition.vo.Resource;
+import com.yibaiqi.face.recognition.vo.SettingContent;
 
 import java.util.List;
 
@@ -320,6 +324,90 @@ public class FaceRepository {
     public void saveConfig(GlobalConfig config) {
         mCache.put("config_error_flag", config.getError_flag());
         mCache.put("config_setting_traffic_flag", config.getSetting_traffic_flag());
+    }
+
+    public void delClassCourse(List<DbClassOptionContent> list) {
+        if (list == null || list.isEmpty()) {
+            return;
+        }
+
+        Disposable disposable = Flowable.fromIterable(list)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<DbClassOptionContent>() {
+                    @Override
+                    public void accept(DbClassOptionContent data) throws Exception {
+                        if (data.getType_flag() == 3) {
+                            userDao.deleteClassCourse3(data.getClass_id(), data.getClass_course_id());
+                        } else if (data.getType_flag() == 4) {
+                            userDao.deleteClassCourse4(data.getClass_id(), data.getUser_key());
+                        }
+                    }
+                });
+    }
+
+    public void insetClassCourse(List<DbClassOptionContent> list) {
+        if (list == null || list.isEmpty()) {
+            return;
+        }
+        Disposable disposable = Flowable.fromIterable(list)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<DbClassOptionContent>() {
+                    @Override
+                    public void accept(DbClassOptionContent data) throws Exception {
+                        if (data.getType_flag() == 1) {
+                            userDao.insetClassCourse(data);
+                        } else if (data.getType_flag() == 2) {
+                            userDao.updateClass(data.getStart_time(), data.getEnd_time(), data.getClass_id(), data.getClass_course_id());
+                        }
+                    }
+                });
+    }
+
+    public void delLeaves(List<DbLeaveOptionContent> list) {
+        if (list == null || list.isEmpty()) {
+            return;
+        }
+
+        Disposable disposable = Flowable.just(list)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<List<DbLeaveOptionContent>>() {
+                    @Override
+                    public void accept(List<DbLeaveOptionContent> dbLeaveOptionContents) throws Exception {
+                        userDao.deleteLeaves(dbLeaveOptionContents);
+                    }
+                });
+    }
+
+    public void insertLeaves(List<DbLeaveOptionContent> list) {
+        if (list == null || list.isEmpty()) {
+            return;
+        }
+        Disposable disposable = Flowable.just(list)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<List<DbLeaveOptionContent>>() {
+                    @Override
+                    public void accept(List<DbLeaveOptionContent> dbLeaveOptionContents) throws Exception {
+                        userDao.insertLeaves(dbLeaveOptionContents);
+                    }
+                });
+    }
+
+    public void delSettingsAndAdd(List<SettingContent> list){
+        Disposable disposable = Flowable.just(list)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<List<SettingContent>>() {
+                    @Override
+                    public void accept(List<SettingContent> list) throws Exception {
+                        userDao.delSettings();
+                        userDao.insertSettings(list);
+                    }
+                });
+
     }
 
 }

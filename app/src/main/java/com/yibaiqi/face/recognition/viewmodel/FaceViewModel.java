@@ -57,12 +57,14 @@ import com.yibaiqi.face.recognition.tools.FileUtil;
 import com.yibaiqi.face.recognition.tools.Mac;
 import com.yibaiqi.face.recognition.ui.core.CMainActivity;
 import com.yibaiqi.face.recognition.vo.BaseResponse;
+import com.yibaiqi.face.recognition.vo.DbClassOption;
 import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.DbUserOption;
 import com.yibaiqi.face.recognition.vo.DeviceName;
 import com.yibaiqi.face.recognition.vo.ExData;
 import com.yibaiqi.face.recognition.vo.GlobalConfig;
 import com.yibaiqi.face.recognition.vo.ImportUser;
+import com.yibaiqi.face.recognition.vo.Leaves;
 import com.yibaiqi.face.recognition.vo.LocalUser;
 import com.yibaiqi.face.recognition.vo.MyRecord;
 import com.yibaiqi.face.recognition.vo.OSSConfig;
@@ -70,6 +72,7 @@ import com.yibaiqi.face.recognition.vo.RegisterDevice;
 import com.yibaiqi.face.recognition.vo.Remote;
 import com.yibaiqi.face.recognition.vo.RemoteRecord;
 import com.yibaiqi.face.recognition.vo.Resource;
+import com.yibaiqi.face.recognition.vo.Settings;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -660,9 +663,9 @@ public class FaceViewModel extends ViewModel {
                         facePath = "https://" + mOssConfig.getBucketName() + ".oss-cn-hangzhou.aliyuncs.com/" + mOssConfig.getObjectPath() + myRecord.getFileName() + "_face.jpg";
                     }
 
-                    RemoteRecord recorde = new RemoteRecord(myRecord.getUser_key(),
+                    RemoteRecord record = new RemoteRecord(myRecord.getUser_key(),
                             facePath, hikPath, myRecord.getCreate_time());
-                    syncRecord(owner, recorde, myRecord);
+                    syncRecord(owner, record, myRecord);
                 }
             }
         };
@@ -1115,7 +1118,41 @@ public class FaceViewModel extends ViewModel {
     }
 
     //-------------------------2019/7/3
-    public void saveConfig(GlobalConfig config) {
+    private void saveConfig(GlobalConfig config) {
+        if (config == null)
+            return;
         faceRepository.saveConfig(config);
+    }
+
+    private void saveClassCourse(DbClassOption dbClass) {
+        if (dbClass == null)
+            return;
+
+        faceRepository.delClassCourse(dbClass.getDelete());// 需要删除的内容
+        faceRepository.insetClassCourse(dbClass.getChange());// 添加或修改
+    }
+
+    private void saveLeaves(Leaves leaves) {
+        if (leaves == null)
+            return;
+        faceRepository.delLeaves(leaves.getDelete());// 需要删除的内容
+        faceRepository.insertLeaves(leaves.getChange());// 添加或修改
+    }
+
+    private void saveSettings(Settings settings) {
+        if (settings == null)
+            return;
+
+        if (settings.isDelete()) {
+            faceRepository.delSettingsAndAdd(settings.getChange());
+        }
+    }
+
+
+    public void executeLocalData(ExData exData) {
+        saveConfig(exData.getConfig());// 保存配置
+        saveClassCourse(exData.getClass_course());
+        saveLeaves(exData.getLeaves());
+        saveSettings(exData.getSetting());
     }
 }

@@ -9,9 +9,12 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
 import com.yibaiqi.face.recognition.entity.User;
+import com.yibaiqi.face.recognition.vo.DbClassOptionContent;
+import com.yibaiqi.face.recognition.vo.DbLeaveOptionContent;
 import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.LocalUser;
 import com.yibaiqi.face.recognition.vo.MyRecord;
+import com.yibaiqi.face.recognition.vo.SettingContent;
 
 import java.util.List;
 
@@ -76,4 +79,32 @@ public interface UserDao {
 
     @Query("SELECT * FROM MyRecord")
     LiveData<List<MyRecord>> observeRecordAll();// 只会执行一次
+
+
+    //----------------------------------
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insetClassCourse(DbClassOptionContent data);
+
+    @Query("DELETE FROM DbClassOptionContent WHERE class_id is :classId AND class_course_id is :classCourseId")
+    void deleteClassCourse3(int classId, int classCourseId);
+
+    @Query("DELETE FROM DbClassOptionContent WHERE class_id is :classId AND user_key is :userKey")
+    void deleteClassCourse4(int classId, String userKey);
+
+    @Query("UPDATE DbClassOptionContent set start_time=:start AND end_time =:end WHERE class_id is :classId AND class_course_id is :classCourseId ")
+    void updateClass(String start, String end, int classId, int classCourseId);
+
+    @Delete
+    void deleteLeaves(List<DbLeaveOptionContent> list);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertLeaves(List<DbLeaveOptionContent> list);
+
+    @Query("DELETE FROM SettingContent")
+    void delSettings();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertSettings(List<SettingContent> list);
+
+
 }

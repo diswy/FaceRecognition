@@ -7,16 +7,15 @@ import android.arch.persistence.room.PrimaryKey;
  * Created by @author xiaofu on 2019/7/3.
  */
 @Entity
-public class DbClassOptionContent {
+public class SettingContent {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
     private int type_flag;
-    private String user_key;
-    private int class_course_id;
-    private int class_id;
     private String start_time;
     private String end_time;
+    private String time_detail;
+    private String app_types;
 
     public int getType_flag() {
         return type_flag;
@@ -24,30 +23,6 @@ public class DbClassOptionContent {
 
     public void setType_flag(int type_flag) {
         this.type_flag = type_flag;
-    }
-
-    public String getUser_key() {
-        return user_key;
-    }
-
-    public void setUser_key(String user_key) {
-        this.user_key = user_key;
-    }
-
-    public int getClass_course_id() {
-        return class_course_id;
-    }
-
-    public void setClass_course_id(int class_course_id) {
-        this.class_course_id = class_course_id;
-    }
-
-    public int getClass_id() {
-        return class_id;
-    }
-
-    public void setClass_id(int class_id) {
-        this.class_id = class_id;
     }
 
     public String getStart_time() {
@@ -64,5 +39,21 @@ public class DbClassOptionContent {
 
     public void setEnd_time(String end_time) {
         this.end_time = end_time;
+    }
+
+    public String getTime_detail() {
+        return time_detail;
+    }
+
+    public void setTime_detail(String time_detail) {
+        this.time_detail = time_detail;
+    }
+
+    public String getApp_types() {
+        return app_types;
+    }
+
+    public void setApp_types(String app_types) {
+        this.app_types = app_types;
     }
 }

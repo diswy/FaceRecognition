@@ -1,12 +1,18 @@
 package com.yibaiqi.face.recognition.vo;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 /**
  * Created by @author xiaofu on 2019/7/3.
  */
+@Entity
 public class DbLeaveOptionContent {
+    @PrimaryKey
+    private int leave_id;
+
     private int type_flag;
     private String user_key;
-    private int leave_id;
     private String start_time;
     private String end_time;
 

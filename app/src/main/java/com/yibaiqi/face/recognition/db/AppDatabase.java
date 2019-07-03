@@ -6,11 +6,14 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.migration.Migration;
 import android.support.annotation.NonNull;
 
+import com.yibaiqi.face.recognition.vo.DbClassOptionContent;
+import com.yibaiqi.face.recognition.vo.DbLeaveOptionContent;
 import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.LocalUser;
 import com.yibaiqi.face.recognition.vo.MyRecord;
 
-@Database(entities = {DbOption.class, MyRecord.class, LocalUser.class}, version = 3, exportSchema = false)
+@Database(entities = {DbOption.class, MyRecord.class, LocalUser.class,
+        DbClassOptionContent.class, DbLeaveOptionContent.class}, version = 4, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
 
