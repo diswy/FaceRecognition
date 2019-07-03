@@ -438,7 +438,12 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
                                         if (user == null) {
                                             return Flowable.just("");
                                         } else {
-                                            return Flowable.just(user.getReal_name());
+                                            if (user.getReal_name() == null){
+                                                return Flowable.just("");
+                                            }else {
+                                                return Flowable.just(user.getReal_name());
+                                            }
+
                                         }
                                     }
                                 })
@@ -447,6 +452,11 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
                                     @Override
                                     public void accept(String s) throws Exception {
                                         say(s + getCurrentTime());
+                                    }
+                                }, new Consumer<Throwable>() {
+                                    @Override
+                                    public void accept(Throwable throwable) throws Exception {
+
                                     }
                                 });
 //                        say(feature.getUserName() + getCurrentTime());

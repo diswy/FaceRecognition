@@ -41,6 +41,8 @@ public class SplashActivity extends BaseActivity {
     @Inject
     ACache cache;
 
+    private FaceViewModel faceModel;
+
     private EditText et;
     private int pos = 0;
 
@@ -106,7 +108,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void initFaceEngine() {
-        FaceViewModel faceModel = ViewModelProviders.of(this, App.getInstance().factory).get(FaceViewModel.class);
+        faceModel = ViewModelProviders.of(this, App.getInstance().factory).get(FaceViewModel.class);
 
         faceModel.getInitStatus().observe(this, status -> {
             if (status != null && status) {
@@ -210,5 +212,10 @@ public class SplashActivity extends BaseActivity {
             }
         });
 
+    }
+
+
+    private void excuteLocalData(ExData exData) {
+        faceModel.saveConfig(exData.getConfig());
     }
 }

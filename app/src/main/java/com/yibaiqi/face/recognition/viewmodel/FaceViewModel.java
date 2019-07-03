@@ -61,6 +61,7 @@ import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.DbUserOption;
 import com.yibaiqi.face.recognition.vo.DeviceName;
 import com.yibaiqi.face.recognition.vo.ExData;
+import com.yibaiqi.face.recognition.vo.GlobalConfig;
 import com.yibaiqi.face.recognition.vo.ImportUser;
 import com.yibaiqi.face.recognition.vo.LocalUser;
 import com.yibaiqi.face.recognition.vo.MyRecord;
@@ -1111,5 +1112,10 @@ public class FaceViewModel extends ViewModel {
             return path;
         }
         return path;
+    }
+
+    //-------------------------2019/7/3
+    public void saveConfig(GlobalConfig config) {
+        faceRepository.saveConfig(config);
     }
 }

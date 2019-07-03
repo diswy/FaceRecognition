@@ -14,6 +14,7 @@ import com.yibaiqi.face.recognition.vo.BaseResponse;
 import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.DeviceName;
 import com.yibaiqi.face.recognition.vo.ExData;
+import com.yibaiqi.face.recognition.vo.GlobalConfig;
 import com.yibaiqi.face.recognition.vo.LocalUser;
 import com.yibaiqi.face.recognition.vo.MyRecord;
 import com.yibaiqi.face.recognition.vo.OSSKey;
@@ -250,8 +251,7 @@ public class FaceRepository {
     }
 
 
-
-    public void userInsert(List<LocalUser> list){
+    public void userInsert(List<LocalUser> list) {
         Disposable disposable = Flowable.just(list)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -262,7 +262,8 @@ public class FaceRepository {
                     }
                 });
     }
-    public void userDel(List<LocalUser> list){
+
+    public void userDel(List<LocalUser> list) {
         Disposable disposable = Flowable.just(list)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -274,7 +275,7 @@ public class FaceRepository {
                 });
     }
 
-    public LocalUser getUserByKey(String key){
+    public LocalUser getUserByKey(String key) {
         return userDao.getUser(key);
     }
 
@@ -314,5 +315,11 @@ public class FaceRepository {
         }.asLiveData();
     }
 
+
+    //------------------------2019/7/3/
+    public void saveConfig(GlobalConfig config) {
+        mCache.put("config_error_flag", config.getError_flag());
+        mCache.put("config_setting_traffic_flag", config.getSetting_traffic_flag());
+    }
 
 }
