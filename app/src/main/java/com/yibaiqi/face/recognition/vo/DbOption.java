@@ -126,4 +126,37 @@ public class DbOption {
     public void setCreate_time(String create_time) {
         this.create_time = create_time;
     }
+
+
+    public int getApp_type() {
+        return app_type;
+    }
+
+    public void setApp_type(int app_type) {
+        this.app_type = app_type;
+    }
+
+    public boolean isIs_traffic_error() {
+        return is_traffic_error;
+    }
+
+    public void setIs_traffic_error(boolean is_traffic_error) {
+        this.is_traffic_error = is_traffic_error;
+    }
+
+    public boolean isIs_intrude() {
+        return is_intrude;
+    }
+
+    public void setIs_intrude(boolean is_intrude) {
+        this.is_intrude = is_intrude;
+    }
+
+    public boolean isIs_class_course() {
+        return is_class_course;
+    }
+
+    public void setIs_class_course(boolean is_class_course) {
+        this.is_class_course = is_class_course;
+    }
 }

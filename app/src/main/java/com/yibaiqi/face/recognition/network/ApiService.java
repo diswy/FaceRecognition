@@ -46,4 +46,9 @@ public interface ApiService {
     @GET("devices/FaceDevices/get_info")
     LiveData<ApiResponse<BaseResponse<DeviceName>>> getDevice(@Header("token") String token);
 
+
+    @POST("devices/FaceDevices/activation_success")
+    LiveData<ApiResponse<BaseResponse<String>>> uploadError(@Header("token") String token, @Query("user_key") String user_key);
+
+
 }

@@ -137,6 +137,9 @@ public class SplashActivity extends BaseActivity {
                         }
 
                         ExData exData = resource.data.getData().getData();
+
+                        faceModel.executeLocalData(exData);
+
                         if (exData != null && exData.getUsers() != null) {// 后台通知消息，也许有新操作
                             List<DbOption> list = new ArrayList<>();// 百度数据库任务
                             int addCount = 0;
@@ -150,7 +153,12 @@ public class SplashActivity extends BaseActivity {
 
                                 for (DbOption item : exData.getUsers().getAdd()) {
                                     // 不管是1 还是 2 都需要维护本地数据库
-                                    LocalUser localUser = new LocalUser(item.getUser_key(), item.getFull_name());
+                                    LocalUser localUser = new LocalUser(item.getUser_key(),
+                                            item.getFull_name(),
+                                            item.getApp_type(),
+                                            item.isIs_traffic_error(),
+                                            item.isIs_intrude(),
+                                            item.isIs_class_course());
                                     insertOrUpdateUsers.add(localUser);
 
 
@@ -177,7 +185,12 @@ public class SplashActivity extends BaseActivity {
                             if (exData.getUsers().getDelete() != null) {
                                 for (DbOption item : exData.getUsers().getDelete()) {
                                     // 维护本地用户表，需要删除的人员
-                                    LocalUser localUser = new LocalUser(item.getUser_key(), item.getFull_name());
+                                    LocalUser localUser = new LocalUser(item.getUser_key(),
+                                            item.getFull_name(),
+                                            item.getApp_type(),
+                                            item.isIs_traffic_error(),
+                                            item.isIs_intrude(),
+                                            item.isIs_class_course());
                                     delUsers.add(localUser);
 
 
@@ -214,8 +227,4 @@ public class SplashActivity extends BaseActivity {
 
     }
 
-
-    private void excuteLocalData(ExData exData) {
-        faceModel.saveConfig(exData.getConfig());
-    }
 }

@@ -11,9 +11,11 @@ import com.yibaiqi.face.recognition.vo.DbLeaveOptionContent;
 import com.yibaiqi.face.recognition.vo.DbOption;
 import com.yibaiqi.face.recognition.vo.LocalUser;
 import com.yibaiqi.face.recognition.vo.MyRecord;
+import com.yibaiqi.face.recognition.vo.SettingContent;
 
 @Database(entities = {DbOption.class, MyRecord.class, LocalUser.class,
-        DbClassOptionContent.class, DbLeaveOptionContent.class}, version = 4, exportSchema = false)
+        DbClassOptionContent.class, DbLeaveOptionContent.class, SettingContent.class,
+}, version = 4, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
 

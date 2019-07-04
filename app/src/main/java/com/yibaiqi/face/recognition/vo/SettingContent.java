@@ -56,4 +56,12 @@ public class SettingContent {
     public void setApp_types(String app_types) {
         this.app_types = app_types;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

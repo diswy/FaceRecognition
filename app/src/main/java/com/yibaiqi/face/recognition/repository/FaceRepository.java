@@ -91,6 +91,19 @@ public class FaceRepository {
     }
 
     /**
+     * 上报异常
+     */
+    public LiveData<Resource<BaseResponse<String>>> uploadError(String userKey){
+        return new NetworkResource<BaseResponse<String>>(appExecutors){
+            @NonNull
+            @Override
+            protected LiveData<ApiResponse<BaseResponse<String>>> createCall() {
+                return service.bindDevice(mCache.getAsString("token"),userKey);
+            }
+        }.asLiveData();
+    }
+
+    /**
      * 绑定设备
      */
     public Flowable<String> bindDevice2(String devId) {
@@ -283,6 +296,10 @@ public class FaceRepository {
         return userDao.getUser(key);
     }
 
+    public UserDao getDao(){
+        return userDao;
+    }
+
 
     //------------摄像头
     public boolean isCameraEnable() {
@@ -322,8 +339,8 @@ public class FaceRepository {
 
     //------------------------2019/7/3/
     public void saveConfig(GlobalConfig config) {
-        mCache.put("config_error_flag", config.getError_flag());
-        mCache.put("config_setting_traffic_flag", config.getSetting_traffic_flag());
+        mCache.put("config_error_flag", String.valueOf(config.getError_flag()));
+        mCache.put("config_setting_traffic_flag", String.valueOf(config.getSetting_traffic_flag()));
     }
 
     public void delClassCourse(List<DbClassOptionContent> list) {

@@ -50,6 +50,7 @@ import com.liulishuo.filedownloader.FileDownloadQueueSet;
 import com.liulishuo.filedownloader.FileDownloader;
 import com.yibaiqi.face.recognition.App;
 import com.yibaiqi.face.recognition.Key;
+import com.yibaiqi.face.recognition.db.UserDao;
 import com.yibaiqi.face.recognition.repository.FaceRepository;
 import com.yibaiqi.face.recognition.tools.ACache;
 import com.yibaiqi.face.recognition.tools.EBQValue;
@@ -72,6 +73,7 @@ import com.yibaiqi.face.recognition.vo.RegisterDevice;
 import com.yibaiqi.face.recognition.vo.Remote;
 import com.yibaiqi.face.recognition.vo.RemoteRecord;
 import com.yibaiqi.face.recognition.vo.Resource;
+import com.yibaiqi.face.recognition.vo.SettingContent;
 import com.yibaiqi.face.recognition.vo.Settings;
 
 import java.io.File;
@@ -210,6 +212,10 @@ public class FaceViewModel extends ViewModel {
         return faceRepository.getDevice();
     }
 
+    public void uploadError(String userKey){
+        faceRepository.uploadError(userKey);
+    }
+
     //--------数据库相关
     private MediatorLiveData<List<DbOption>> mLiveData = new MediatorLiveData<>();
     private MediatorLiveData<List<MyRecord>> mLiveRecordData = new MediatorLiveData<>();
@@ -255,11 +261,21 @@ public class FaceViewModel extends ViewModel {
                 List<LocalUser> delUsers = new ArrayList<>();
                 for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).getType_flag() == 2 || list.get(i).getType_flag() == 1) {// 更新本地数据库
-                        LocalUser localUser = new LocalUser(list.get(i).getUser_key(), list.get(i).getFull_name());
+                        LocalUser localUser = new LocalUser(list.get(i).getUser_key(),
+                                list.get(i).getFull_name(),
+                                list.get(i).getApp_type(),
+                                list.get(i).isIs_traffic_error(),
+                                list.get(i).isIs_intrude(),
+                                list.get(i).isIs_class_course());
                         insertOrUpdateUsers.add(localUser);
                     }
                     if (list.get(i).getType_flag() == 3) {// 删除本地数据库
-                        LocalUser localUser = new LocalUser(list.get(i).getUser_key(), list.get(i).getFull_name());
+                        LocalUser localUser = new LocalUser(list.get(i).getUser_key(),
+                                list.get(i).getFull_name(),
+                                list.get(i).getApp_type(),
+                                list.get(i).isIs_traffic_error(),
+                                list.get(i).isIs_intrude(),
+                                list.get(i).isIs_class_course());
                         delUsers.add(localUser);
                     }
                 }
@@ -1053,6 +1069,10 @@ public class FaceViewModel extends ViewModel {
                         case ERROR:
                             break;
                         case SUCCESS:
+                            if (data.data != null && data.data.getData() != null) {
+                                executeLocalData(data.data.getData());
+                            }
+
                             if (data.data != null
                                     && data.data.getData() != null
                                     && data.data.getData().getUsers() != null) {
@@ -1154,5 +1174,9 @@ public class FaceViewModel extends ViewModel {
         saveClassCourse(exData.getClass_course());
         saveLeaves(exData.getLeaves());
         saveSettings(exData.getSetting());
+    }
+
+    public UserDao getDao(){
+        return faceRepository.getDao();
     }
 }

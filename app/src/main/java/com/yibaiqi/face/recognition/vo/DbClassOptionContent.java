@@ -65,4 +65,12 @@ public class DbClassOptionContent {
     public void setEnd_time(String end_time) {
         this.end_time = end_time;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

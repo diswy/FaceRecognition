@@ -59,6 +59,12 @@ public class TimeFormat {
         calendar.setTimeInMillis(timeMillis);
         return format.format(calendar.getTime());
     }
+    public static String FULL2(long timeMillis) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.CHINA);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timeMillis);
+        return format.format(calendar.getTime());
+    }
 
     private static Long formatTime(String time) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.CHINA);
@@ -69,5 +75,16 @@ public class TimeFormat {
             return 0L;
         }
     }
+
+    public static Long formatTime2(String time) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        try {
+            return format.parse(time).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0L;
+        }
+    }
+
 
 }
