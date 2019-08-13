@@ -98,7 +98,7 @@ public class FaceRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<BaseResponse<String>>> createCall() {
-                return service.bindDevice(mCache.getAsString("token"),userKey);
+                return service.uploadError(mCache.getAsString("token"),userKey);
             }
         }.asLiveData();
     }

@@ -106,12 +106,12 @@ public interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertSettings(List<SettingContent> list);
 
-    @Query("SELECT * FROM SettingContent")
-    List<SettingContent> getSettingContent();
+    @Query("SELECT * FROM SettingContent WHERE app_types LIKE :type AND (start_time<= :currentTime and end_time>= :currentTime)")
+    List<SettingContent> getSettingContent(String currentTime, String type);
 
     @Query("SELECT count(*) FROM DbLeaveOptionContent WHERE user_key =:userKey AND (start_time <=:currentTime and end_time >=:currentTime)")
     int isLeaves(String userKey, String currentTime);
 
     @Query("SELECT count(*) FROM DbClassOptionContent WHERE user_key =:userKey AND (start_time <=:currentTime and end_time >=:currentTime)")
-    int isCourse(String userKey,String currentTime);
+    int isCourse(String userKey, String currentTime);
 }

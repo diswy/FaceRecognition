@@ -35,16 +35,13 @@ import com.baidu.idl.sample.api.FaceApi;
 import com.baidu.idl.sample.common.FaceEnvironment;
 import com.baidu.idl.sample.common.GlobalSet;
 import com.baidu.idl.sample.db.DBManager;
-import com.baidu.idl.sample.manager.FaceLiveness;
 import com.baidu.idl.sample.manager.FaceSDKManager;
 import com.baidu.idl.sample.model.ARGBImg;
 import com.baidu.idl.sample.utils.FeatureUtils;
 import com.baidu.idl.sample.utils.FileUtils;
 import com.baidu.idl.sample.utils.ImageUtils;
 import com.baidu.idl.sample.utils.ToastUtils;
-import com.baidu.idl.sample.view.MonocularView;
 import com.liulishuo.filedownloader.BaseDownloadTask;
-import com.liulishuo.filedownloader.FileDownloadLargeFileListener;
 import com.liulishuo.filedownloader.FileDownloadListener;
 import com.liulishuo.filedownloader.FileDownloadQueueSet;
 import com.liulishuo.filedownloader.FileDownloader;
@@ -73,7 +70,6 @@ import com.yibaiqi.face.recognition.vo.RegisterDevice;
 import com.yibaiqi.face.recognition.vo.Remote;
 import com.yibaiqi.face.recognition.vo.RemoteRecord;
 import com.yibaiqi.face.recognition.vo.Resource;
-import com.yibaiqi.face.recognition.vo.SettingContent;
 import com.yibaiqi.face.recognition.vo.Settings;
 
 import java.io.File;
@@ -268,6 +264,8 @@ public class FaceViewModel extends ViewModel {
                                 list.get(i).isIs_intrude(),
                                 list.get(i).isIs_class_course());
                         insertOrUpdateUsers.add(localUser);
+
+                        Log.wtf("用户判断","app_type="+list.get(i).getApp_type());
                     }
                     if (list.get(i).getType_flag() == 3) {// 删除本地数据库
                         LocalUser localUser = new LocalUser(list.get(i).getUser_key(),
@@ -659,7 +657,7 @@ public class FaceViewModel extends ViewModel {
 
         if (totalCount == 0) {// 两张图片都出错了，理论上极低概率~但是依旧需要上传
             RemoteRecord mRecord = new RemoteRecord(myRecord.getUser_key(),
-                    "", "", myRecord.getCreate_time());
+                    "", "", myRecord.getCreate_time(),myRecord.getError_type(),myRecord.isIs_open());
             syncRecord(owner, mRecord, myRecord);
             return;
         }
@@ -680,7 +678,7 @@ public class FaceViewModel extends ViewModel {
                     }
 
                     RemoteRecord record = new RemoteRecord(myRecord.getUser_key(),
-                            facePath, hikPath, myRecord.getCreate_time());
+                            facePath, hikPath, myRecord.getCreate_time(),myRecord.getError_type(),myRecord.isIs_open());
                     syncRecord(owner, record, myRecord);
                 }
             }
@@ -1093,7 +1091,11 @@ public class FaceViewModel extends ViewModel {
                                                     item.getFace_image(),
                                                     0,
                                                     item.getFull_name(),
-                                                    item.getType_flag());// 新增用户
+                                                    item.getType_flag(),
+                                                    item.getApp_type(),
+                                                    item.isIs_traffic_error(),
+                                                    item.isIs_intrude(),
+                                                    item.isIs_class_course());// 新增用户
                                             list.add(mDbOption);
                                             addCount++;
                                         }
@@ -1111,7 +1113,11 @@ public class FaceViewModel extends ViewModel {
                                                 "",
                                                 1,
                                                 item.getFull_name(),
-                                                item.getType_flag());
+                                                item.getType_flag(),
+                                                item.getApp_type(),
+                                                item.isIs_traffic_error(),
+                                                item.isIs_intrude(),
+                                                item.isIs_class_course());
                                         list.add(mDbOption);
                                         delCount++;
                                     }

@@ -22,14 +22,37 @@ public class MyRecord {
     private boolean hikStatus;
     @ColumnInfo(name = "faceStatus")
     private boolean faceStatus;
+    @ColumnInfo(name = "error_type")
+    private int error_type;//异常类型 0为正常刷脸， 1_异常刷脸, 2_非法闯入
+    @ColumnInfo(name = "is_open")
+    private boolean is_open;//是否开门
 
     public MyRecord(@NonNull String create_time, String user_key, String fileName,
-                    boolean hikStatus, boolean faceStatus) {
+                    boolean hikStatus, boolean faceStatus,int error_type,boolean is_open) {
         this.create_time = create_time;
         this.user_key = user_key;
         this.fileName = fileName;
         this.hikStatus = hikStatus;
         this.faceStatus = faceStatus;
+        this.error_type = error_type;
+        this.is_open = is_open;
+    }
+
+
+    public int getError_type() {
+        return error_type;
+    }
+
+    public void setError_type(int error_type) {
+        this.error_type = error_type;
+    }
+
+    public boolean isIs_open() {
+        return is_open;
+    }
+
+    public void setIs_open(boolean is_open) {
+        this.is_open = is_open;
     }
 
     @NonNull

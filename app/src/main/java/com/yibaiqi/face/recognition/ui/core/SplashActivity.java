@@ -171,7 +171,11 @@ public class SplashActivity extends BaseActivity {
                                                     item.getFace_image(),
                                                     0,
                                                     item.getFull_name(),
-                                                    item.getType_flag());// 新增用户
+                                                    item.getType_flag(),
+                                                    item.getApp_type(),
+                                                    item.isIs_traffic_error(),
+                                                    item.isIs_intrude(),
+                                                    item.isIs_class_course());// 新增用户
                                             list.add(mData);
                                             addCount++;
                                         }
@@ -201,7 +205,11 @@ public class SplashActivity extends BaseActivity {
                                             "",
                                             1,
                                             item.getFull_name(),
-                                            item.getType_flag());
+                                            item.getType_flag(),
+                                            item.getApp_type(),
+                                            item.isIs_traffic_error(),
+                                            item.isIs_intrude(),
+                                            item.isIs_class_course());
                                     list.add(mData);
                                     delCount++;
                                 }

@@ -8,9 +8,9 @@
 	tools:context=".ui.core.DelaySettingActivity">
 
 	<LinearLayout
-		android:orientation="vertical"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
 
 		<TextView
 			android:layout_width="wrap_content"
@@ -33,13 +33,13 @@
 
 
 		<TextView
-			android:layout_marginTop="20dp"
-			android:textColor="@color/c333"
-			android:paddingStart="16dp"
-			android:paddingEnd="16dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="闸机延长时间，默认300毫秒:" />
+			android:layout_marginTop="20dp"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:text="闸机延长时间，默认300毫秒:"
+			android:textColor="@color/c333" />
 
 		<EditText
 			android:id="@+id/et_delay"
@@ -54,12 +54,12 @@
 			android:textSize="16sp" />
 
 		<TextView
-			android:textColor="@color/c333"
-			android:paddingStart="16dp"
-			android:paddingEnd="16dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="人脸识别延长时间(拍照间隔)，默认5000毫秒:" />
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:text="人脸识别延长时间(拍照间隔)，默认5000毫秒:"
+			android:textColor="@color/c333" />
 
 		<EditText
 			android:id="@+id/et_delay_face"
@@ -74,12 +74,12 @@
 			android:textSize="16sp" />
 
 		<TextView
-			android:textColor="@color/c333"
-			android:paddingStart="16dp"
-			android:paddingEnd="16dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="延迟注册人脸时间，默认3000毫秒:" />
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:text="延迟注册人脸时间，默认3000毫秒:"
+			android:textColor="@color/c333" />
 
 		<EditText
 			android:id="@+id/et_delay_register"
@@ -92,6 +92,38 @@
 			android:paddingStart="16dp"
 			android:paddingEnd="16dp"
 			android:textSize="16sp" />
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:text="开闸模式："
+			android:textColor="@color/c333" />
+
+		<RadioGroup
+			android:id="@+id/open_type_rg"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp">
+
+			<RadioButton
+				android:checked="true"
+				android:id="@+id/open_type_1"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="模式一" />
+
+			<RadioButton
+				android:id="@+id/open_type_2"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="16dp"
+				android:text="模式二" />
+
+		</RadioGroup>
 
 		<TextView
 			android:id="@+id/btn_commit"

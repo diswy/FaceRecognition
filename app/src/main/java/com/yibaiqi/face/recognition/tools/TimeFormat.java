@@ -65,6 +65,12 @@ public class TimeFormat {
         calendar.setTimeInMillis(timeMillis);
         return format.format(calendar.getTime());
     }
+    public static String YMD(long timeMillis) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd ", Locale.CHINA);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timeMillis);
+        return format.format(calendar.getTime());
+    }
 
     private static Long formatTime(String time) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.CHINA);

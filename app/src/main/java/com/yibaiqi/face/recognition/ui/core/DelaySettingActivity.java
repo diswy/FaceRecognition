@@ -1,6 +1,8 @@
 package com.yibaiqi.face.recognition.ui.core;
 
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +19,8 @@ public class DelaySettingActivity extends BaseActivity {
 
     private EditText etDelay, etDelayFace, etDelayRegister;
     private TextView btnCommit;
+    private RadioGroup mOpenTypeRg;
+    private RadioButton mType1, mType2;
 
     @Inject
     ACache cache;
@@ -32,6 +36,9 @@ public class DelaySettingActivity extends BaseActivity {
         etDelayFace = findViewById(R.id.et_delay_face);
         etDelayRegister = findViewById(R.id.et_delay_register);
         btnCommit = findViewById(R.id.btn_commit);
+        mOpenTypeRg = findViewById(R.id.open_type_rg);
+        mType1 = findViewById(R.id.open_type_1);
+        mType2 = findViewById(R.id.open_type_2);
     }
 
     @Override
@@ -52,13 +59,31 @@ public class DelaySettingActivity extends BaseActivity {
             etDelayFace.setText(sDelay2);
         }
 
-        if (sDelay3 != null){
+        if (sDelay3 != null) {
             etDelayRegister.setText(sDelay3);
+        }
+        String openType = cache.getAsString(Key.KEY_OPEN_TYPE);
+        if (openType == null || openType.equals("type_1")) {
+            mType1.setChecked(true);
+        } else if (openType.equals("type_2")) {
+            mType2.setChecked(true);
         }
     }
 
     @Override
     protected void initListener() {
+        mOpenTypeRg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.open_type_1) {
+                    cache.put(Key.KEY_OPEN_TYPE, "type_1");
+                } else if (checkedId == R.id.open_type_2) {
+                    cache.put(Key.KEY_OPEN_TYPE, "type_2");
+                }
+            }
+        });
+
+
         btnCommit.setOnClickListener(v -> {
             try {
                 String etS = etDelay.getText().toString().trim();

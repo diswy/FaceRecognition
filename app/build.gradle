@@ -6,8 +6,8 @@ android {
         applicationId "com.yibaiqi.face.recognition"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 3
-        versionName "1.2"
+        versionCode 4
+        versionName "1.3"
         multiDexEnabled true
 
         ndk {
@@ -97,9 +97,8 @@ dependencies {
     implementation 'com.aliyun.dpa:oss-android-sdk:+'
     implementation 'com.liulishuo.filedownloader:library:1.7.6'
     implementation 'top.zibin:Luban:1.1.8'
-
     implementation 'com.umeng.umsdk:analytics:8.0.0'
     implementation 'com.umeng.umsdk:common:2.0.0'
-
     implementation 'com.github.nanchen2251:AppManager:1.0.1'
+    implementation files('libs/yface.jar')
 }

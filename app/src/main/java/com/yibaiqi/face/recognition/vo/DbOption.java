@@ -50,7 +50,7 @@ public class DbOption {
 
 
     public DbOption(@NonNull String data_key, String user_key, String real_name, String face_image, int status
-            , String full_name, int type_flag) {
+            , String full_name, int type_flag, int app_type, boolean is_traffic_error, boolean is_intrude, boolean is_class_course) {
         this.user_key = user_key;
         this.data_key = data_key;
         this.real_name = real_name;
@@ -58,6 +58,10 @@ public class DbOption {
         this.status = status;
         this.full_name = full_name;
         this.type_flag = type_flag;
+        this.app_type = app_type;
+        this.is_traffic_error = is_traffic_error;
+        this.is_intrude = is_intrude;
+        this.is_class_course = is_class_course;
     }
 
     @NonNull
@@ -159,4 +163,5 @@ public class DbOption {
     public void setIs_class_course(boolean is_class_course) {
         this.is_class_course = is_class_course;
     }
+
 }

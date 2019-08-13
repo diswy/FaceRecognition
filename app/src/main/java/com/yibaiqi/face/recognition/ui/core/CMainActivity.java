@@ -31,6 +31,7 @@ import com.baidu.tts.chainofresponsibility.logger.LoggerProxy;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
+import com.example.yfaceapi.GPIOManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hcnetsdk.jna.HCNetSDKJNAInstance;
@@ -61,8 +62,6 @@ import com.yibaiqi.face.recognition.vo.MyRecord;
 import com.yibaiqi.face.recognition.vo.SettingContent;
 import com.yibaiqi.face.recognition.vo.TimeZone;
 
-import org.reactivestreams.Publisher;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -75,7 +74,6 @@ import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.rong.imlib.RongIMClient;
 
@@ -188,6 +186,15 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
+
+        // 新机器开闸方式
+        String openType = cache.getAsString(Key.KEY_OPEN_TYPE);
+        if (openType == null || openType.equals("type_1")) {
+            openTypeMode = 1;
+        } else if (openType.equals("type_2")) {
+            openTypeMode = 2;
+        }
+
         // 固定设备，闸机头默认需要设置0度
         mHint = findViewById(R.id.ff_hint);
         mCameraView = findViewById(R.id.layout_camera);
@@ -694,7 +701,7 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
     /**
      * 获取摄像头截图,保存送检图片
      */
-    private void captureVideo(String userKey, Bitmap bitmap) {
+    private void captureVideo(String userKey, Bitmap bitmap, int errorType, boolean isOpen) {
         boolean hikvisonCapture = false;
         boolean faceCapture = false;
         String formatTime = TimeFormat.FULL(System.currentTimeMillis());
@@ -721,23 +728,34 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
         }
 
         MyRecord record = new MyRecord(formatTime, userKey, realFileName,
-                hikvisonCapture, faceCapture);
+                hikvisonCapture, faceCapture, errorType, isOpen);
         faceModel.insert(record);
     }
 
 
     //--------------开关门
+
+    private int openTypeMode = 1;
+
     private void openDoor() {
-        if (GpioUtils.setGpioDirection(146, 0)) {
-            Log.e("ebq", "设置IO为输出口成功");
+        if (openTypeMode == 1) {// 老模式
+            if (GpioUtils.setGpioDirection(146, 0)) {
+                Log.e("ebq", "设置IO为输出口成功");
+                mHandler.sendEmptyMessageDelayed(CLOSE_DOOR, delay);
+            }
+        } else {// 新模式
+            GPIOManager.getInstance(this).pullUpRelay();
             mHandler.sendEmptyMessageDelayed(CLOSE_DOOR, delay);
         }
-
     }
 
     private void closeDoor() {
-        if (GpioUtils.setGpioDirection(146, 1)) {
-            Log.e("ebq", "设置IO为输入口成功");
+        if (openTypeMode == 1) {// 老模式
+            if (GpioUtils.setGpioDirection(146, 1)) {
+                Log.e("ebq", "设置IO为输入口成功");
+            }
+        } else {
+            GPIOManager.getInstance(this).pullDownRelay();
         }
     }
 
@@ -862,28 +880,38 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
         t.setToNow(); // 取得系统时间。
         int hour = t.hour;    // 0-23
         if (hour >= 0 && hour <= 9)
-            return "，早上好";
+            return "早上好";
 
         if (hour >= 9 && hour <= 12)
-            return "，上午好";
+            return "上午好";
 
         if (hour >= 12 && hour <= 13)
-            return "，中午好";
+            return "中午好";
 
         if (hour >= 13 && hour <= 18)
-            return "，下午好";
+            return "下午好";
 
         if (hour >= 18)
-            return "，晚上好";
+            return "晚上好";
 
-        return "，您好";
+        return "您好";
     }
 
     //---工具
-    private boolean inTimeZone(String start, String start2, String end2) {
-        long mStart = TimeFormat.formatTime2(start + start2);
-        long mEnd = TimeFormat.formatTime2(start + end2);
+    private boolean inTimeZone(String start2, String end2) {
+
+
+        String today = TimeFormat.YMD(System.currentTimeMillis());
+
+        long mStart = TimeFormat.formatTime2(today + start2);
+        long mEnd = TimeFormat.formatTime2(today + end2);
         long mCurrent = System.currentTimeMillis();
+
+
+        Log.wtf("用户判断", "开始时间：" + today + start2);
+        Log.wtf("用户判断", "结束时间：" + today + end2);
+
+        Log.wtf("用户判断", "Bool：" + (mCurrent > mStart && mCurrent < mEnd));
         return mCurrent > mStart && mCurrent < mEnd;
     }
 
@@ -893,180 +921,188 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
                 .observeOn(Schedulers.io())
                 .subscribe(s -> {
                     LocalUser user = faceModel.getUserByKey(s);
-                    String settingFlag = cache.getAsString("config_setting_traffic_flag");
-                    Log.i("用户判断","1");
-                    if (user.getApp_type() == 3) {//
-                        Log.i("用户判断","2");
-                        if (settingFlag.equals("1")) {// 允许
-                            Log.i("用户判断","3");
-                            List<SettingContent> list = faceModel.getDao().getSettingContent();
-                            boolean flag = false;// false非法 true正常
-                            for (int i = 0; i < list.size(); i++) {
-                                if (list.get(i).getApp_types().contains("3")) {// 包含
-                                    String timeDetails = list.get(i).getTime_detail();
-                                    List<TimeZone> timeZoneList = new Gson().fromJson(timeDetails, new TypeToken<List<TimeZone>>() {
-                                    }.getType());
-                                    boolean innerFlag = false;// 默认不开门
-                                    for (int j = 0; j < timeZoneList.size(); j++) {
-
-                                        if (inTimeZone(list.get(i).getStart_time(), timeZoneList.get(j).getStart_time(), timeZoneList.get(j).getEnd_time())) {
-                                            // 需要开门
-                                            innerFlag = true;
-                                            break;
-                                        }
-                                    }
-
-                                    flag = innerFlag;
-                                    break;
-                                }
-                            }
-
-                            if (flag) {
-                                Log.i("用户判断","4");
-                                openDoor();
-                                say(user.getReal_name() + "" + getCurrentTime());
-                                captureVideo(id, bitmap);
-                            } else {
-                                Log.i("用户判断","5");
-                                say(user.getReal_name() + ",当前禁止通行");
-                                faceModel.uploadError(user.getUser_key());
-                            }
-
-                        } else if (settingFlag.equals("2")) {// 不允许
-                            Log.i("用户判断","6");
-                            say(user.getReal_name() + ",当前禁止通行");
-                            faceModel.uploadError(user.getUser_key());
-                        }
-                    } else {// 不为
-                        Log.i("用户判断","7");
-                        if (user.isIs_intrude()) {// 入侵者
-                            Log.i("用户判断","8");
-                            say(user.getReal_name() + ",非法闯入");
-                            faceModel.uploadError(user.getUser_key());
-                        } else {// 不是非法闯入
-                            Log.i("用户判断","9");
-                            String current = TimeFormat.FULL2(System.currentTimeMillis());
-                            int count = faceModel.getDao().isLeaves(user.getUser_key(), current);
-                            if (count > 0 && user.isIs_traffic_error()) {// 不开门
-                                Log.i("用户判断","10");
-
-                                if (user.isIs_class_course()) {// 判断课表
-                                    Log.i("用户判断","11");
-                                    int classCount = faceModel.getDao().isCourse(user.getUser_key(), current);
-                                    if (classCount > 0) {
-                                        Log.i("用户判断","12");
-                                        say(user.getReal_name() + ",当前禁止通行");
-                                        faceModel.uploadError(user.getUser_key());
-                                    } else {
-                                        Log.i("用户判断","13");
-                                        if (settingFlag.equals("1")) {// 允许
-                                            Log.i("用户判断","14");
-                                            List<SettingContent> list = faceModel.getDao().getSettingContent();
-                                            boolean flag = false;// false非法 true正常
-                                            for (int i = 0; i < list.size(); i++) {
-                                                if (list.get(i).getApp_types().contains("1")) {// 包含学生
-                                                    String timeDetails = list.get(i).getTime_detail();
-                                                    List<TimeZone> timeZoneList = new Gson().fromJson(timeDetails, new TypeToken<List<TimeZone>>() {
-                                                    }.getType());
-                                                    boolean innerFlag = false;// 默认不开门
-                                                    for (int j = 0; j < timeZoneList.size(); j++) {
-
-                                                        if (inTimeZone(list.get(i).getStart_time(), timeZoneList.get(j).getStart_time(), timeZoneList.get(j).getEnd_time())) {
-                                                            // 需要开门
-                                                            innerFlag = true;
-                                                            break;
-                                                        }
-                                                    }
-
-                                                    flag = innerFlag;
-                                                    break;
-                                                }
-                                            }
-
-                                            if (flag) {
-                                                Log.i("用户判断","15");
-                                                openDoor();
-                                                say(user.getReal_name() + getCurrentTime());
-                                                captureVideo(id, bitmap);
-                                            } else {
-                                                Log.i("用户判断","16");
-                                                say(user.getReal_name() + ",当前禁止通行");
-                                                faceModel.uploadError(user.getUser_key());
-                                            }
-
-                                        } else if (settingFlag.equals("2")) {// 不允许
-                                            Log.i("用户判断","17");
-                                            say(user.getReal_name() + ",当前禁止通行");
-                                            faceModel.uploadError(user.getUser_key());
-                                        }
-                                    }
-                                } else {// 走固定时间判断
-                                    Log.i("用户判断","18");
-                                    if (settingFlag.equals("1")) {// 允许
-                                        Log.i("用户判断","19");
-                                        List<SettingContent> list = faceModel.getDao().getSettingContent();
-                                        boolean flag = false;// false非法 true正常
-                                        for (int i = 0; i < list.size(); i++) {
-                                            if (list.get(i).getApp_types().contains("1")) {// 包含学生
-                                                String timeDetails = list.get(i).getTime_detail();
-                                                List<TimeZone> timeZoneList = new Gson().fromJson(timeDetails, new TypeToken<List<TimeZone>>() {
-                                                }.getType());
-                                                boolean innerFlag = false;// 默认不开门
-                                                for (int j = 0; j < timeZoneList.size(); j++) {
-
-                                                    if (inTimeZone(list.get(i).getStart_time(), timeZoneList.get(j).getStart_time(), timeZoneList.get(j).getEnd_time())) {
-                                                        // 需要开门
-                                                        innerFlag = true;
-                                                        break;
-                                                    }
-                                                }
-
-                                                flag = innerFlag;
-                                                break;
-                                            }
-                                        }
-
-                                        if (flag) {
-                                            Log.i("用户判断","20");
-                                            openDoor();
-                                            say(user.getReal_name() + getCurrentTime());
-                                            captureVideo(id, bitmap);
-                                        } else {
-                                            Log.i("用户判断","21");
-                                            say(user.getReal_name() + ",当前禁止通行");
-                                            faceModel.uploadError(user.getUser_key());
-                                        }
-
-                                    } else if (settingFlag.equals("2")) {// 不允许
-                                        Log.i("用户判断","22");
-                                        say(user.getReal_name() + ",当前禁止通行");
-                                        faceModel.uploadError(user.getUser_key());
-                                    }
-                                }
-
-
-                            } else if (count > 0 && !user.isIs_traffic_error()) {
-                                Log.i("用户判断","23");
-                                openDoor();
-                                say(user.getReal_name() + getCurrentTime());
-                                captureVideo(id, bitmap);
-                            }
-                            if (count == 0){
-                                Log.i("用户判断","是否需要判断课表");
-                                if (user.isIs_class_course()){
-
-                                }else {
-                                    gudingshijian(settingFlag,"1",user,id,bitmap);
-                                }
-                            }
-                        }
-
+                    Log.i("用户判断", "APP_TYPE=" + user.getApp_type());
+                    if (user.getApp_type() == 3) {// 老师 只有固定时间判断
+                        Log.i("用户判断", "是老师");
+                        gudingshijian(user.getApp_type(), user, id, bitmap, false);
+                    } else {// 学生
+                        Log.i("用户判断", "是学生");
+                        isIntrude(user, id, bitmap);
                     }
+
+//
+//                    Log.i("用户判断", "1");
+//                    if (user.getApp_type() == 3) {//
+//                        Log.i("用户判断", "2");
+//                        if (settingFlag.equals("1")) {// 允许
+//                            Log.i("用户判断", "3");
+//                            List<SettingContent> list = faceModel.getDao().getSettingContent();
+//                            boolean flag = false;// false非法 true正常
+//                            for (int i = 0; i < list.size(); i++) {
+//                                if (list.get(i).getApp_types().contains("3")) {// 包含
+//                                    String timeDetails = list.get(i).getTime_detail();
+//                                    List<TimeZone> timeZoneList = new Gson().fromJson(timeDetails, new TypeToken<List<TimeZone>>() {
+//                                    }.getType());
+//                                    boolean innerFlag = false;// 默认不开门
+//                                    for (int j = 0; j < timeZoneList.size(); j++) {
+//
+//                                        if (inTimeZone(list.get(i).getStart_time(), timeZoneList.get(j).getStart_time(), timeZoneList.get(j).getEnd_time())) {
+//                                            // 需要开门
+//                                            innerFlag = true;
+//                                            break;
+//                                        }
+//                                    }
+//
+//                                    flag = innerFlag;
+//                                    break;
+//                                }
+//                            }
+//
+//                            if (flag) {
+//                                Log.i("用户判断", "4");
+//                                openDoor();
+//                                say(user.getReal_name() + "" + getCurrentTime());
+//                                captureVideo(id, bitmap);
+//                            } else {
+//                                Log.i("用户判断", "5");
+//                                say(user.getReal_name() + ",当前禁止通行");
+//                                faceModel.uploadError(user.getUser_key());
+//                            }
+//
+//                        } else if (settingFlag.equals("2")) {// 不允许
+//                            Log.i("用户判断", "6");
+//                            say(user.getReal_name() + ",当前禁止通行");
+//                            faceModel.uploadError(user.getUser_key());
+//                        }
+//                    } else {// 不为
+//                        Log.i("用户判断", "7");
+//                        if (user.isIs_intrude()) {// 入侵者
+//                            Log.i("用户判断", "8");
+//                            say(user.getReal_name() + ",非法闯入");
+//                            faceModel.uploadError(user.getUser_key());
+//                        } else {// 不是非法闯入
+//                            Log.i("用户判断", "9");
+//                            String current = TimeFormat.FULL2(System.currentTimeMillis());
+//                            int count = faceModel.getDao().isLeaves(user.getUser_key(), current);
+//                            if (count > 0 && user.isIs_traffic_error()) {// 不开门
+//                                Log.i("用户判断", "10");
+//
+//                                if (user.isIs_class_course()) {// 判断课表
+//                                    Log.i("用户判断", "11");
+//                                    int classCount = faceModel.getDao().isCourse(user.getUser_key(), current);
+//                                    if (classCount > 0) {
+//                                        Log.i("用户判断", "12");
+//                                        say(user.getReal_name() + ",当前禁止通行");
+//                                        faceModel.uploadError(user.getUser_key());
+//                                    } else {
+//                                        Log.i("用户判断", "13");
+//                                        if (settingFlag.equals("1")) {// 允许
+//                                            Log.i("用户判断", "14");
+//                                            List<SettingContent> list = faceModel.getDao().getSettingContent();
+//                                            boolean flag = false;// false非法 true正常
+//                                            for (int i = 0; i < list.size(); i++) {
+//                                                if (list.get(i).getApp_types().contains("1")) {// 包含学生
+//                                                    String timeDetails = list.get(i).getTime_detail();
+//                                                    List<TimeZone> timeZoneList = new Gson().fromJson(timeDetails, new TypeToken<List<TimeZone>>() {
+//                                                    }.getType());
+//                                                    boolean innerFlag = false;// 默认不开门
+//                                                    for (int j = 0; j < timeZoneList.size(); j++) {
+//
+//                                                        if (inTimeZone(list.get(i).getStart_time(), timeZoneList.get(j).getStart_time(), timeZoneList.get(j).getEnd_time())) {
+//                                                            // 需要开门
+//                                                            innerFlag = true;
+//                                                            break;
+//                                                        }
+//                                                    }
+//
+//                                                    flag = innerFlag;
+//                                                    break;
+//                                                }
+//                                            }
+//
+//                                            if (flag) {
+//                                                Log.i("用户判断", "15");
+//                                                openDoor();
+//                                                say(user.getReal_name() + getCurrentTime());
+//                                                captureVideo(id, bitmap);
+//                                            } else {
+//                                                Log.i("用户判断", "16");
+//                                                say(user.getReal_name() + ",当前禁止通行");
+//                                                faceModel.uploadError(user.getUser_key());
+//                                            }
+//
+//                                        } else if (settingFlag.equals("2")) {// 不允许
+//                                            Log.i("用户判断", "17");
+//                                            say(user.getReal_name() + ",当前禁止通行");
+//                                            faceModel.uploadError(user.getUser_key());
+//                                        }
+//                                    }
+//                                } else {// 走固定时间判断
+//                                    Log.i("用户判断", "18");
+//                                    if (settingFlag.equals("1")) {// 允许
+//                                        Log.i("用户判断", "19");
+//                                        List<SettingContent> list = faceModel.getDao().getSettingContent();
+//                                        boolean flag = false;// false非法 true正常
+//                                        for (int i = 0; i < list.size(); i++) {
+//                                            if (list.get(i).getApp_types().contains("1")) {// 包含学生
+//                                                String timeDetails = list.get(i).getTime_detail();
+//                                                List<TimeZone> timeZoneList = new Gson().fromJson(timeDetails, new TypeToken<List<TimeZone>>() {
+//                                                }.getType());
+//                                                boolean innerFlag = false;// 默认不开门
+//                                                for (int j = 0; j < timeZoneList.size(); j++) {
+//
+//                                                    if (inTimeZone(list.get(i).getStart_time(), timeZoneList.get(j).getStart_time(), timeZoneList.get(j).getEnd_time())) {
+//                                                        // 需要开门
+//                                                        innerFlag = true;
+//                                                        break;
+//                                                    }
+//                                                }
+//
+//                                                flag = innerFlag;
+//                                                break;
+//                                            }
+//                                        }
+//
+//                                        if (flag) {
+//                                            Log.i("用户判断", "20");
+//                                            openDoor();
+//                                            say(user.getReal_name() + getCurrentTime());
+//                                            captureVideo(id, bitmap);
+//                                        } else {
+//                                            Log.i("用户判断", "21");
+//                                            say(user.getReal_name() + ",当前禁止通行");
+//                                            faceModel.uploadError(user.getUser_key());
+//                                        }
+//
+//                                    } else if (settingFlag.equals("2")) {// 不允许
+//                                        Log.i("用户判断", "22");
+//                                        say(user.getReal_name() + ",当前禁止通行");
+//                                        faceModel.uploadError(user.getUser_key());
+//                                    }
+//                                }
+//
+//
+//                            } else if (count > 0 && !user.isIs_traffic_error()) {
+//                                Log.i("用户判断", "23");
+//                                openDoor();
+//                                say(user.getReal_name() + getCurrentTime());
+//                                captureVideo(id, bitmap);
+//                            }
+//                            if (count == 0) {
+//                                Log.i("用户判断", "是否需要判断课表");
+//                                if (user.isIs_class_course()) {
+//
+//                                } else {
+//                                }
+//                            }
+//                        }
+//
+//                    }
                 }, throwable -> {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(CMainActivity.this,"发生错误："+throwable.getMessage(),Toast.LENGTH_LONG).show();
+                            Toast.makeText(CMainActivity.this, "发生错误：" + throwable.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
 
@@ -1074,49 +1110,148 @@ public class CMainActivity extends BaseActivity implements SurfaceHolder.Callbac
     }
 
     /**
-     * 固定时间判断
-     * @param type 1.学生 3.老师
+     * 是否非法
      */
-    private void gudingshijian(String setting,String type,LocalUser user,String id, final Bitmap bitmap){
-        if (setting.equals("1")) {// 允许
-            Log.i("用户判断","119");
-            List<SettingContent> list = faceModel.getDao().getSettingContent();
-            boolean flag = false;// false非法 true正常
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).getApp_types().contains(type)) {// 包含学生
-                    String timeDetails = list.get(i).getTime_detail();
-                    List<TimeZone> timeZoneList = new Gson().fromJson(timeDetails, new TypeToken<List<TimeZone>>() {
-                    }.getType());
-                    boolean innerFlag = false;// 默认不开门
-                    for (int j = 0; j < timeZoneList.size(); j++) {
+    private void isIntrude(LocalUser user, String id, final Bitmap bitmap) {
+        if (user.isIs_intrude()) {// 非法
+            Log.i("用户判断", "非法闯入");
+            say(user.getReal_name() + "非法闯入");
+            captureVideo(id, bitmap, 2, false);
+        } else {// 正常->走请假判断
+            isLeaves(user, id, bitmap);
+        }
+    }
 
-                        if (inTimeZone(list.get(i).getStart_time(), timeZoneList.get(j).getStart_time(), timeZoneList.get(j).getEnd_time())) {
-                            // 需要开门
-                            innerFlag = true;
-                            break;
-                        }
-                    }
+    /**
+     * 是否请假
+     */
+    private void isLeaves(LocalUser user, String id, final Bitmap bitmap) {
+        Log.i("用户判断", "进入请假");
+        String current = TimeFormat.FULL2(System.currentTimeMillis());
+        int count = faceModel.getDao().isLeaves(user.getUser_key(), current);
+        Log.i("用户判断", "请假数量：" + count);
+        if (count > 0) {// 有请假，判断异常
+            Log.i("用户判断", "有请假");
+            isTraficError(user, id, bitmap);
+        } else {// 无请假，执行课表
+            exeClassCourse(user, id, bitmap);
+        }
+    }
 
-                    flag = innerFlag;
+    /**
+     * 课表
+     */
+    private void exeClassCourse(LocalUser user, String id, final Bitmap bitmap) {
+        if (user.isIs_class_course()) {// 需要
+            String current = TimeFormat.FULL2(System.currentTimeMillis());
+            int count = faceModel.getDao().isCourse(user.getUser_key(), current);
+            if (count > 0) {// 上课时间禁止
+                say(user.getReal_name() + "上课时间禁止通行");
+                captureVideo(id, bitmap, 0, false);
+            } else {
+                gudingshijian(user.getApp_type(), user, id, bitmap, true);
+            }
+        } else {// 不需要
+            gudingshijian(user.getApp_type(), user, id, bitmap, true);
+        }
+    }
+
+    /**
+     * 异常
+     */
+    private void isTraficError(LocalUser user, String id, final Bitmap bitmap) {
+        if (user.isIs_traffic_error()) {// 异常
+            Log.i("用户判断", "出现异常");
+
+            faceModel.uploadError(user.getUser_key());// 上传异常
+            String settingFlag = cache.getAsString("config_error_flag");
+            if (settingFlag.equals("1")) {// 不开门
+                Log.i("用户判断", "出现异常-没有开门");
+                captureVideo(id, bitmap, 1, false);
+            } else if (settingFlag.equals("2")) {// 开门
+                Log.i("用户判断", "出现异常-开门");
+                openDoor();
+                captureVideo(id, bitmap, 1, true);
+            }
+            say(user.getReal_name() + "当前通行异常");
+
+        } else {// 正常
+            openDoor();
+            say(user.getReal_name() + getCurrentTime());
+            captureVideo(id, bitmap, 0, true);
+        }
+    }
+
+
+    /**
+     * 固定时间判断
+     */
+    private void gudingshijian(int type, LocalUser user, String id, final Bitmap bitmap, boolean isError) {
+        Log.i("用户判断", "固定时间判断");
+
+        String settingFlag = cache.getAsString("config_setting_traffic_flag");
+
+        String search = "%" + type + "%";
+        long current = System.currentTimeMillis();
+        String data = TimeFormat.FULL2(current);
+        List<SettingContent> list = faceModel.getDao().getSettingContent(data, search);
+        Log.e("用户判断", "查找出来的结果：" + new Gson().toJson(list));
+        boolean flag = false;// 是否存在在这个值
+        for (int i = 0; i < list.size(); i++) {
+            String timeDetails = list.get(i).getTime_detail();
+            List<TimeZone> timeZoneList = new Gson().fromJson(timeDetails, new TypeToken<List<TimeZone>>() {
+            }.getType());
+            boolean innerFlag = false;// 默认不开门
+            for (int j = 0; j < timeZoneList.size(); j++) {
+                if (inTimeZone(timeZoneList.get(j).getStart_time(), timeZoneList.get(j).getEnd_time())) {
+                    // 需要开门
+                    innerFlag = true;
                     break;
                 }
             }
+            flag = innerFlag;
+            break;
+        }
 
-            if (flag) {
-                Log.i("用户判断","120");
-                openDoor();
-                say(user.getReal_name() + getCurrentTime());
-                captureVideo(id, bitmap);
+        if (flag) {
+            Log.i("用户判断", "当前在配置时间段");
+
+            if (settingFlag.equals("1")) {// 默认不开门
+
+                if (isError) {
+                    isTraficError(user, id, bitmap);
+                } else {
+                    Log.i("用户判断", "当前在配置时间段，默认不开门，开门");
+                    openDoor();
+                    say(user.getReal_name() + getCurrentTime());
+                    captureVideo(id, bitmap, 0, true);
+                }
+
             } else {
-                Log.i("用户判断","121");
-                say(user.getReal_name() + ",当前禁止通行");
-                faceModel.uploadError(user.getUser_key());
+                Log.i("用户判断", "当前在配置时间段，默认开门，不开门");
+                say(user.getReal_name() + "当前禁止通行");
+                captureVideo(id, bitmap, 0, false);
             }
+        } else {
+            Log.i("用户判断", "当前不在配置时间段");
 
-        } else if (setting.equals("2")) {// 不允许
-            Log.i("用户判断","122");
-            say(user.getReal_name() + ",当前禁止通行");
-            faceModel.uploadError(user.getUser_key());
+            if (settingFlag.equals("1")) {// 默认不开门
+                Log.i("用户判断", "当前在配置时间段，默认不开门，不开门");
+
+                say(user.getReal_name() + "当前禁止通行");
+                captureVideo(id, bitmap, 0, false);
+            } else {
+                Log.i("用户判断", "当前在配置时间段，默认开门，开门");
+
+                if (isError) {
+                    isTraficError(user, id, bitmap);
+                } else {
+                    openDoor();
+                    say(user.getReal_name() + getCurrentTime());
+                    captureVideo(id, bitmap, 0, true);
+                }
+
+            }
         }
     }
 }
